@@ -1,2 +1,1 @@
-# SkillManagementApp
-d
+# SkillManager
