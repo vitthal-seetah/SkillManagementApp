@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Application.Abstractions.Repository;
+using SkillManager.Domain.Enums;
 using SkillManager.Infrastructure.Identity.Models;
 
 namespace SkillManager.Infrastructure.Repositories;
@@ -42,25 +43,32 @@ public class UserRepository : IUserRepository
         if (appUser == null)
             return;
 
+        // Map domain → persistence
         appUser.FirstName = user.FirstName;
         appUser.LastName = user.LastName;
         appUser.UTCode = user.UTCode;
-        appUser.EmployeeId = user.EmployeeId;
+        appUser.RefId = user.RefId;
+        appUser.RoleId = user.RoleId;
+        appUser.Status = user.Status;
+        appUser.DeliveryType = user.DeliveryType;
 
         await _userManager.UpdateAsync(appUser);
     }
 
     // -------------------------
-    // Helper: Map ApplicationUser → User
+    // Helper: Map ApplicationUser → Domain User
     // -------------------------
     private static User MapToDomain(ApplicationUser appUser) =>
         new()
         {
             Id = appUser.Id,
+            Email = appUser.Email ?? "",
             FirstName = appUser.FirstName,
             LastName = appUser.LastName,
             UTCode = appUser.UTCode,
-            EmployeeId = appUser.EmployeeId,
-            Email = appUser.Email,
+            RefId = appUser.RefId,
+            RoleId = appUser.RoleId,
+            Status = appUser.Status,
+            DeliveryType = appUser.DeliveryType,
         };
 }

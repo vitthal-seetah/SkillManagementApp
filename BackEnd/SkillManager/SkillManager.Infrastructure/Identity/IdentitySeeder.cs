@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Infrastructure.Identity.Models;
 
 namespace SkillManager.Infrastructure.Identity;
@@ -14,36 +15,46 @@ public static class IdentitySeeder
         await SeedAdminAsync(userManager);
     }
 
-    private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+    static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
     {
-        string[] roles = { "Admin", "Leader", "User" };
-        foreach (var role in roles)
+        string[] roleNames =
         {
-            if (!await roleManager.RoleExistsAsync(role))
-                await roleManager.CreateAsync(new IdentityRole(role));
+            RoleName.Admin,
+            RoleName.Manager,
+            RoleName.Leader,
+            RoleName.SME,
+            RoleName.User,
+        };
+
+        foreach (var roleName in roleNames)
+        {
+            if (!await roleManager.RoleExistsAsync(roleName))
+                await roleManager.CreateAsync(new IdentityRole(roleName));
         }
     }
 
-    private static async Task SeedAdminAsync(UserManager<ApplicationUser> userManager)
+    static async Task SeedAdminAsync(UserManager<ApplicationUser> userManager)
     {
         var adminEmail = "admin@skillmanager.com";
         var adminPassword = "Admin123!";
 
-        var admin = await userManager.FindByEmailAsync(adminEmail);
-        if (admin != null)
-            return;
+        var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
 
-        var user = new ApplicationUser
+        if (existingAdmin == null)
         {
-            UserName = adminEmail,
-            Email = adminEmail,
-            FirstName = "System",
-            LastName = "Admin",
-            EmailConfirmed = true,
-        };
+            var adminUser = new ApplicationUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                EmailConfirmed = true,
+                FirstName = "System",
+                LastName = "Admin",
+            };
 
-        var result = await userManager.CreateAsync(user, adminPassword);
-        if (result.Succeeded)
-            await userManager.AddToRoleAsync(user, "Admin");
+            var result = await userManager.CreateAsync(adminUser, adminPassword);
+
+            if (result.Succeeded)
+                await userManager.AddToRoleAsync(adminUser, RoleName.Admin);
+        }
     }
 }

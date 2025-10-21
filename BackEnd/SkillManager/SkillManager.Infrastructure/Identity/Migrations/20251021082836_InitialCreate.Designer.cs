@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SkillManager.Infrastructure.Identity.DbContext;
 
 #nullable disable
 
-namespace SkillManager.Infrastructure.Migrations
+namespace AppManagement.Infrastructure.Identity.Migrations
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    partial class ApplicationIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251021082836_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,21 +54,33 @@ namespace SkillManager.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "310e3593-d06a-4617-887b-2f9153edea09",
-                            Name = "User",
-                            NormalizedName = "USER"
+                            Id = "4a0e59b4-9c1e-4536-b43f-119d13556b8e",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "4a0e59b4-9c1e-4536-b43f-119d13556b8e",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
+                            Id = "310e3593-d06a-4617-887b-2f9153edea09",
+                            Name = "Employee",
+                            NormalizedName = "EMPLOYEE"
                         },
                         new
                         {
                             Id = "4c31900d-90f7-43a2-beec-c2bf0af83dea",
-                            Name = "Leader",
-                            NormalizedName = "LEADER"
+                            Name = "Tech Lead",
+                            NormalizedName = "TECH LEAD"
+                        },
+                        new
+                        {
+                            Id = "5bdb9b9d-f62f-4ec2-9451-fbcf9ed13752",
+                            Name = "Manager",
+                            NormalizedName = "MANAGER"
+                        },
+                        new
+                        {
+                            Id = "98a4b2e6-9833-4b7c-9d2b-fba562f7a4ef",
+                            Name = "SME",
+                            NormalizedName = "SME"
                         });
                 });
 
@@ -308,15 +323,15 @@ namespace SkillManager.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DeliveryType")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("EmployeeId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -349,8 +364,18 @@ namespace SkillManager.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("RefId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -380,7 +405,8 @@ namespace SkillManager.Infrastructure.Migrations
                         {
                             Id = "a4950d3d-ca05-40ab-b8ff-7791c173ba98",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2bdb64ed-6d87-4128-9ef1-500d54a639e4",
+                            ConcurrencyStamp = "aeb9b6e1-d492-48c1-bbf4-5c5079f0d564",
+                            DeliveryType = 1,
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             FirstName = "System",
@@ -388,49 +414,60 @@ namespace SkillManager.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHYZ2IKAQ8/FeY3gU4G79mumZrd/ymgspqYubXMeW7bf4aVF2QBm73xJXp0YRAeYXQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGJ5wcxQ3UGcK7pq9iQ1LAkDBW+sW98nP0Z2I36NPLP+VzkpW38ebpTxezV7LcHBiw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "472b07e8-f704-490f-b3e5-0afec86aa62e",
+                            RefId = "HR001",
+                            RoleId = 1,
+                            SecurityStamp = "16c0130f-b502-47f8-b70d-ebb846e11514",
+                            Status = 1,
                             TwoFactorEnabled = false,
-                            UTCode = "",
+                            UTCode = "UT001",
                             UserName = "admin@localhost.com"
                         },
                         new
                         {
                             Id = "a6146e7c-febf-4fbb-83ab-97fccabb044c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e747bf60-8519-42ce-8670-49fb28704289",
+                            ConcurrencyStamp = "41ca50cb-0973-475e-85ba-55819c3fdc97",
+                            DeliveryType = 1,
                             Email = "user1@localhost.com",
                             EmailConfirmed = true,
                             FirstName = "System",
                             LastName = "User",
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1@LOCALHOST.COM",
-                            NormalizedUserName = "user1@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFmg9rGLXmI+kJP6QT1BUPb6K2DS1bLHAu4ceM9Xjf0UjNPFyyNvrTbvTQ2yuRgPqA==",
+                            NormalizedUserName = "USER1@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFeFIU48h2wYzUqeUsBlFSdnOD2Kz5DQhhBVvsm/hil3U106cFlH9BjHf3XfFQ6mcA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c03b8f78-60c0-473e-bcbc-1b38b3eead4d",
+                            RefId = "HR002",
+                            RoleId = 5,
+                            SecurityStamp = "1896f609-d1c6-4091-aae2-04114409640c",
+                            Status = 1,
                             TwoFactorEnabled = false,
-                            UTCode = "",
+                            UTCode = "UT002",
                             UserName = "user1@localhost.com"
                         },
                         new
                         {
                             Id = "8310a350-45e3-4b03-82d6-3120d3edad80",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e448085f-0e09-46a7-9ae7-a415e2fc046b",
+                            ConcurrencyStamp = "5d2b0495-7215-4c9a-a515-af517929e480",
+                            DeliveryType = 1,
                             Email = "leader@localhost.com",
                             EmailConfirmed = true,
                             FirstName = "System",
                             LastName = "Leader",
                             LockoutEnabled = false,
-                            NormalizedEmail = "leader@LOCALHOST.COM",
-                            NormalizedUserName = "leader@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEISQUOSGaSxVjvfaRf1KTTT94DHPdChCGYaXX20njf13cwRIKKcKqtKp3OCMnoE/Yg==",
+                            NormalizedEmail = "LEADER@LOCALHOST.COM",
+                            NormalizedUserName = "LEADER@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAWLa5NIu3Yq/gaXjiu7QRBknFxI5sSu3iLZEXLwgxo7usnl5Z6duOyDSTAb97k0LQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "89d61e46-4fbc-425a-8e2a-6faaca3a1849",
+                            RefId = "HR003",
+                            RoleId = 2,
+                            SecurityStamp = "c71b8216-6f77-48b4-8556-b977cca9939d",
+                            Status = 1,
                             TwoFactorEnabled = false,
-                            UTCode = "",
+                            UTCode = "UT003",
                             UserName = "leader@localhost.com"
                         });
                 });

@@ -1,14 +1,12 @@
-using AppManagement.Application;
 using AppManagement.Infrastructure;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // --------------------------
-// Services Registration
+// Register Infrastructure (DbContext, Identity, JWT, Repositories)
 // --------------------------
-builder.Services.AddApplication();
-await builder.Services.AddInfrastructureAsync(builder.Configuration); // <-- now handles DB + Identity + seeding
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // --------------------------
 // Controllers
@@ -57,6 +55,11 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// --------------------------
+// Apply Migrations & Seed Identity
+// --------------------------
+await app.Services.SeedIdentityAsync();
 
 // --------------------------
 // HTTP Request Pipeline

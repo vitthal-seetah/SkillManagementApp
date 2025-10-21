@@ -13,6 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SkillManager.Application\SkillManager.Application.csproj" />
+    <ProjectReference Include="..\SkillManager.Domain\SkillManager.Domain.csproj" />
     <ProjectReference Include="..\SkillManager.Infrastructure\SkillManager.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
