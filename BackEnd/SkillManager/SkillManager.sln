@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillManager.Api", "SkillManager.Api\SkillManager.Api.csproj", "{B6CEBB49-6F73-8AE9-8FA9-7EA5E7F745AA}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillManager.Application.UnitTest", "SkillManager.Application.UnitTest\SkillManager.Application.UnitTest.csproj", "{D7D067E9-29F2-52B1-05E9-16B5EC706D34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillManager.Infrastructure", "SkillManager.Infrastructure\SkillManager.Infrastructure.csproj", "{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillManager.Domain", "SkillManager.Domain\SkillManager.Domain.csproj", "{07951593-5196-4E11-BACE-DE20F8688320}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07951593-5196-4E11-BACE-DE20F8688320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07951593-5196-4E11-BACE-DE20F8688320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07951593-5196-4E11-BACE-DE20F8688320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07951593-5196-4E11-BACE-DE20F8688320}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
