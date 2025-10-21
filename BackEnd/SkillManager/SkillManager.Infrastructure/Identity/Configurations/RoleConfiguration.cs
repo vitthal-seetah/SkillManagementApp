@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SkillManager.Application.Abstractions.Identity;
+using SkillManager.Infrastructure.Abstractions.Identity;
 
 namespace SkillManager.Infrastructure.Identity.Configurations;
 

@@ -1,9 +1,9 @@
-﻿using SkillManager.Application.Abstractions.Repository;
-using SkillManager.Application.Abstractions.Services;
-using SkillManager.Application.DTOs.Skill;
-using SkillManager.Domain.Entities;
+﻿using SkillManager.Domain.Entities;
+using SkillManager.Infrastructure.Abstractions.Repository;
+using SkillManager.Infrastructure.Abstractions.Services;
+using SkillManager.Infrastructure.DTOs.Skill;
 
-namespace SkillManager.Application.Services;
+namespace SkillManager.Infrastructure.Services;
 
 public class UserSkillService : IUserSkillService
 {

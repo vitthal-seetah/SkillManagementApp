@@ -1,4 +1,4 @@
-﻿namespace SkillManager.Application.DTOs.Skill;
+﻿namespace SkillManager.Infrastructure.DTOs.Skill;
 
 public class UpdateUserSkillsDto
 {

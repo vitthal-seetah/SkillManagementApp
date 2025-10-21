@@ -1,7 +1,7 @@
-﻿namespace SkillManager.Application.Abstractions.Identity;
+﻿namespace SkillManager.Infrastructure.Abstractions.Identity;
 
 public interface IUserService
 {
-    Task<IEnumerable<User>> GetAll();
-    Task<User?> GetUserById(string userId);
+    Task<IEnumerable<ApplicationUser>> GetAll();
+    Task<ApplicationUser?> GetUserById(string userId);
 }

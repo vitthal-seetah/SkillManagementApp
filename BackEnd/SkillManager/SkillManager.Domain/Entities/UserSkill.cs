@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using SkillManager.Application.Entities;
+using SkillManager.Infrastructure.Identity.Models;
 
 namespace SkillManager.Domain.Entities;
 
@@ -10,7 +10,6 @@ public class UserSkill
     public int LevelId { get; set; }
 
     // Navigation properties
-    public virtual User User { get; set; }
     public virtual Skill Skill { get; set; }
     public virtual Level Level { get; set; }
 }

@@ -1,10 +1,10 @@
-﻿using SkillManager.Application.Abstractions.Identity;
+﻿using SkillManager.Infrastructure.Abstractions.Identity;
 
-namespace SkillManager.Application.Abstractions.Repository;
+namespace SkillManager.Infrastructure.Abstractions.Repository;
 
 public interface IUserRepository
 {
-    Task<User?> GetByIdAsync(string userId);
-    Task<IEnumerable<User>> GetAllAsync();
-    Task UpdateAsync(User user);
+    Task<ApplicationUser?> GetByIdAsync(string userId);
+    Task<IEnumerable<ApplicationUser>> GetAllAsync();
+    Task UpdateAsync(ApplicationUser user);
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SkillManager.Application.Abstractions.Identity;
-using SkillManager.Application.Abstractions.Repository;
 using SkillManager.Domain.Enums;
+using SkillManager.Infrastructure.Abstractions.Identity;
+using SkillManager.Infrastructure.Abstractions.Repository;
 
 namespace SkillManager.API.Controllers;
 

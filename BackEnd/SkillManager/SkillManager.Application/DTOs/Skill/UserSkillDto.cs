@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SkillManager.Application.DTOs.Skill;
+namespace SkillManager.Infrastructure.DTOs.Skill;
 
 public class UserSkillDto
 {

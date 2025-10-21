@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SkillManager.Application.Abstractions.Services;
-using SkillManager.Application.Services;
+using SkillManager.Infrastructure.Abstractions.Services;
+using SkillManager.Infrastructure.Services;
 
 namespace AppManagement.Application;
 

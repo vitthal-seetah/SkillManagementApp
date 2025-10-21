@@ -4,8 +4,8 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SkillManager.Application.Abstractions.Identity;
-using SkillManager.Application.Exceptions;
+using SkillManager.Infrastructure.Abstractions.Identity;
+using SkillManager.Infrastructure.Exceptions;
 using SkillManager.Infrastructure.Identity.Models;
 using SkillManager.Infrastructure.Identity.Settings;
 

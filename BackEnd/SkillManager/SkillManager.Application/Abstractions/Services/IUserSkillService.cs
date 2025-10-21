@@ -1,7 +1,7 @@
-﻿using SkillManager.Application.DTOs;
-using SkillManager.Application.DTOs.Skill;
+﻿using SkillManager.Infrastructure.DTOs;
+using SkillManager.Infrastructure.DTOs.Skill;
 
-namespace SkillManager.Application.Abstractions.Services;
+namespace SkillManager.Infrastructure.Abstractions.Services;
 
 public interface IUserSkillService
 {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SkillManager.Application.Abstractions.Identity;
+using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Identity.Models;
 
 namespace SkillManager.Infrastructure.Identity;

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SkillManager.Application.Exceptions;
+namespace SkillManager.Infrastructure.Exceptions;
 
 public class BadRequestException : Exception
 {

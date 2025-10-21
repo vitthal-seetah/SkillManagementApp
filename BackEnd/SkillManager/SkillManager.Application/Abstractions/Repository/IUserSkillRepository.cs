@@ -1,6 +1,6 @@
 ﻿using SkillManager.Domain.Entities;
 
-namespace SkillManager.Application.Abstractions.Repository;
+namespace SkillManager.Infrastructure.Abstractions.Repository;
 
 public interface IUserSkillRepository
 {

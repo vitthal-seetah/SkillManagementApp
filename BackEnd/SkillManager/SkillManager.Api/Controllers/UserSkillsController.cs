@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SkillManager.Application.Abstractions.Services;
-using SkillManager.Application.DTOs;
-using SkillManager.Application.DTOs.Skill;
+using SkillManager.Infrastructure.Abstractions.Services;
+using SkillManager.Infrastructure.DTOs;
+using SkillManager.Infrastructure.DTOs.Skill;
 
 namespace SkillManager.API.Controllers;
 

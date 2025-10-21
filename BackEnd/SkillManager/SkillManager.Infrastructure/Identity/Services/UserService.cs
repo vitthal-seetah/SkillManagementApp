@@ -1,26 +1,26 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Domain.Entities;
 using SkillManager.Domain.Enums;
+using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Identity.Models;
 
 namespace SkillManager.Infrastructure.Identity.Services;
 
 public sealed class UserService : IUserService
 {
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly UserManager<Models.ApplicationUser> _userManager;
 
-    public UserService(UserManager<ApplicationUser> userManager)
+    public UserService(UserManager<Models.ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
 
-    public async Task<IEnumerable<User>> GetAll()
+    public async Task<IEnumerable<Infrastructure.Abstractions.Identity.ApplicationUser>> GetAll()
     {
         // Get all users regardless of role
         var users = _userManager.Users.ToList();
 
-        return users.Select(q => new User
+        return users.Select(q => new ApplicationUser
         {
             Id = q.Id,
             Email = q.Email,
@@ -34,14 +34,16 @@ public sealed class UserService : IUserService
         });
     }
 
-    public async Task<User?> GetUserById(string userId)
+    public async Task<Infrastructure.Abstractions.Identity.ApplicationUser?> GetUserById(
+        string userId
+    )
     {
         var user = await _userManager.FindByIdAsync(userId);
 
         if (user == null)
             return null;
 
-        return new User
+        return new Infrastructure.Abstractions.Identity.ApplicationUser
         {
             Id = user.Id,
             Email = user.Email,

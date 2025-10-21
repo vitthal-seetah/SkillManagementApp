@@ -1,4 +1,4 @@
-﻿namespace SkillManager.Application.Exceptions;
+﻿namespace SkillManager.Infrastructure.Exceptions;
 
 public class NotFoundException : Exception
 {

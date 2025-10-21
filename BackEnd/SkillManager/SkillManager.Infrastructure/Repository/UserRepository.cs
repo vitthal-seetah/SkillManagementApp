@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SkillManager.Application.Abstractions.Identity;
-using SkillManager.Application.Abstractions.Repository;
 using SkillManager.Domain.Enums;
+using SkillManager.Infrastructure.Abstractions.Identity;
+using SkillManager.Infrastructure.Abstractions.Repository;
 using SkillManager.Infrastructure.Identity.Models;
 
 namespace SkillManager.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly UserManager<Identity.Models.ApplicationUser> _userManager;
 
-    public UserRepository(UserManager<ApplicationUser> userManager)
+    public UserRepository(UserManager<Identity.Models.ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
@@ -19,7 +19,9 @@ public class UserRepository : IUserRepository
     // -------------------------
     // Get a single user by ID
     // -------------------------
-    public async Task<User?> GetByIdAsync(string userId)
+    public async Task<Infrastructure.Abstractions.Identity.ApplicationUser?> GetByIdAsync(
+        string userId
+    )
     {
         var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
         return appUser == null ? null : MapToDomain(appUser);
@@ -28,7 +30,9 @@ public class UserRepository : IUserRepository
     // -------------------------
     // Get all users
     // -------------------------
-    public async Task<IEnumerable<User>> GetAllAsync()
+    public async Task<
+        IEnumerable<Infrastructure.Abstractions.Identity.ApplicationUser>
+    > GetAllAsync()
     {
         var users = await _userManager.Users.ToListAsync();
         return users.Select(MapToDomain);
@@ -37,7 +41,7 @@ public class UserRepository : IUserRepository
     // -------------------------
     // Update a user
     // -------------------------
-    public async Task UpdateAsync(User user)
+    public async Task UpdateAsync(Infrastructure.Abstractions.Identity.ApplicationUser user)
     {
         var appUser = await _userManager.FindByIdAsync(user.Id);
         if (appUser == null)
@@ -58,7 +62,9 @@ public class UserRepository : IUserRepository
     // -------------------------
     // Helper: Map ApplicationUser → Domain User
     // -------------------------
-    private static User MapToDomain(ApplicationUser appUser) =>
+    private static Infrastructure.Abstractions.Identity.ApplicationUser MapToDomain(
+        Identity.Models.ApplicationUser appUser
+    ) =>
         new()
         {
             Id = appUser.Id,

@@ -1,3 +1,3 @@
-﻿namespace SkillManager.Application.Abstractions.Identity;
+﻿namespace SkillManager.Infrastructure.Abstractions.Identity;
 
 public record RegistrationResponse(string UserId);

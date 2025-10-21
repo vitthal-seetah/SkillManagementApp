@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SkillManager.Application.Abstractions.Repository;
 using SkillManager.Domain.Entities;
+using SkillManager.Infrastructure.Abstractions.Repository;
 using SkillManager.Infrastructure.Identity.DbContext;
 
 namespace SkillManager.Infrastructure.Persistence.Repositories;

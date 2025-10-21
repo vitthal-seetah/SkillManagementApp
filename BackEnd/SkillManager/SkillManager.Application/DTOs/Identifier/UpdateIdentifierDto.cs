@@ -1,4 +1,4 @@
-﻿namespace SkillManager.Application.DTOs.Identifier;
+﻿namespace SkillManager.Infrastructure.DTOs.Identifier;
 
 public class UpdateIdentifierDto
 {

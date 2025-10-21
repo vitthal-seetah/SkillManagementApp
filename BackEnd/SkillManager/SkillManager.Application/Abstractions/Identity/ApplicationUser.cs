@@ -1,8 +1,8 @@
 ﻿using SkillManager.Domain.Enums;
 
-namespace SkillManager.Application.Abstractions.Identity;
+namespace SkillManager.Infrastructure.Abstractions.Identity;
 
-public sealed class User
+public sealed class ApplicationUser
 {
     public string Id { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
