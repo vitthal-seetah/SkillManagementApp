@@ -7,8 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Application.Abstractions.Repository;
+using SkillManager.Infrastructure.Identity;
 using SkillManager.Infrastructure.Identity.DbContext;
 using SkillManager.Infrastructure.Identity.Models;
+using SkillManager.Infrastructure.Identity.Seed;
 using SkillManager.Infrastructure.Identity.Services;
 using SkillManager.Infrastructure.Identity.Settings;
 using SkillManager.Infrastructure.Persistence.Repositories;
@@ -18,7 +20,7 @@ namespace AppManagement.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(
+    public static async Task<IServiceCollection> AddInfrastructureAsync(
         this IServiceCollection services,
         IConfiguration configuration
     )
@@ -34,6 +36,18 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserSkillRepository, UserSkillRepository>();
+
+        // --------------------------
+        // Run initial Identity seed
+        // --------------------------
+        using (var scope = services.BuildServiceProvider().CreateScope())
+        {
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<
+                UserManager<ApplicationUser>
+            >();
+            await IdentitySeeder.SeedAsync(roleManager, userManager);
+        }
 
         return services;
     }
