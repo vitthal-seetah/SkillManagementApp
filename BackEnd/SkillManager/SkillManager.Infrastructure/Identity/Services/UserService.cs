@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Domain.Entities;
-using SkillManager.Domain.Enums;
 using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Identity.Models;
 
@@ -8,56 +8,35 @@ namespace SkillManager.Infrastructure.Identity.Services;
 
 public sealed class UserService : IUserService
 {
-    private readonly UserManager<Models.ApplicationUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public UserService(UserManager<Models.ApplicationUser> userManager)
+    public UserService(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
 
-    public async Task<IEnumerable<Infrastructure.Abstractions.Identity.ApplicationUser>> GetAll()
+    // -----------------------------
+    // Get all users
+    // -----------------------------
+    public async Task<IEnumerable<User>> GetAll()
     {
-        // Get all users regardless of role
-        var users = _userManager.Users.ToList();
+        var users = await Task.FromResult(_userManager.Users.ToList());
 
-        return users.Select(q => new ApplicationUser
-        {
-            Id = q.Id,
-            Email = q.Email,
-            FirstName = q.FirstName,
-            LastName = q.LastName,
-            UTCode = q.UTCode,
-            RefId = q.RefId,
-            RoleId = q.RoleId,
-            Status = q.Status,
-            DeliveryType = q.DeliveryType,
-        });
+        return users.Select(u => MapToDomain(u));
     }
 
-    public async Task<Infrastructure.Abstractions.Identity.ApplicationUser?> GetUserById(
-        string userId
-    )
+    // -----------------------------
+    // Get single user by ID
+    // -----------------------------
+    public async Task<User?> GetUserById(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
-
-        if (user == null)
-            return null;
-
-        return new Infrastructure.Abstractions.Identity.ApplicationUser
-        {
-            Id = user.Id,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            UTCode = user.UTCode,
-            RefId = user.RefId,
-            RoleId = user.RoleId,
-            Status = user.Status,
-            DeliveryType = user.DeliveryType,
-        };
+        return user == null ? null : MapToDomain(user);
     }
 
-    // Admin: update ID-related fields (UTCode, RefId)
+    // -----------------------------
+    // Admin: Update user identifiers (UTCode, RefId)
+    // -----------------------------
     public async Task<bool> UpdateUserIdentifiersAsync(string userId, string utCode, string refId)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -71,7 +50,9 @@ public sealed class UserService : IUserService
         return result.Succeeded;
     }
 
-    // Manager: update other fields (FirstName, LastName, Status, DeliveryType)
+    // -----------------------------
+    // Manager: Update personal or status info
+    // -----------------------------
     public async Task<bool> UpdateUserDetailsAsync(
         string userId,
         string firstName,
@@ -87,6 +68,7 @@ public sealed class UserService : IUserService
         user.FirstName = firstName;
         user.LastName = lastName;
 
+        // Parse enum values if provided
         if (
             !string.IsNullOrEmpty(status)
             && Enum.TryParse(status, true, out UserStatus parsedStatus)
@@ -101,5 +83,24 @@ public sealed class UserService : IUserService
 
         var result = await _userManager.UpdateAsync(user);
         return result.Succeeded;
+    }
+
+    // -----------------------------
+    // Helper: Map ApplicationUser -> Domain User
+    // -----------------------------
+    private static User MapToDomain(ApplicationUser u)
+    {
+        return new User
+        {
+            Id = u.Id,
+            Email = u.Email ?? string.Empty,
+            FirstName = u.FirstName,
+            LastName = u.LastName,
+            UTCode = u.UTCode,
+            RefId = u.RefId,
+            RoleId = u.RoleId,
+            Status = u.Status,
+            DeliveryType = u.DeliveryType,
+        };
     }
 }

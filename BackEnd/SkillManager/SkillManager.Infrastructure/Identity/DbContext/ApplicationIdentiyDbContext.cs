@@ -8,7 +8,7 @@ using AppEntity = SkillManager.Domain.Entities.Application;
 
 namespace SkillManager.Infrastructure.Identity.DbContext;
 
-public class ApplicationIdentityDbContext : IdentityDbContext<Models.ApplicationUser>
+public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
         : base(options) { }
@@ -136,7 +136,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<Models.Application
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder
-            .Entity<Application>()
+            .Entity<Domain.Entities.Application>()
             .HasMany(a => a.ApplicationSkills)
             .WithOne(appSkill => appSkill.Application)
             .HasForeignKey(appSkill => appSkill.ApplicationId)
@@ -166,7 +166,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<Models.Application
 
         modelBuilder.Entity<SubCategory>().Property(sc => sc.Name).HasMaxLength(100);
 
-        modelBuilder.Entity<Application>().Property(a => a.Name).HasMaxLength(200);
+        modelBuilder.Entity<Domain.Entities.Application>().Property(a => a.Name).HasMaxLength(200);
 
         modelBuilder.Entity<ApplicationSuite>().Property(asu => asu.Name).HasMaxLength(200);
 

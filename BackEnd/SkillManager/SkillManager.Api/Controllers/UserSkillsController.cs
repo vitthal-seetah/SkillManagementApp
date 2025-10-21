@@ -104,7 +104,7 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteSkill(int id)
+    public async Task<IActionResult> DeleteSkill(string id)
     {
         try
         {

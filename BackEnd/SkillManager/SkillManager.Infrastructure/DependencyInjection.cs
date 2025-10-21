@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Abstractions.Repository;
 using SkillManager.Infrastructure.Identity;

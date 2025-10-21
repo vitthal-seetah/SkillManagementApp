@@ -1,7 +1,17 @@
-﻿namespace SkillManager.Infrastructure.Abstractions.Identity;
+﻿using SkillManager.Infrastructure.Abstractions.Identity;
+
+namespace SkillManager.Application.Abstractions.Identity;
 
 public interface IUserService
 {
-    Task<IEnumerable<ApplicationUser>> GetAll();
-    Task<ApplicationUser?> GetUserById(string userId);
+    Task<IEnumerable<User>> GetAll();
+    Task<User?> GetUserById(string userId);
+    Task<bool> UpdateUserIdentifiersAsync(string userId, string utCode, string refId);
+    Task<bool> UpdateUserDetailsAsync(
+        string userId,
+        string firstName,
+        string lastName,
+        string? status = null,
+        string? deliveryType = null
+    );
 }

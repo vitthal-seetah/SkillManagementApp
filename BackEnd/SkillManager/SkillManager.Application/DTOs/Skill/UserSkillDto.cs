@@ -8,10 +8,12 @@ namespace SkillManager.Infrastructure.DTOs.Skill;
 
 public class UserSkillDto
 {
-    public int Id { get; set; }
-    public string SkillName { get; set; } = default!;
-    public string SkillCode { get; set; } = default!;
-    public string SectionName { get; set; } = default!;
-    public string CategoryName { get; set; } = default!;
-    public int Level { get; set; }
+    public string UserId { get; set; }
+    public int SkillId { get; set; }
+    public string SkillName { get; set; }
+    public string SkillCode { get; set; }
+    public string CategoryName { get; set; }
+    public string CategoryType { get; set; }
+    public int LevelId { get; set; }
+    public string LevelName { get; set; }
 }

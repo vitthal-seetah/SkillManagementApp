@@ -8,7 +8,7 @@ using SkillManager.Infrastructure.Identity.DbContext;
 
 #nullable disable
 
-namespace AppManagement.Infrastructure.Identity.Migrations
+namespace SkillManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
     partial class ApplicationIdentityDbContextModelSnapshot : ModelSnapshot
@@ -47,38 +47,6 @@ namespace AppManagement.Infrastructure.Identity.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "4a0e59b4-9c1e-4536-b43f-119d13556b8e",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "310e3593-d06a-4617-887b-2f9153edea09",
-                            Name = "Employee",
-                            NormalizedName = "EMPLOYEE"
-                        },
-                        new
-                        {
-                            Id = "4c31900d-90f7-43a2-beec-c2bf0af83dea",
-                            Name = "Tech Lead",
-                            NormalizedName = "TECH LEAD"
-                        },
-                        new
-                        {
-                            Id = "5bdb9b9d-f62f-4ec2-9451-fbcf9ed13752",
-                            Name = "Manager",
-                            NormalizedName = "MANAGER"
-                        },
-                        new
-                        {
-                            Id = "98a4b2e6-9833-4b7c-9d2b-fba562f7a4ef",
-                            Name = "SME",
-                            NormalizedName = "SME"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -166,23 +134,6 @@ namespace AppManagement.Infrastructure.Identity.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "a4950d3d-ca05-40ab-b8ff-7791c173ba98",
-                            RoleId = "4a0e59b4-9c1e-4536-b43f-119d13556b8e"
-                        },
-                        new
-                        {
-                            UserId = "8310a350-45e3-4b03-82d6-3120d3edad80",
-                            RoleId = "4c31900d-90f7-43a2-beec-c2bf0af83dea"
-                        },
-                        new
-                        {
-                            UserId = "a6146e7c-febf-4fbb-83ab-97fccabb044c",
-                            RoleId = "310e3593-d06a-4617-887b-2f9153edea09"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -204,102 +155,262 @@ namespace AppManagement.Infrastructure.Identity.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SkillManager.Domain.Entities.Category", b =>
+            modelBuilder.Entity("SkillManager.Domain.Entities.Application", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ApplicationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("SkillManager.Domain.Entities.Skill", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Level")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SkillSectionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SkillSectionId");
-
-                    b.ToTable("Skills");
-                });
-
-            modelBuilder.Entity("SkillManager.Domain.Entities.SkillSection", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationId"));
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.HasKey("Id");
+                    b.Property<int>("SuiteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ApplicationId");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("SkillSections");
+                    b.HasIndex("SuiteId");
+
+                    b.ToTable("Applications");
                 });
 
-            modelBuilder.Entity("SkillManager.Domain.Entities.UserSkill", b =>
+            modelBuilder.Entity("SkillManager.Domain.Entities.ApplicationSkill", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Level")
+                    b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
                     b.Property<int>("SkillId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
+                    b.HasKey("ApplicationId", "SkillId");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("ApplicationSkills");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.ApplicationSuite", b =>
+                {
+                    b.Property<int>("SuiteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SuiteId"));
+
+                    b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Perimeter")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("SuiteId");
+
+                    b.ToTable("ApplicationSuites");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.Category", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
+
+                    b.Property<int>("CategoryTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("CategoryId");
+
+                    b.HasIndex("CategoryTypeId");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.CategoryType", b =>
+                {
+                    b.Property<int>("CategoryTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryTypeId"));
+
+                    b.Property<int>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoryTypeId");
+
+                    b.ToTable("CategoryTypes");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.Level", b =>
+                {
+                    b.Property<int>("LevelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LevelId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.HasKey("LevelId");
+
+                    b.ToTable("Levels");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.Skill", b =>
+                {
+                    b.Property<int>("SkillId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkillId"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("CriticalityLevel")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("FirstLevelDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FourthLevelDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("ProjectRequiresSkill")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RequiredLevel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SecondLevelDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ThirdLevelDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SkillId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("SubCategoryId");
+
+                    b.ToTable("Skills");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.SubCategory", b =>
+                {
+                    b.Property<int>("SubCategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubCategoryId"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("SubCategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("SubCategories");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.UserSME", b =>
+                {
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.Property<int>("SkillId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "SkillId", "CategoryTypeId");
+
+                    b.HasIndex("CategoryTypeId");
+
+                    b.HasIndex("SkillId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSMEs");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.UserSkill", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("SkillId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LevelId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "SkillId");
+
+                    b.HasIndex("LevelId");
 
                     b.HasIndex("SkillId");
 
@@ -396,77 +507,6 @@ namespace AppManagement.Infrastructure.Identity.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "a4950d3d-ca05-40ab-b8ff-7791c173ba98",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "aeb9b6e1-d492-48c1-bbf4-5c5079f0d564",
-                            DeliveryType = 1,
-                            Email = "admin@localhost.com",
-                            EmailConfirmed = true,
-                            FirstName = "System",
-                            LastName = "Admin",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@LOCALHOST.COM",
-                            NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGJ5wcxQ3UGcK7pq9iQ1LAkDBW+sW98nP0Z2I36NPLP+VzkpW38ebpTxezV7LcHBiw==",
-                            PhoneNumberConfirmed = false,
-                            RefId = "HR001",
-                            RoleId = 1,
-                            SecurityStamp = "16c0130f-b502-47f8-b70d-ebb846e11514",
-                            Status = 1,
-                            TwoFactorEnabled = false,
-                            UTCode = "UT001",
-                            UserName = "admin@localhost.com"
-                        },
-                        new
-                        {
-                            Id = "a6146e7c-febf-4fbb-83ab-97fccabb044c",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "41ca50cb-0973-475e-85ba-55819c3fdc97",
-                            DeliveryType = 1,
-                            Email = "user1@localhost.com",
-                            EmailConfirmed = true,
-                            FirstName = "System",
-                            LastName = "User",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "USER1@LOCALHOST.COM",
-                            NormalizedUserName = "USER1@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFeFIU48h2wYzUqeUsBlFSdnOD2Kz5DQhhBVvsm/hil3U106cFlH9BjHf3XfFQ6mcA==",
-                            PhoneNumberConfirmed = false,
-                            RefId = "HR002",
-                            RoleId = 5,
-                            SecurityStamp = "1896f609-d1c6-4091-aae2-04114409640c",
-                            Status = 1,
-                            TwoFactorEnabled = false,
-                            UTCode = "UT002",
-                            UserName = "user1@localhost.com"
-                        },
-                        new
-                        {
-                            Id = "8310a350-45e3-4b03-82d6-3120d3edad80",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "5d2b0495-7215-4c9a-a515-af517929e480",
-                            DeliveryType = 1,
-                            Email = "leader@localhost.com",
-                            EmailConfirmed = true,
-                            FirstName = "System",
-                            LastName = "Leader",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "LEADER@LOCALHOST.COM",
-                            NormalizedUserName = "LEADER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAWLa5NIu3Yq/gaXjiu7QRBknFxI5sSu3iLZEXLwgxo7usnl5Z6duOyDSTAb97k0LQ==",
-                            PhoneNumberConfirmed = false,
-                            RefId = "HR003",
-                            RoleId = 2,
-                            SecurityStamp = "c71b8216-6f77-48b4-8556-b977cca9939d",
-                            Status = 1,
-                            TwoFactorEnabled = false,
-                            UTCode = "UT003",
-                            UserName = "leader@localhost.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -520,21 +560,78 @@ namespace AppManagement.Infrastructure.Identity.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SkillManager.Domain.Entities.Skill", b =>
+            modelBuilder.Entity("SkillManager.Domain.Entities.Application", b =>
                 {
-                    b.HasOne("SkillManager.Domain.Entities.SkillSection", "SkillSection")
-                        .WithMany("Skills")
-                        .HasForeignKey("SkillSectionId")
+                    b.HasOne("SkillManager.Domain.Entities.Category", "Category")
+                        .WithMany("Applications")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SkillManager.Domain.Entities.ApplicationSuite", "ApplicationSuite")
+                        .WithMany("Applications")
+                        .HasForeignKey("SuiteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationSuite");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.ApplicationSkill", b =>
+                {
+                    b.HasOne("SkillManager.Domain.Entities.Application", "Application")
+                        .WithMany("ApplicationSkills")
+                        .HasForeignKey("ApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("SkillSection");
+                    b.HasOne("SkillManager.Domain.Entities.Skill", "Skill")
+                        .WithMany("ApplicationSkills")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Application");
+
+                    b.Navigation("Skill");
                 });
 
-            modelBuilder.Entity("SkillManager.Domain.Entities.SkillSection", b =>
+            modelBuilder.Entity("SkillManager.Domain.Entities.Category", b =>
+                {
+                    b.HasOne("SkillManager.Domain.Entities.CategoryType", "CategoryType")
+                        .WithMany("Categories")
+                        .HasForeignKey("CategoryTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CategoryType");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.Skill", b =>
                 {
                     b.HasOne("SkillManager.Domain.Entities.Category", "Category")
-                        .WithMany("Sections")
+                        .WithMany("Skills")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SkillManager.Domain.Entities.SubCategory", "SubCategory")
+                        .WithMany("Skills")
+                        .HasForeignKey("SubCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("SubCategory");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.SubCategory", b =>
+                {
+                    b.HasOne("SkillManager.Domain.Entities.Category", "Category")
+                        .WithMany("SubCategories")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -542,8 +639,39 @@ namespace AppManagement.Infrastructure.Identity.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("SkillManager.Domain.Entities.UserSME", b =>
+                {
+                    b.HasOne("SkillManager.Domain.Entities.CategoryType", "CategoryType")
+                        .WithMany()
+                        .HasForeignKey("CategoryTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SkillManager.Domain.Entities.Skill", "Skill")
+                        .WithMany("UserSMEs")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SkillManager.Infrastructure.Identity.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CategoryType");
+
+                    b.Navigation("Skill");
+                });
+
             modelBuilder.Entity("SkillManager.Domain.Entities.UserSkill", b =>
                 {
+                    b.HasOne("SkillManager.Domain.Entities.Level", "Level")
+                        .WithMany("UserSkills")
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("SkillManager.Domain.Entities.Skill", "Skill")
                         .WithMany("UserSkills")
                         .HasForeignKey("SkillId")
@@ -556,20 +684,50 @@ namespace AppManagement.Infrastructure.Identity.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Level");
+
                     b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.Application", b =>
+                {
+                    b.Navigation("ApplicationSkills");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.ApplicationSuite", b =>
+                {
+                    b.Navigation("Applications");
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.Category", b =>
                 {
-                    b.Navigation("Sections");
+                    b.Navigation("Applications");
+
+                    b.Navigation("Skills");
+
+                    b.Navigation("SubCategories");
                 });
 
-            modelBuilder.Entity("SkillManager.Domain.Entities.Skill", b =>
+            modelBuilder.Entity("SkillManager.Domain.Entities.CategoryType", b =>
+                {
+                    b.Navigation("Categories");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.Level", b =>
                 {
                     b.Navigation("UserSkills");
                 });
 
-            modelBuilder.Entity("SkillManager.Domain.Entities.SkillSection", b =>
+            modelBuilder.Entity("SkillManager.Domain.Entities.Skill", b =>
+                {
+                    b.Navigation("ApplicationSkills");
+
+                    b.Navigation("UserSMEs");
+
+                    b.Navigation("UserSkills");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.SubCategory", b =>
                 {
                     b.Navigation("Skills");
                 });

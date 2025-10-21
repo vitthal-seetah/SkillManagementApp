@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SkillManager.Domain.Enums;
+using SkillManager.Domain.Entities;
 
 namespace SkillManager.Infrastructure.Identity.Models;
 

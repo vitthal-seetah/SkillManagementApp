@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SkillManager.Domain.Enums;
+using SkillManager.Domain.Entities;
 using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Abstractions.Repository;
 using SkillManager.Infrastructure.Identity.Models;
@@ -9,45 +9,40 @@ namespace SkillManager.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly UserManager<Identity.Models.ApplicationUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public UserRepository(UserManager<Identity.Models.ApplicationUser> userManager)
+    public UserRepository(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
 
-    // -------------------------
-    // Get a single user by ID
-    // -------------------------
-    public async Task<Infrastructure.Abstractions.Identity.ApplicationUser?> GetByIdAsync(
-        string userId
-    )
-    {
-        var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        return appUser == null ? null : MapToDomain(appUser);
-    }
-
-    // -------------------------
-    // Get all users
-    // -------------------------
-    public async Task<
-        IEnumerable<Infrastructure.Abstractions.Identity.ApplicationUser>
-    > GetAllAsync()
+    // ------------------------------------------------------
+    // Get all users (Admin/Leader use case)
+    // ------------------------------------------------------
+    public async Task<IEnumerable<User>> GetAllAsync()
     {
         var users = await _userManager.Users.ToListAsync();
         return users.Select(MapToDomain);
     }
 
-    // -------------------------
-    // Update a user
-    // -------------------------
-    public async Task UpdateAsync(Infrastructure.Abstractions.Identity.ApplicationUser user)
+    // ------------------------------------------------------
+    // Get a single user by ID
+    // ------------------------------------------------------
+    public async Task<User?> GetByIdAsync(string userId)
+    {
+        var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        return appUser == null ? null : MapToDomain(appUser);
+    }
+
+    // ------------------------------------------------------
+    // Update user (Admin/Manager use case)
+    // ------------------------------------------------------
+    public async Task UpdateAsync(User user)
     {
         var appUser = await _userManager.FindByIdAsync(user.Id);
         if (appUser == null)
             return;
 
-        // Map domain → persistence
         appUser.FirstName = user.FirstName;
         appUser.LastName = user.LastName;
         appUser.UTCode = user.UTCode;
@@ -59,16 +54,15 @@ public class UserRepository : IUserRepository
         await _userManager.UpdateAsync(appUser);
     }
 
-    // -------------------------
+    // ------------------------------------------------------
     // Helper: Map ApplicationUser → Domain User
-    // -------------------------
-    private static Infrastructure.Abstractions.Identity.ApplicationUser MapToDomain(
-        Identity.Models.ApplicationUser appUser
-    ) =>
-        new()
+    // ------------------------------------------------------
+    private static User MapToDomain(ApplicationUser appUser)
+    {
+        return new User
         {
             Id = appUser.Id,
-            Email = appUser.Email ?? "",
+            Email = appUser.Email ?? string.Empty,
             FirstName = appUser.FirstName,
             LastName = appUser.LastName,
             UTCode = appUser.UTCode,
@@ -77,4 +71,5 @@ public class UserRepository : IUserRepository
             Status = appUser.Status,
             DeliveryType = appUser.DeliveryType,
         };
+    }
 }

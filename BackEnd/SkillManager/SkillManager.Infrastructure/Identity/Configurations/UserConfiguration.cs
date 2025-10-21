@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SkillManager.Domain.Enums;
+using SkillManager.Domain.Entities;
 using SkillManager.Infrastructure.Identity.Models;
 
 namespace SkillManager.Infrastructure.Identity.Configurations;

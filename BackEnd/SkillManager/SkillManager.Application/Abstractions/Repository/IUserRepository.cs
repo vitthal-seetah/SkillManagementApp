@@ -4,7 +4,7 @@ namespace SkillManager.Infrastructure.Abstractions.Repository;
 
 public interface IUserRepository
 {
-    Task<ApplicationUser?> GetByIdAsync(string userId);
-    Task<IEnumerable<ApplicationUser>> GetAllAsync();
-    Task UpdateAsync(ApplicationUser user);
+    Task<User?> GetByIdAsync(string userId);
+    Task<IEnumerable<User>> GetAllAsync();
+    Task UpdateAsync(User user);
 }
