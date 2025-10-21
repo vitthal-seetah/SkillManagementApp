@@ -91,7 +91,7 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     // LEADER / ADMIN: Filter users by skill name
     // -------------------------
-    [Authorize(Roles = "Leader,Admin")]
+    [Authorize(Roles = "Leader,Admin, Manager")]
     [HttpGet("FilterBySkill")]
     public async Task<IActionResult> FilterBySkill([FromQuery] string skillName)
     {
