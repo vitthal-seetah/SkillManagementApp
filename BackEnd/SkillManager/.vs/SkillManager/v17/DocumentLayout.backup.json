@@ -3,6 +3,26 @@
   "WorkspaceRootPath": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B6CEBB49-6F73-8AE9-8FA9-7EA5E7F745AA}|SkillManager.Api\\SkillManager.Api.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B6CEBB49-6F73-8AE9-8FA9-7EA5E7F745AA}|SkillManager.Api\\SkillManager.Api.csproj|solutionrelative:skillmanager.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.infrastructure\\identity\\configurations\\roleconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|solutionrelative:skillmanager.infrastructure\\identity\\configurations\\roleconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.infrastructure\\identity\\configurations\\userconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|solutionrelative:skillmanager.infrastructure\\identity\\configurations\\userconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.application\\abstractions\\identity\\authresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|solutionrelative:skillmanager.application\\abstractions\\identity\\authresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.application\\abstractions\\identity\\authrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|solutionrelative:skillmanager.application\\abstractions\\identity\\authrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.infrastructure\\identity\\services\\authenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|solutionrelative:skillmanager.infrastructure\\identity\\services\\authenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -11,24 +31,12 @@
       "RelativeMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|solutionrelative:skillmanager.infrastructure\\identity\\models\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B6CEBB49-6F73-8AE9-8FA9-7EA5E7F745AA}|SkillManager.Api\\SkillManager.Api.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B6CEBB49-6F73-8AE9-8FA9-7EA5E7F745AA}|SkillManager.Api\\SkillManager.Api.csproj|solutionrelative:skillmanager.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.infrastructure\\identity\\dbcontext\\applicationidentiydbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|solutionrelative:skillmanager.infrastructure\\identity\\dbcontext\\applicationidentiydbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.infrastructure\\identity\\configurations\\userroleconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|solutionrelative:skillmanager.infrastructure\\identity\\configurations\\userroleconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.infrastructure\\identity\\configurations\\userconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|solutionrelative:skillmanager.infrastructure\\identity\\configurations\\userconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.infrastructure\\identity\\configurations\\roleconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7EF049FF-D6E3-3DA7-3721-93D4AB86DB34}|SkillManager.Infrastructure\\SkillManager.Infrastructure.csproj|solutionrelative:skillmanager.infrastructure\\identity\\configurations\\roleconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\girish.s.jagroop\\SkillManager\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Migrations\\20251015045751_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
@@ -80,14 +88,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.application\\abstractions\\identity\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|solutionrelative:skillmanager.application\\abstractions\\identity\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.application\\abstractions\\identity\\authresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|solutionrelative:skillmanager.application\\abstractions\\identity\\authresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.application\\abstractions\\identity\\authrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|solutionrelative:skillmanager.application\\abstractions\\identity\\authrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{0BEA7E65-CC62-3AF3-6C47-71C5F42C9A9C}|SkillManager.Application\\SkillManager.Application.csproj|c:\\users\\vitthal.seetah\\documents\\skillmanagementapp\\backend\\skillmanager\\skillmanager.application\\entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -201,54 +201,45 @@
       "DocumentGroups": [
         {
           "DockedWidth": 802,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ApplicationIdentiyDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\DbContext\\ApplicationIdentiyDbContext.cs",
-              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\DbContext\\ApplicationIdentiyDbContext.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\DbContext\\ApplicationIdentiyDbContext.cs",
-              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\DbContext\\ApplicationIdentiyDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T12:10:12.947Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Api\\Program.cs",
               "RelativeDocumentMoniker": "SkillManager.Api\\Program.cs",
               "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Api\\Program.cs",
               "RelativeToolTip": "SkillManager.Api\\Program.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAAAF8AAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-14T12:53:30.043Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "AuthenticationService.cs",
               "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Services\\AuthenticationService.cs",
               "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Services\\AuthenticationService.cs",
               "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Services\\AuthenticationService.cs",
               "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Services\\AuthenticationService.cs",
-              "ViewState": "AgIAAFgAAAAAAAAAAAAkwFsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADMAAAAAAAAAAAAqwFwAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-14T12:50:22.395Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 2,
               "Title": "UserConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Configurations\\UserConfiguration.cs",
               "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Configurations\\UserConfiguration.cs",
@@ -261,215 +252,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ApplicationUser.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Models\\ApplicationUser.cs",
-              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Models\\ApplicationUser.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Models\\ApplicationUser.cs",
-              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Models\\ApplicationUser.cs",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAgwA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T12:19:14.671Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "RoleConfiguration.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Configurations\\RoleConfiguration.cs",
-              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Configurations\\RoleConfiguration.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Configurations\\RoleConfiguration.cs",
-              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Configurations\\RoleConfiguration.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAAQwB8AAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T12:51:28.94Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "UserRoleConfiguration.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Configurations\\UserRoleConfiguration.cs",
-              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Configurations\\UserRoleConfiguration.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Configurations\\UserRoleConfiguration.cs",
-              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Configurations\\UserRoleConfiguration.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBMAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T06:14:38.27Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "UserService.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Services\\UserService.cs",
-              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Services\\UserService.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Services\\UserService.cs",
-              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Services\\UserService.cs",
-              "ViewState": "AgIAADcAAAAAAAAAAAAkwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T12:51:08.514Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "JwtSettings.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Settings\\JwtSettings.cs",
-              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Settings\\JwtSettings.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Settings\\JwtSettings.cs",
-              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Settings\\JwtSettings.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T06:52:52.044Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "UserRepository.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Repository\\UserRepository.cs",
-              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Repository\\UserRepository.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Repository\\UserRepository.cs",
-              "RelativeToolTip": "SkillManager.Infrastructure\\Repository\\UserRepository.cs",
-              "ViewState": "AgIAAC8AAAAAAAAAAAAuwA0AAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T12:42:56.803Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "IAuthenticationService.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\IAuthenticationService.cs",
-              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\IAuthenticationService.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\IAuthenticationService.cs",
-              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\IAuthenticationService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T06:22:40.834Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "UserSkillRepository.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Repository\\UserSkillRepository.cs",
-              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Repository\\UserSkillRepository.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Repository\\UserSkillRepository.cs",
-              "RelativeToolTip": "SkillManager.Infrastructure\\Repository\\UserSkillRepository.cs",
-              "ViewState": "AgIAAD0AAAAAAAAAAADwvwAAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T05:00:31.79Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "DependencyInjection.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\DependencyInjection.cs",
-              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\DependencyInjection.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\DependencyInjection.cs",
-              "RelativeToolTip": "SkillManager.Infrastructure\\DependencyInjection.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAASwCEAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T12:48:17.828Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "UserSkillService.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Services\\UserSkillService.cs",
-              "RelativeDocumentMoniker": "SkillManager.Application\\Services\\UserSkillService.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Services\\UserSkillService.cs",
-              "RelativeToolTip": "SkillManager.Application\\Services\\UserSkillService.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAwAAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T05:11:27.7Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "User.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\User.cs",
-              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\User.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\User.cs",
-              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T12:23:11.836Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "RoleName.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RoleName.cs",
-              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\RoleName.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RoleName.cs",
-              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\RoleName.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T12:33:43.162Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "RegistrationResponse.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RegistrationResponse.cs",
-              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\RegistrationResponse.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RegistrationResponse.cs",
-              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\RegistrationResponse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T06:56:59.334Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "RegistrationRequest.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RegistrationRequest.cs",
-              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\RegistrationRequest.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RegistrationRequest.cs",
-              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\RegistrationRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T12:33:57.584Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "IUserService.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\IUserService.cs",
-              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\IUserService.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\IUserService.cs",
-              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\IUserService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T06:22:39.952Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "AuthResponse.cs",
-              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\AuthResponse.cs",
-              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\AuthResponse.cs",
-              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\AuthResponse.cs",
-              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\AuthResponse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T06:22:37.205Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
               "Title": "AuthRequest.cs",
               "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\AuthRequest.cs",
               "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\AuthRequest.cs",
@@ -482,6 +265,218 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AuthResponse.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\AuthResponse.cs",
+              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\AuthResponse.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\AuthResponse.cs",
+              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\AuthResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-16T06:22:37.205Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "RoleConfiguration.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Configurations\\RoleConfiguration.cs",
+              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Configurations\\RoleConfiguration.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Configurations\\RoleConfiguration.cs",
+              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Configurations\\RoleConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-14T12:51:28.94Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ApplicationIdentiyDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\DbContext\\ApplicationIdentiyDbContext.cs",
+              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\DbContext\\ApplicationIdentiyDbContext.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\DbContext\\ApplicationIdentiyDbContext.cs",
+              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\DbContext\\ApplicationIdentiyDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-14T12:10:12.947Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ApplicationUser.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Models\\ApplicationUser.cs",
+              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Models\\ApplicationUser.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Models\\ApplicationUser.cs",
+              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Models\\ApplicationUser.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAgwA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-14T12:19:14.671Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "UserRoleConfiguration.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Configurations\\UserRoleConfiguration.cs",
+              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Configurations\\UserRoleConfiguration.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Configurations\\UserRoleConfiguration.cs",
+              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Configurations\\UserRoleConfiguration.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBMAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-16T06:14:38.27Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "UserService.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Services\\UserService.cs",
+              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Services\\UserService.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Services\\UserService.cs",
+              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Services\\UserService.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAkwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-14T12:51:08.514Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "JwtSettings.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Settings\\JwtSettings.cs",
+              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Identity\\Settings\\JwtSettings.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Settings\\JwtSettings.cs",
+              "RelativeToolTip": "SkillManager.Infrastructure\\Identity\\Settings\\JwtSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-16T06:52:52.044Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Repository\\UserRepository.cs",
+              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Repository\\UserRepository.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Repository\\UserRepository.cs",
+              "RelativeToolTip": "SkillManager.Infrastructure\\Repository\\UserRepository.cs",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAuwA0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-14T12:42:56.803Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "IAuthenticationService.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\IAuthenticationService.cs",
+              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\IAuthenticationService.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\IAuthenticationService.cs",
+              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\IAuthenticationService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-16T06:22:40.834Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "UserSkillRepository.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Repository\\UserSkillRepository.cs",
+              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\Repository\\UserSkillRepository.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Repository\\UserSkillRepository.cs",
+              "RelativeToolTip": "SkillManager.Infrastructure\\Repository\\UserSkillRepository.cs",
+              "ViewState": "AgIAAD0AAAAAAAAAAADwvwAAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-16T05:00:31.79Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "DependencyInjection.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\DependencyInjection.cs",
+              "RelativeDocumentMoniker": "SkillManager.Infrastructure\\DependencyInjection.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\DependencyInjection.cs",
+              "RelativeToolTip": "SkillManager.Infrastructure\\DependencyInjection.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAASwCEAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-14T12:48:17.828Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "UserSkillService.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Services\\UserSkillService.cs",
+              "RelativeDocumentMoniker": "SkillManager.Application\\Services\\UserSkillService.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Services\\UserSkillService.cs",
+              "RelativeToolTip": "SkillManager.Application\\Services\\UserSkillService.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAwAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-16T05:11:27.7Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\User.cs",
+              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\User.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\User.cs",
+              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-14T12:23:11.836Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "RoleName.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RoleName.cs",
+              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\RoleName.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RoleName.cs",
+              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\RoleName.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-14T12:33:43.162Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "RegistrationResponse.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RegistrationResponse.cs",
+              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\RegistrationResponse.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RegistrationResponse.cs",
+              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\RegistrationResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-16T06:56:59.334Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "RegistrationRequest.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RegistrationRequest.cs",
+              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\RegistrationRequest.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\RegistrationRequest.cs",
+              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\RegistrationRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-14T12:33:57.584Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "IUserService.cs",
+              "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\IUserService.cs",
+              "RelativeDocumentMoniker": "SkillManager.Application\\Abstractions\\Identity\\IUserService.cs",
+              "ToolTip": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Abstractions\\Identity\\IUserService.cs",
+              "RelativeToolTip": "SkillManager.Application\\Abstractions\\Identity\\IUserService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-16T06:22:39.952Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 22,
               "Title": "Category.cs",
               "DocumentMoniker": "C:\\Users\\vitthal.seetah\\Documents\\SkillManagementApp\\BackEnd\\SkillManager\\SkillManager.Application\\Entities\\Category.cs",
@@ -490,8 +485,7 @@
               "RelativeToolTip": "SkillManager.Application\\Entities\\Category.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T11:55:23.233Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-14T11:55:23.233Z"
             },
             {
               "$type": "Document",
@@ -503,8 +497,7 @@
               "RelativeToolTip": "SkillManager.Api\\Controllers\\UserController.cs",
               "ViewState": "AgIAAAsAAAAAAAAAAAAAwDAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T11:54:31.155Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-14T11:54:31.155Z"
             },
             {
               "$type": "Document",
@@ -516,8 +509,7 @@
               "RelativeToolTip": "SkillManager.Application\\Entities\\User.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAAAYAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T10:13:30.005Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-16T10:13:30.005Z"
             },
             {
               "$type": "Document",
@@ -529,8 +521,7 @@
               "RelativeToolTip": "SkillManager.Application\\Abstractions\\Repository\\IUserRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T10:07:06.084Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-16T10:07:06.084Z"
             },
             {
               "$type": "Document",
@@ -554,8 +545,7 @@
               "RelativeToolTip": "SkillManager.Application\\Abstractions\\Repository\\IUserSkillRepository.cs",
               "ViewState": "AgIAAAcAAAAAAAAAAAAQwAQAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T04:51:14.803Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-16T04:51:14.803Z"
             },
             {
               "$type": "Document",
@@ -579,8 +569,7 @@
               "RelativeToolTip": "SkillManager.Api\\Controllers\\UserSkillsController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAHcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T04:48:11.026Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-16T04:48:11.026Z"
             },
             {
               "$type": "Document",
@@ -592,8 +581,7 @@
               "RelativeToolTip": "SkillManager.Application\\Entities\\SkillSection.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T11:59:03.132Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-14T11:59:03.132Z"
             },
             {
               "$type": "Document",
@@ -605,8 +593,7 @@
               "RelativeToolTip": "SkillManager.Application\\Entities\\Skill.cs",
               "ViewState": "AgIAABEAAAAAAAAAAAAzwBQAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-14T12:00:32.5Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-14T12:00:32.5Z"
             },
             {
               "$type": "Document",
@@ -766,7 +753,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "20251015045751_InitialCreate.cs",
               "DocumentMoniker": "C:\\Users\\girish.s.jagroop\\SkillManager\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Migrations\\20251015045751_InitialCreate.cs",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\girish.s.jagroop\\SkillManager\\BackEnd\\SkillManager\\SkillManager.Infrastructure\\Identity\\Migrations\\20251015045751_InitialCreate.cs",
@@ -810,14 +797,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
               "WhenOpened": "2025-10-14T09:55:47.547Z"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             }
           ]
         }
