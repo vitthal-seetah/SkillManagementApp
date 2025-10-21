@@ -5,13 +5,20 @@ namespace SkillManager.Domain.Entities;
 
 public class Category
 {
-    public int Id { get; set; }
+    [Key]
+    public int CategoryId { get; set; }
 
     [Required]
-    public string Name { get; set; } = default!; // e.g. "Fonctionnel" or "Technique"
+    public string Name { get; set; }
 
-    public string? Description { get; set; }
+    // Foreign key to CategoryType
+    [Required]
+    public int CategoryTypeId { get; set; }
 
-    // Navigation Property
-    public ICollection<SkillSection> Sections { get; set; } = new List<SkillSection>();
+    // Navigation property
+    // Navigation properties
+    public virtual CategoryType CategoryType { get; set; }
+    public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
+    public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
+    public virtual ICollection<SubCategory> SubCategories { get; set; } = new List<SubCategory>();
 }

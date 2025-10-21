@@ -5,23 +5,25 @@ namespace SkillManager.Domain.Entities;
 
 public class Skill
 {
-    public int Id { get; set; }
+    public int SkillId { get; set; }
+    public int CategoryId { get; set; }
+    public int SubCategoryId { get; set; }
+    public string Name { get; set; }
+    public string Code { get; set; }
+    public string Label { get; set; }
+    public string CriticalityLevel { get; set; }
+    public bool ProjectRequiresSkill { get; set; }
+    public int RequiredLevel { get; set; }
+    public string FirstLevelDescription { get; set; }
+    public string SecondLevelDescription { get; set; }
+    public string ThirdLevelDescription { get; set; }
+    public string FourthLevelDescription { get; set; }
 
-    [Required]
-    public string Code { get; set; } = default!; // e.g. "FCT", "PJT", "TEC", etc.
-
-    [Required]
-    public string Name { get; set; } = default!; // e.g. "ASP.NET Core", "Produits financiers"
-
-    public string? Description { get; set; }
-
-    public int SkillSectionId { get; set; }
-
-    [ForeignKey(nameof(SkillSectionId))]
-    public SkillSection SkillSection { get; set; } = default!;
-
-    public int? Level { get; set; } // optional level mapping
-
-    // ✅ Add this to link to UserSkill
-    public ICollection<UserSkill> UserSkills { get; set; } = new List<UserSkill>();
+    // Navigation properties
+    public virtual Category Category { get; set; }
+    public virtual SubCategory SubCategory { get; set; }
+    public virtual ICollection<UserSkill> UserSkills { get; set; } = new List<UserSkill>();
+    public virtual ICollection<UserSME> UserSMEs { get; set; } = new List<UserSME>();
+    public virtual ICollection<ApplicationSkill> ApplicationSkills { get; set; } =
+        new List<ApplicationSkill>();
 }

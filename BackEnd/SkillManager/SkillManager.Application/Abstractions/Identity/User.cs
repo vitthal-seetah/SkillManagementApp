@@ -8,4 +8,5 @@ public sealed class User
     public string LastName { get; set; } = string.Empty;
     public string UTCode { get; set; } = string.Empty;
     public string? EmployeeId { get; set; }
+    public object UserSMEs { get; set; }
 }
