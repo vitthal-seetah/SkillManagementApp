@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Application.Abstractions.Repository;
+using SkillManager.Domain.Enums;
 
 namespace SkillManager.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "Admin")]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -19,14 +19,18 @@ public class UsersController : ControllerBase
         _userRepository = userRepository;
     }
 
+    // Anyone with access (Admin, Manager, User) can list users
     [HttpGet]
+    [Authorize(Roles = "Admin,Manager,Employee,Tech Lead,SME")]
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await _userService.GetAll();
         return Ok(users);
     }
 
+    // Anyone with access can get a user by ID
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Manager,Employee,Tech Lead,SME")]
     public async Task<IActionResult> GetUserById(string id)
     {
         var user = await _userService.GetUserById(id);
@@ -36,24 +40,51 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
+    // Admin: update ID-related fields (UtCode, RefId)
     [HttpPost("update-identifiers")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateUserIdentifiers(
         string userId,
         string utCode,
-        string employeeId
+        string refId
     )
     {
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
             return NotFound("User not found");
 
-        // manually set the values
         user.UTCode = utCode;
-        user.EmployeeId = employeeId;
+        user.RefId = refId;
 
-        // save the changes via repository
         await _userRepository.UpdateAsync(user);
-
         return Ok("User identifiers updated successfully");
+    }
+
+    // Manager: update other fields (FirstName, LastName, Status, DeliveryType)
+    [HttpPost("update-details")]
+    [Authorize(Roles = "Manager")]
+    public async Task<IActionResult> UpdateUserDetails(
+        string userId,
+        string firstName,
+        string lastName,
+        string status,
+        string deliveryType
+    )
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            return NotFound("User not found");
+
+        user.FirstName = firstName;
+        user.LastName = lastName;
+
+        if (Enum.TryParse(status, true, out UserStatus userStatus))
+            user.Status = userStatus;
+
+        if (Enum.TryParse(deliveryType, true, out DeliveryType userDeliveryType))
+            user.DeliveryType = userDeliveryType;
+
+        await _userRepository.UpdateAsync(user);
+        return Ok("User details updated successfully");
     }
 }

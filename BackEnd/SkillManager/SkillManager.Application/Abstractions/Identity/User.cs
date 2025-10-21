@@ -1,4 +1,6 @@
-﻿namespace SkillManager.Application.Abstractions.Identity;
+﻿using SkillManager.Domain.Enums;
+
+namespace SkillManager.Application.Abstractions.Identity;
 
 public sealed class User
 {
@@ -7,6 +9,8 @@ public sealed class User
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string UTCode { get; set; } = string.Empty;
-    public string? EmployeeId { get; set; }
-    public object UserSMEs { get; set; }
+    public string RefId { get; set; } = string.Empty;
+    public int? RoleId { get; set; }
+    public UserStatus Status { get; set; }
+    public DeliveryType DeliveryType { get; set; }
 }

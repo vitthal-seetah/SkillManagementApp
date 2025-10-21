@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Application.Abstractions.Repository;
+using SkillManager.Infrastructure.Identity;
 using SkillManager.Infrastructure.Identity.DbContext;
 using SkillManager.Infrastructure.Identity.Models;
 using SkillManager.Infrastructure.Identity.Services;
@@ -29,11 +30,12 @@ public static class DependencyInjection
         services.AddIdentityServices(configuration);
 
         // --------------------------
-        // Repositories
+        // Repositories & Services
         // --------------------------
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserSkillRepository, UserSkillRepository>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
 
         return services;
     }
@@ -49,9 +51,6 @@ public static class DependencyInjection
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         });
 
-        // JWT Settings
-        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-
         // Identity
         services
             .AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -64,11 +63,9 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
             .AddDefaultTokenProviders();
 
-        // Services
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddScoped<IUserService, UserService>();
+        // JWT Settings
+        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
-        // JWT Authentication
         var jwtSettings = configuration.GetSection("JwtSettings");
         var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
@@ -94,5 +91,20 @@ public static class DependencyInjection
             });
 
         return services;
+    }
+
+    // --------------------------
+    // Run this AFTER building the app to safely seed
+    // --------------------------
+    public static async Task SeedIdentityAsync(this IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationIdentityDbContext>();
+        await db.Database.MigrateAsync(); // Apply migrations first
+
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+        await IdentitySeeder.SeedAsync(roleManager, userManager); // Safe seeding
     }
 }

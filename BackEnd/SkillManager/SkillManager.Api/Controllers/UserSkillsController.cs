@@ -21,7 +21,7 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     // USER: View their own skills
     // -------------------------
-    [Authorize(Roles = "User,Leader,Admin")]
+    [Authorize(Roles = "Admin,Manager,Tech Lead,SME")]
     [HttpGet("MySkills")]
     public async Task<IActionResult> GetMySkills()
     {
@@ -36,7 +36,7 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     // USER: Add a skill for themselves
     // -------------------------
-    [Authorize(Roles = "User,Leader,Admin")]
+    [Authorize(Roles = "Admin,Manager,Tech Lead,SME")]
     [HttpPost("AddSkill")]
     public async Task<IActionResult> AddSkill([FromBody] AddUserSkillDto dto)
     {
@@ -58,7 +58,7 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     // USER: Update a skill for themselves
     // -------------------------
-    [Authorize(Roles = "User,Leader,Admin")]
+    [Authorize(Roles = "Admin,Manager,Tech Lead,SME")]
     [HttpPut("UpdateSkill")]
     public async Task<IActionResult> UpdateSkill([FromBody] UpdateUserSkillsDto dto)
     {
