@@ -12,8 +12,8 @@ using SkillManager.Infrastructure.Identity.DbContext;
 namespace SkillManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    [Migration("20251021114321_SecondCreate")]
-    partial class SecondCreate
+    [Migration("20251021120811_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

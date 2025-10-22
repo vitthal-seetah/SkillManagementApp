@@ -29,6 +29,21 @@ public class UsersController : ControllerBase
         return Ok(users);
     }
 
+    // ✅ Test endpoint for Windows Authentication
+    [HttpGet("current")]
+    [AllowAnonymous] // or [Authorize] if you want only authenticated users to access
+    public IActionResult GetCurrentUser()
+    {
+        var userFull = HttpContext.User.Identity?.Name; // e.g. DOMAIN\vitthal.seetah
+
+        if (string.IsNullOrEmpty(userFull))
+            return Ok("No user detected (Windows Auth might not be enabled).");
+
+        var username = userFull.Contains('\\') ? userFull.Split('\\').Last() : userFull;
+
+        return Ok(new { FullName = userFull, UserName = username });
+    }
+
     // Anyone with access can get a user by ID
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin,Manager,Employee,Tech Lead,SME")]
