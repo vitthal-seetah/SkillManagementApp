@@ -14,7 +14,7 @@ namespace SkillManager.Domain.Entities
         public int CategoryTypeId { get; set; }
 
         [Required]
-        public CategoryTypeEnum Name { get; set; }
+        public string Name { get; set; }
 
         public ICollection<Category> Categories { get; set; } = new List<Category>();
     }

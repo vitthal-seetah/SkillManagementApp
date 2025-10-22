@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Domain.Entities;
+using SkillManager.Domain.Entities.Enums;
 using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Abstractions.Repository;
 

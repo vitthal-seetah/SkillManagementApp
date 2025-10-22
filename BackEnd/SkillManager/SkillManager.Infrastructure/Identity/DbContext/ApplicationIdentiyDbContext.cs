@@ -14,6 +14,10 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
         : base(options) { }
 
     // DbSets
+    public DbSet<Domain.Entities.User> Users { get; set; }
+
+    public DbSet<UserRole> UserRoles { get; set; }
+
     public DbSet<CategoryType> CategoryTypes { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<SubCategory> SubCategories { get; set; }
@@ -29,6 +33,25 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Domain.Entities.User>().HasIndex(u => u.UtCode).IsUnique();
+
+        modelBuilder.Entity<Domain.Entities.User>().HasIndex(u => u.RefId).IsUnique();
+
+        modelBuilder.Entity<UserRole>().HasIndex(r => r.Name).IsUnique();
+
+        // Add unique constraint for Eid as well
+        modelBuilder.Entity<Domain.Entities.User>().HasIndex(u => u.Eid).IsUnique();
+        // Configure Enums
+        modelBuilder
+            .Entity<Domain.Entities.User>()
+            .Property(u => u.Status)
+            .HasConversion<string>();
+
+        modelBuilder
+            .Entity<Domain.Entities.User>()
+            .Property(u => u.DeliveryType)
+            .HasConversion<string>();
+
         // Configure composite keys
         modelBuilder.Entity<UserSkill>().HasKey(us => new { us.UserId, us.SkillId });
 
@@ -43,9 +66,33 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
 
         modelBuilder.Entity<ApplicationSkill>().HasKey(a => new { a.ApplicationId, a.SkillId });
 
-        // Configure relationships WITHOUT User navigation
+        // Configure relationships
 
-        // UserSkill -> Skill (One-to-Many)
+        // User -> UserRole (Many-to-One)
+        modelBuilder
+            .Entity<Domain.Entities.User>()
+            .HasOne(u => u.Role)
+            .WithMany(r => r.Users)
+            .HasForeignKey(u => u.RoleId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // User -> UserSkills (One-to-Many)
+        modelBuilder
+            .Entity<Domain.Entities.User>()
+            .HasMany(u => u.UserSkills)
+            .WithOne(us => us.User)
+            .HasForeignKey(us => us.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // User -> UserSMEs (One-to-Many)
+        modelBuilder
+            .Entity<Domain.Entities.User>()
+            .HasMany(u => u.UserSMEs)
+            .WithOne(us => us.User)
+            .HasForeignKey(us => us.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // UserSkill -> Skill (Many-to-One)
         modelBuilder
             .Entity<UserSkill>()
             .HasOne(us => us.Skill)
@@ -53,7 +100,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(us => us.SkillId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // UserSkill -> Level (One-to-Many)
+        // UserSkill -> Level (Many-to-One)
         modelBuilder
             .Entity<UserSkill>()
             .HasOne(us => us.Level)
@@ -61,7 +108,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(us => us.LevelId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // UserSME -> Skill (One-to-Many)
+        // UserSME -> Skill (Many-to-One)
         modelBuilder
             .Entity<UserSME>()
             .HasOne(us => us.Skill)
@@ -69,7 +116,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(us => us.SkillId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // UserSME -> CategoryType (One-to-Many)
+        // UserSME -> CategoryType (Many-to-One)
         modelBuilder
             .Entity<UserSME>()
             .HasOne(us => us.CategoryType)
@@ -77,22 +124,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(us => us.CategoryTypeId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Configure ApplicationUser relationships (one-way)
-        modelBuilder
-            .Entity<Models.ApplicationUser>()
-            .HasMany<UserSkill>()
-            .WithOne()
-            .HasForeignKey(us => us.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder
-            .Entity<Models.ApplicationUser>()
-            .HasMany<UserSME>()
-            .WithOne()
-            .HasForeignKey(us => us.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        // Rest of your configurations remain the same
+        // CategoryType -> Categories (One-to-Many)
         modelBuilder
             .Entity<CategoryType>()
             .HasMany(ct => ct.Categories)
@@ -100,6 +132,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(c => c.CategoryTypeId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Category -> Skills (One-to-Many)
         modelBuilder
             .Entity<Category>()
             .HasMany(c => c.Skills)
@@ -107,6 +140,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(s => s.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Category -> Applications (One-to-Many)
         modelBuilder
             .Entity<Category>()
             .HasMany(c => c.Applications)
@@ -114,6 +148,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(a => a.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Category -> SubCategories (One-to-Many)
         modelBuilder
             .Entity<Category>()
             .HasMany(c => c.SubCategories)
@@ -121,6 +156,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(sc => sc.CategoryId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        // SubCategory -> Skills (One-to-Many)
         modelBuilder
             .Entity<SubCategory>()
             .HasMany(sc => sc.Skills)
@@ -128,6 +164,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(s => s.SubCategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // ApplicationSuite -> Applications (One-to-Many)
         modelBuilder
             .Entity<ApplicationSuite>()
             .HasMany(asu => asu.Applications)
@@ -135,6 +172,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(a => a.SuiteId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Application -> ApplicationSkills (One-to-Many)
         modelBuilder
             .Entity<Domain.Entities.Application>()
             .HasMany(a => a.ApplicationSkills)
@@ -142,6 +180,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(appSkill => appSkill.ApplicationId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        // Skill -> ApplicationSkills (One-to-Many)
         modelBuilder
             .Entity<Skill>()
             .HasMany(s => s.ApplicationSkills)
@@ -150,6 +189,20 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .OnDelete(DeleteBehavior.Cascade);
 
         // Configure string lengths and constraints
+        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.FirstName).HasMaxLength(100);
+
+        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.LastName).HasMaxLength(100);
+
+        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.UtCode).HasMaxLength(50);
+
+        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.RefId).HasMaxLength(100);
+
+        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.Domain).HasMaxLength(100);
+
+        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.Eid).HasMaxLength(50);
+
+        modelBuilder.Entity<UserRole>().Property(r => r.Name).HasMaxLength(50);
+
         modelBuilder.Entity<Skill>().Property(s => s.Name).HasMaxLength(200);
 
         modelBuilder.Entity<Skill>().Property(s => s.Code).HasMaxLength(50);
@@ -166,13 +219,19 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
 
         modelBuilder.Entity<SubCategory>().Property(sc => sc.Name).HasMaxLength(100);
 
-        modelBuilder.Entity<Domain.Entities.Application>().Property(a => a.Name).HasMaxLength(200);
+        modelBuilder.Entity<AppEntity>().Property(a => a.Name).HasMaxLength(200);
 
         modelBuilder.Entity<ApplicationSuite>().Property(asu => asu.Name).HasMaxLength(200);
 
         modelBuilder.Entity<ApplicationSuite>().Property(asu => asu.Perimeter).HasMaxLength(500);
 
         // Indexes for performance
+        modelBuilder.Entity<Domain.Entities.User>().HasIndex(u => u.UtCode).IsUnique();
+
+        modelBuilder.Entity<Domain.Entities.User>().HasIndex(u => u.Eid).IsUnique();
+
+        modelBuilder.Entity<UserRole>().HasIndex(r => r.Name).IsUnique();
+
         modelBuilder.Entity<Skill>().HasIndex(s => s.Code).IsUnique();
 
         modelBuilder.Entity<UserSkill>().HasIndex(us => us.UserId);
@@ -186,5 +245,28 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<ApplicationSkill>().HasIndex(a => a.ApplicationId);
 
         modelBuilder.Entity<ApplicationSkill>().HasIndex(a => a.SkillId);
+
+        // Seed initial data
+        SeedData(modelBuilder);
+    }
+
+    private void SeedData(ModelBuilder modelBuilder)
+    {
+        // Seed UserRoles
+        modelBuilder
+            .Entity<UserRole>()
+            .HasData(
+                new UserRole { RoleId = 1, Name = "Admin" },
+                new UserRole { RoleId = 2, Name = "TechLead" },
+                new UserRole { RoleId = 3, Name = "Manager" },
+                new UserRole { RoleId = 4, Name = "Employee" }
+            );
+
+        modelBuilder
+            .Entity<CategoryType>()
+            .HasData(
+                new CategoryType { CategoryTypeId = 1, Name = "Technical" },
+                new CategoryType { CategoryTypeId = 2, Name = "Functional" }
+            );
     }
 }

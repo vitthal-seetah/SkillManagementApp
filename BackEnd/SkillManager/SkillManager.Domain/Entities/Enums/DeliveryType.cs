@@ -1,4 +1,4 @@
-﻿namespace SkillManager.Domain.Entities
+﻿namespace SkillManager.Domain.Entities.Enums
 {
     public enum DeliveryType
     {

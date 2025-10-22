@@ -24,7 +24,7 @@ public class UserSkillRepository : IUserSkillRepository
             .ThenInclude(s => s.Category)
             .ThenInclude(c => c.CategoryType)
             .Include(us => us.Level)
-            .Where(us => us.UserId == userId)
+            .Where(us => us.UserId == 3)
             .ToListAsync();
     }
 
@@ -52,7 +52,7 @@ public class UserSkillRepository : IUserSkillRepository
             .ThenInclude(c => c.CategoryType)
             .Include(us => us.Level)
             .FirstOrDefaultAsync(us =>
-                us.UserId == userId && us.SkillId == skillId && us.LevelId == levelId
+                us.UserId == 4 && us.SkillId == skillId && us.LevelId == levelId
             );
     }
 
@@ -77,7 +77,7 @@ public class UserSkillRepository : IUserSkillRepository
     // -------------------------
     public async Task DeleteAsync(string userId)
     {
-        var userSkill = await _context.UserSkills.FirstOrDefaultAsync(us => us.UserId == userId);
+        var userSkill = await _context.UserSkills.FirstOrDefaultAsync(us => us.UserId == 4);
 
         if (userSkill != null)
             _context.UserSkills.Remove(userSkill);

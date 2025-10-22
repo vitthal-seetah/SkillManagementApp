@@ -12,8 +12,8 @@ using SkillManager.Infrastructure.Identity.DbContext;
 namespace SkillManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    [Migration("20251021120811_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251022070527_InitalCreate")]
+    partial class InitalCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -378,10 +378,115 @@ namespace SkillManager.Infrastructure.Migrations
                     b.ToTable("SubCategories");
                 });
 
+            modelBuilder.Entity("SkillManager.Domain.Entities.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
+                    b.Property<string>("DeliveryType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Domain")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Eid")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RefId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UtCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("Eid")
+                        .IsUnique();
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UtCode")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.UserRole", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("RoleId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            Name = "TechLead"
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            Name = "Manager"
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            Name = "Employee"
+                        });
+                });
+
             modelBuilder.Entity("SkillManager.Domain.Entities.UserSME", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<int>("SkillId")
                         .HasColumnType("int");
@@ -402,8 +507,8 @@ namespace SkillManager.Infrastructure.Migrations
 
             modelBuilder.Entity("SkillManager.Domain.Entities.UserSkill", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<int>("SkillId")
                         .HasColumnType("int");
@@ -642,6 +747,17 @@ namespace SkillManager.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("SkillManager.Domain.Entities.User", b =>
+                {
+                    b.HasOne("SkillManager.Domain.Entities.UserRole", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("SkillManager.Domain.Entities.UserSME", b =>
                 {
                     b.HasOne("SkillManager.Domain.Entities.CategoryType", "CategoryType")
@@ -656,8 +772,8 @@ namespace SkillManager.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SkillManager.Infrastructure.Identity.Models.ApplicationUser", null)
-                        .WithMany()
+                    b.HasOne("SkillManager.Domain.Entities.User", "User")
+                        .WithMany("UserSMEs")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -665,6 +781,8 @@ namespace SkillManager.Infrastructure.Migrations
                     b.Navigation("CategoryType");
 
                     b.Navigation("Skill");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.UserSkill", b =>
@@ -681,8 +799,8 @@ namespace SkillManager.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SkillManager.Infrastructure.Identity.Models.ApplicationUser", null)
-                        .WithMany()
+                    b.HasOne("SkillManager.Domain.Entities.User", "User")
+                        .WithMany("UserSkills")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -690,6 +808,8 @@ namespace SkillManager.Infrastructure.Migrations
                     b.Navigation("Level");
 
                     b.Navigation("Skill");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.Application", b =>
@@ -733,6 +853,18 @@ namespace SkillManager.Infrastructure.Migrations
             modelBuilder.Entity("SkillManager.Domain.Entities.SubCategory", b =>
                 {
                     b.Navigation("Skills");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.User", b =>
+                {
+                    b.Navigation("UserSMEs");
+
+                    b.Navigation("UserSkills");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.UserRole", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

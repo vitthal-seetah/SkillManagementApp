@@ -1,4 +1,5 @@
 ﻿using SkillManager.Domain.Entities;
+using SkillManager.Domain.Entities.Enums;
 
 namespace SkillManager.Infrastructure.Abstractions.Identity;
 

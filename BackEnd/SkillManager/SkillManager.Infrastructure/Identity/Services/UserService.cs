@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Domain.Entities;
+using SkillManager.Domain.Entities.Enums;
 using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Identity.Models;
+using User = SkillManager.Infrastructure.Abstractions.Identity.User;
 
 namespace SkillManager.Infrastructure.Identity.Services;
 
@@ -88,9 +90,9 @@ public sealed class UserService : IUserService
     // -----------------------------
     // Helper: Map ApplicationUser -> Domain User
     // -----------------------------
-    private static User MapToDomain(ApplicationUser u)
+    private static Abstractions.Identity.User MapToDomain(ApplicationUser u)
     {
-        return new User
+        return new Abstractions.Identity.User
         {
             Id = u.Id,
             Email = u.Email ?? string.Empty,
@@ -98,7 +100,6 @@ public sealed class UserService : IUserService
             LastName = u.LastName,
             UTCode = u.UTCode,
             RefId = u.RefId,
-            RoleId = u.RoleId,
             Status = u.Status,
             DeliveryType = u.DeliveryType,
         };

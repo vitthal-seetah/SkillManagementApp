@@ -4,6 +4,7 @@ using SkillManager.Domain.Entities;
 using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Abstractions.Repository;
 using SkillManager.Infrastructure.Identity.Models;
+using User = SkillManager.Infrastructure.Abstractions.Identity.User;
 
 namespace SkillManager.Infrastructure.Repositories;
 

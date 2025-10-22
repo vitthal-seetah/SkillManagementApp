@@ -50,7 +50,7 @@ public class UserSkillService : IUserSkillService
 
         var userSkill = new UserSkill
         {
-            UserId = userId,
+            UserId = 4,
             SkillId = dto.SkillId,
             LevelId = dto.LevelId,
         };
@@ -109,7 +109,7 @@ public class UserSkillService : IUserSkillService
     {
         return new UserSkillDto
         {
-            UserId = us.UserId,
+            UserId = "$",
             SkillId = us.SkillId,
             LevelId = us.LevelId,
             SkillName = us.Skill?.Name ?? "",
