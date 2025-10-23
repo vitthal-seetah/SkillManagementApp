@@ -5,40 +5,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="DTOs\Category\**" />
+    <Compile Remove="DTOs\SkillSection\**" />
+    <EmbeddedResource Remove="DTOs\Category\**" />
+    <EmbeddedResource Remove="DTOs\SkillSection\**" />
+    <None Remove="DTOs\Category\**" />
+    <None Remove="DTOs\SkillSection\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="8.0.20" />
-    <PackageReference
-      Include="Microsoft.Extensions.DependencyInjection.Abstractions"
-      Version="8.0.2"
-    />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DTOs\Category\" />
-    <Folder Include="DTOs\SkillSection\" />
-    <Folder Include="Features\Applications\Commands\CreateApplicaton\" />
-    <Folder Include="Features\Applications\Commands\AssignSkillToApplication\" />
-    <Folder Include="Features\Applications\Commands\UpdateApplication\" />
-    <Folder Include="Features\Applications\DTOs\" />
-    <Folder Include="Features\Applications\Queries\GetApplicationById\" />
-    <Folder Include="Features\Applications\Queries\GetAllApplications\" />
-    <Folder Include="Features\Applications\Queries\GetApplicationSkills\" />
-    <Folder Include="Features\Reports\" />
-    <Folder Include="Features\Skills\Queries\GetSkillById\" />
-    <Folder Include="Features\Skills\Queries\GetAllSkills\" />
-    <Folder Include="Features\Skills\Queries\GetSkillsByCategory\" />
-    <Folder Include="Features\SMEs\Commands\AssignSME\" />
-    <Folder Include="Features\SMEs\Commands\RemoveSME\" />
-    <Folder Include="Features\SMEs\DTOs\" />
-    <Folder Include="Features\SMEs\Queries\GetSMEsBySkill\" />
-    <Folder Include="Features\SMEs\Queries\GetSMEsByCategory\" />
-    <Folder Include="Features\UserSkills\Command\AssignSkillToUser\" />
-    <Folder Include="Features\UserSkills\Command\RemoveSkillsFromUser\" />
-    <Folder Include="Features\UserSkills\Command\UpdateUserSkillLevel\" />
-    <Folder Include="Features\UserSkills\DTOs\" />
-    <Folder Include="Features\UserSkills\Queries\GetUserSkills\" />
-    <Folder Include="Features\UserSkills\Queries\GetSkillGapAnalysis\" />
-    <Folder Include="Features\UserSkills\Queries\GetUsersBySkill\" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SkillManager.Domain\SkillManager.Domain.csproj" />
