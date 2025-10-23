@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +9,7 @@ using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Exceptions;
 using SkillManager.Infrastructure.Identity.Models;
 using SkillManager.Infrastructure.Identity.Settings;
+using IAuthenticationService = SkillManager.Infrastructure.Abstractions.Identity.IAuthenticationService;
 
 namespace SkillManager.Infrastructure.Identity.Services;
 

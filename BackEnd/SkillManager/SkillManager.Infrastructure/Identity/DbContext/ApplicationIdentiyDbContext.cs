@@ -245,7 +245,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<ApplicationSkill>().HasIndex(a => a.SkillId);
 
         // Seed initial data
-        SeedData(modelBuilder);
+        // SeedData(modelBuilder);
     }
 
     private void SeedData(ModelBuilder modelBuilder)
@@ -265,6 +265,35 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .HasData(
                 new CategoryType { CategoryTypeId = 1, Name = "Technical" },
                 new CategoryType { CategoryTypeId = 2, Name = "Functional" }
+            );
+
+        modelBuilder
+            .Entity<Level>()
+            .HasData(
+                new Level
+                {
+                    LevelId = 1,
+                    Name = "Notion",
+                    Points = 1,
+                },
+                new Level
+                {
+                    LevelId = 2,
+                    Name = "Pratique",
+                    Points = 2,
+                },
+                new Level
+                {
+                    LevelId = 3,
+                    Name = "Maitrise",
+                    Points = 3,
+                },
+                new Level
+                {
+                    LevelId = 4,
+                    Name = "Expert",
+                    Points = 4,
+                }
             );
     }
 }

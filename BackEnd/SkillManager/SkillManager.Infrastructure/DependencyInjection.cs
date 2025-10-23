@@ -99,13 +99,8 @@ public static class DependencyInjection
     // --------------------------
     public static async Task SeedIdentityAsync(this IServiceProvider serviceProvider)
     {
-        using var scope = serviceProvider.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationIdentityDbContext>();
-        await db.Database.MigrateAsync(); // Apply migrations first
+        //  await db.Database.MigrateAsync(); // Apply migrations first
 
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-        await IdentitySeeder.SeedAsync(roleManager, userManager); // Safe seeding
+        //  await IdentitySeeder.SeedAsync(roleManager, userManager); // Safe seeding
     }
 }

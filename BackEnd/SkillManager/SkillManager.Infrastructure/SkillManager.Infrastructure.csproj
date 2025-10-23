@@ -21,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SkillManager.Application\SkillManager.Application.csproj" />
+    <ProjectReference Include="..\SkillManager.Domain\SkillManager.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Identity\Settings\" />

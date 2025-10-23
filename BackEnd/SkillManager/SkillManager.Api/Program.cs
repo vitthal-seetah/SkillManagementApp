@@ -46,14 +46,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// --------------------------
-// Apply Migrations & Seed Identity
-// --------------------------
-//await app.Services.SeedIdentityAsync();
-
-// --------------------------
-// HTTP Request Pipeline
-// --------------------------
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

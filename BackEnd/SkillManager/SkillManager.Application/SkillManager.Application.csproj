@@ -16,7 +16,29 @@
   <ItemGroup>
     <Folder Include="DTOs\Category\" />
     <Folder Include="DTOs\SkillSection\" />
-    <Folder Include="Features\Skills\Queries\" />
+    <Folder Include="Features\Applications\Commands\CreateApplicaton\" />
+    <Folder Include="Features\Applications\Commands\AssignSkillToApplication\" />
+    <Folder Include="Features\Applications\Commands\UpdateApplication\" />
+    <Folder Include="Features\Applications\DTOs\" />
+    <Folder Include="Features\Applications\Queries\GetApplicationById\" />
+    <Folder Include="Features\Applications\Queries\GetAllApplications\" />
+    <Folder Include="Features\Applications\Queries\GetApplicationSkills\" />
+    <Folder Include="Features\Reports\" />
+    <Folder Include="Features\Skills\Queries\GetSkillById\" />
+    <Folder Include="Features\Skills\Queries\GetAllSkills\" />
+    <Folder Include="Features\Skills\Queries\GetSkillsByCategory\" />
+    <Folder Include="Features\SMEs\Commands\AssignSME\" />
+    <Folder Include="Features\SMEs\Commands\RemoveSME\" />
+    <Folder Include="Features\SMEs\DTOs\" />
+    <Folder Include="Features\SMEs\Queries\GetSMEsBySkill\" />
+    <Folder Include="Features\SMEs\Queries\GetSMEsByCategory\" />
+    <Folder Include="Features\UserSkills\Command\AssignSkillToUser\" />
+    <Folder Include="Features\UserSkills\Command\RemoveSkillsFromUser\" />
+    <Folder Include="Features\UserSkills\Command\UpdateUserSkillLevel\" />
+    <Folder Include="Features\UserSkills\DTOs\" />
+    <Folder Include="Features\UserSkills\Queries\GetUserSkills\" />
+    <Folder Include="Features\UserSkills\Queries\GetSkillGapAnalysis\" />
+    <Folder Include="Features\UserSkills\Queries\GetUsersBySkill\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SkillManager.Domain\SkillManager.Domain.csproj" />
