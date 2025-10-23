@@ -31,7 +31,6 @@ public class UsersController : ControllerBase
         return Ok(users);
     }
 
-    // ✅ Test endpoint for Windows Authentication
     [HttpGet("current")]
     [AllowAnonymous] // or [Authorize] if you want only authenticated users to access
     public IActionResult GetCurrentUser()
