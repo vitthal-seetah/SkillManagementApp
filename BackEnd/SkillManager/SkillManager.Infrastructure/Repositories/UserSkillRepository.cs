@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SkillManager.Domain.Entities;
-using SkillManager.Infrastructure.Abstractions.Repository;
-using SkillManager.Infrastructure.Identity.DbContext;
+using SkillManager.Infrastructure.Identity.AppDbContext;
 
 namespace SkillManager.Infrastructure.Persistence.Repositories;
 
 public class UserSkillRepository : IUserSkillRepository
 {
-    private readonly ApplicationIdentityDbContext _context;
+    private readonly ApplicationDbContext _context;
 
-    public UserSkillRepository(ApplicationIdentityDbContext context)
+    public UserSkillRepository(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -17,7 +16,7 @@ public class UserSkillRepository : IUserSkillRepository
     // -------------------------
     // Get skills for a specific user
     // -------------------------
-    public async Task<IEnumerable<UserSkill>> GetUserSkillsAsync(string userId)
+    public async Task<IEnumerable<UserSkill>> GetUserSkillsAsync(int userId)
     {
         return await _context
             .UserSkills.Include(us => us.Skill)
@@ -44,7 +43,7 @@ public class UserSkillRepository : IUserSkillRepository
     // -------------------------
     // Get a single UserSkill by composite key
     // -------------------------
-    public async Task<UserSkill?> GetByCompositeKeyAsync(string userId, int skillId, int levelId)
+    public async Task<UserSkill?> GetByCompositeKeyAsync(int userId, int skillId, int levelId)
     {
         return await _context
             .UserSkills.Include(us => us.Skill)
@@ -75,7 +74,7 @@ public class UserSkillRepository : IUserSkillRepository
     // -------------------------
     // ✅ Fixed: Delete a UserSkill (by composite key)
     // -------------------------
-    public async Task DeleteAsync(string userId)
+    public async Task DeleteAsync(int userId)
     {
         var userSkill = await _context.UserSkills.FirstOrDefaultAsync(us => us.UserId == 4);
 

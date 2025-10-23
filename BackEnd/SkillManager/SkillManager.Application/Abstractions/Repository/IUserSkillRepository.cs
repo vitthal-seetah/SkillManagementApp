@@ -2,12 +2,12 @@
 
 public interface IUserSkillRepository
 {
-    Task<IEnumerable<UserSkill>> GetUserSkillsAsync(string userId);
+    Task<IEnumerable<UserSkill>> GetUserSkillsAsync(int userId);
     Task<IEnumerable<UserSkill>> GetAllAsync();
-    Task<UserSkill?> GetByCompositeKeyAsync(string userId, int skillId, int levelId);
+    Task<UserSkill?> GetByCompositeKeyAsync(int userId, int skillId, int levelId);
     Task AddAsync(UserSkill userSkill);
     Task UpdateAsync(UserSkill userSkill);
-    Task DeleteAsync(string userId);
+    Task DeleteAsync(int userId);
     Task<IEnumerable<UserSkill>> FilterBySkillAsync(string skillName);
     Task SaveChangesAsync();
 }

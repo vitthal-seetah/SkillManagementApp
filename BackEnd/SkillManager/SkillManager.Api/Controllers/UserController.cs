@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Domain.Entities;
 using SkillManager.Domain.Entities.Enums;
-using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Abstractions.Repository;
 
 namespace SkillManager.API.Controllers;
@@ -27,7 +26,7 @@ public class UsersController : ControllerBase
     [Authorize(Roles = "Admin,Manager,Employee,Tech Lead,SME")]
     public async Task<IActionResult> GetAllUsers()
     {
-        var users = await _userService.GetAll();
+        var users = await _userService.GetAllAsync();
         return Ok(users);
     }
 
@@ -73,9 +72,9 @@ public class UsersController : ControllerBase
     // Anyone with access can get a user by ID
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin,Manager,Employee,Tech Lead,SME")]
-    public async Task<IActionResult> GetUserById(string id)
+    public async Task<IActionResult> GetUserById(int id)
     {
-        var user = await _userService.GetUserById(id);
+        var user = await _userService.GetUserByIdAsync(id);
         if (user == null)
             return NotFound();
 
@@ -85,17 +84,13 @@ public class UsersController : ControllerBase
     // Admin: update ID-related fields (UtCode, RefId)
     [HttpPost("update-identifiers")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateUserIdentifiers(
-        string userId,
-        string utCode,
-        string refId
-    )
+    public async Task<IActionResult> UpdateUserIdentifiers(int userId, string utCode, string refId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
             return NotFound("User not found");
 
-        user.UTCode = utCode;
+        user.UtCode = utCode;
         user.RefId = refId;
 
         await _userRepository.UpdateAsync(user);
@@ -106,7 +101,7 @@ public class UsersController : ControllerBase
     [HttpPost("update-details")]
     [Authorize(Roles = "Manager")]
     public async Task<IActionResult> UpdateUserDetails(
-        string userId,
+        int userId,
         string firstName,
         string lastName,
         string status,

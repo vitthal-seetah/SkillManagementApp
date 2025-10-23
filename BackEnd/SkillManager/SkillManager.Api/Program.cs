@@ -7,7 +7,6 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructure(builder.Configuration);
-
 builder.Services.AddControllers();
 builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
 builder.Services.AddAuthorization(options =>
@@ -25,7 +24,6 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("all", policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
-builder.Services.AddScoped<IClaimsTransformation, RoleClaimsTransformer>();
 
 // --------------------------
 // Swagger / OpenAPI + JWT
