@@ -93,7 +93,7 @@ public class UserSkillRepository : IUserSkillRepository
             .ThenInclude(s => s.Category)
             .ThenInclude(c => c.CategoryType)
             .Include(us => us.Level)
-            .Where(us => us.Skill.Name.Contains(skillName))
+            .Where(us => us.Skill.Label.Contains(skillName))
             .ToListAsync();
     }
 

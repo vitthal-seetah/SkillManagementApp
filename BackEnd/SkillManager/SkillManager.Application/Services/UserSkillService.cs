@@ -112,7 +112,6 @@ public class UserSkillService : IUserSkillService
             UserId = "$",
             SkillId = us.SkillId,
             LevelId = us.LevelId,
-            SkillName = us.Skill?.Name ?? "",
             SkillCode = us.Skill?.Code ?? "",
             CategoryName = us.Skill?.Category?.Name ?? "",
             CategoryType = us.Skill?.Category?.CategoryType?.Name.ToString() ?? "",

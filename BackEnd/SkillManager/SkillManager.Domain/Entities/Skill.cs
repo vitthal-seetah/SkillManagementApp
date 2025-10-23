@@ -8,7 +8,6 @@ public class Skill
     public int SkillId { get; set; }
     public int CategoryId { get; set; }
     public int SubCategoryId { get; set; }
-    public string Name { get; set; }
     public string Code { get; set; }
     public string Label { get; set; }
     public string CriticalityLevel { get; set; }

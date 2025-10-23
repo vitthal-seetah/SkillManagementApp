@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkillManager.Application.Abstractions.Identity;
 using SkillManager.Domain.Entities;
@@ -43,6 +44,31 @@ public class UsersController : ControllerBase
         var username = userFull.Contains('\\') ? userFull.Split('\\').Last() : userFull;
 
         return Ok(new { FullName = userFull, UserName = username });
+    }
+
+    [HttpGet("debug-claims")]
+    public IActionResult DebugClaims()
+    {
+        var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+
+        return Ok(claims);
+    }
+
+    [Authorize(Policy = "ManagerPolicy")]
+    [HttpGet("check-roles")]
+    public IActionResult CheckRoles()
+    {
+        var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+
+        return Ok(new { Username = User.Identity?.Name, Roles = roles });
+    }
+
+    [Authorize(Policy = "AdminPolicy")]
+    [HttpGet("admin-only")]
+    public IActionResult AdminEndpoint()
+    {
+        var username = User.Identity?.Name;
+        return Ok($"Hello {username}, you are authorized as Admin!");
     }
 
     // Anyone with access can get a user by ID

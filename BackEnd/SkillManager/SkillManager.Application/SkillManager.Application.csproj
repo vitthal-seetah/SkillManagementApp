@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="8.0.20" />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
       Version="8.0.2"
@@ -15,6 +16,7 @@
   <ItemGroup>
     <Folder Include="DTOs\Category\" />
     <Folder Include="DTOs\SkillSection\" />
+    <Folder Include="Features\Skills\Queries\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SkillManager.Domain\SkillManager.Domain.csproj" />

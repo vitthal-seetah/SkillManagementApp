@@ -203,8 +203,6 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
 
         modelBuilder.Entity<UserRole>().Property(r => r.Name).HasMaxLength(50);
 
-        modelBuilder.Entity<Skill>().Property(s => s.Name).HasMaxLength(200);
-
         modelBuilder.Entity<Skill>().Property(s => s.Code).HasMaxLength(50);
 
         modelBuilder.Entity<Skill>().Property(s => s.Label).HasMaxLength(200);
