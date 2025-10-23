@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkillManager.Infrastructure.Abstractions.Services;
-using SkillManager.Infrastructure.DTOs;
 using SkillManager.Infrastructure.DTOs.Skill;
 
 namespace SkillManager.API.Controllers;
@@ -25,8 +24,7 @@ public class UserSkillsController : ControllerBase
     [HttpGet("MySkills")]
     public async Task<IActionResult> GetMySkills()
     {
-        var userId = User.FindFirstValue("uid");
-        if (string.IsNullOrEmpty(userId))
+        if (!TryGetCurrentUserId(out int userId))
             return Unauthorized(new { message = "Invalid user ID" });
 
         var skills = await _userSkillService.GetMySkillsAsync(userId);
@@ -40,8 +38,7 @@ public class UserSkillsController : ControllerBase
     [HttpPost("AddSkill")]
     public async Task<IActionResult> AddSkill([FromBody] AddUserSkillDto dto)
     {
-        var userId = User.FindFirstValue("uid");
-        if (string.IsNullOrEmpty(userId))
+        if (!TryGetCurrentUserId(out int userId))
             return Unauthorized(new { message = "Invalid user ID" });
 
         try
@@ -62,8 +59,7 @@ public class UserSkillsController : ControllerBase
     [HttpPut("UpdateSkill")]
     public async Task<IActionResult> UpdateSkill([FromBody] UpdateUserSkillsDto dto)
     {
-        var userId = User.FindFirstValue("uid");
-        if (string.IsNullOrEmpty(userId))
+        if (!TryGetCurrentUserId(out int userId))
             return Unauthorized(new { message = "Invalid user ID" });
 
         try
@@ -91,7 +87,7 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     // LEADER / ADMIN: Filter users by skill name
     // -------------------------
-    [Authorize(Roles = "Leader,Admin, Manager")]
+    [Authorize(Roles = "Leader,Admin,Manager")]
     [HttpGet("FilterBySkill")]
     public async Task<IActionResult> FilterBySkill([FromQuery] string skillName)
     {
@@ -103,8 +99,8 @@ public class UserSkillsController : ControllerBase
     // ADMIN ONLY: Delete a user skill
     // -------------------------
     [Authorize(Roles = "Admin")]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteSkill(string id)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteSkill(int id)
     {
         try
         {
@@ -115,5 +111,18 @@ public class UserSkillsController : ControllerBase
         {
             return BadRequest(new { message = ex.Message });
         }
+    }
+
+    // -------------------------
+    // Helper: Parse userId from claims
+    // -------------------------
+    private bool TryGetCurrentUserId(out int userId)
+    {
+        userId = 0;
+        var claimValue = User.FindFirstValue("uid");
+        if (string.IsNullOrEmpty(claimValue))
+            return false;
+
+        return int.TryParse(claimValue, out userId);
     }
 }

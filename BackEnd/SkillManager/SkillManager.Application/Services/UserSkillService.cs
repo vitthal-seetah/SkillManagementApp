@@ -22,7 +22,7 @@ public class UserSkillService : IUserSkillService
     // -------------------------------------------------------
     // USER: Get own skills
     // -------------------------------------------------------
-    public async Task<IEnumerable<UserSkillDto>> GetMySkillsAsync(string userId)
+    public async Task<IEnumerable<UserSkillDto>> GetMySkillsAsync(int userId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
@@ -35,7 +35,7 @@ public class UserSkillService : IUserSkillService
     // -------------------------------------------------------
     // USER: Add new skill
     // -------------------------------------------------------
-    public async Task AddSkillAsync(string userId, AddUserSkillDto dto)
+    public async Task AddSkillAsync(int userId, AddUserSkillDto dto)
     {
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
@@ -62,7 +62,7 @@ public class UserSkillService : IUserSkillService
     // -------------------------------------------------------
     // USER: Update skill level
     // -------------------------------------------------------
-    public async Task UpdateSkillAsync(string userId, UpdateUserSkillsDto dto)
+    public async Task UpdateSkillAsync(int userId, UpdateUserSkillsDto dto)
     {
         var userSkills = await _userSkillRepository.GetUserSkillsAsync(userId);
         var userSkill = userSkills.FirstOrDefault(us => us.SkillId == dto.SkillId);
@@ -96,7 +96,7 @@ public class UserSkillService : IUserSkillService
     // -------------------------------------------------------
     // ADMIN: Delete user skill
     // -------------------------------------------------------
-    public async Task DeleteUserSkillAsync(string userId)
+    public async Task DeleteUserSkillAsync(int userId)
     {
         await _userSkillRepository.DeleteAsync(userId);
         await _userSkillRepository.SaveChangesAsync();

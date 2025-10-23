@@ -2,15 +2,15 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SkillManager.Infrastructure.Identity.DbContext;
+using SkillManager.Infrastructure.Identity.AppDbContext;
 
 public class RoleClaimsTransformer : IClaimsTransformation
 {
-    private readonly ApplicationIdentityDbContext _context;
+    private readonly ApplicationDbContext _context;
     private readonly ILogger<RoleClaimsTransformer> _logger;
 
     public RoleClaimsTransformer(
-        ApplicationIdentityDbContext context,
+        ApplicationDbContext context,
         ILogger<RoleClaimsTransformer> logger
     )
     {

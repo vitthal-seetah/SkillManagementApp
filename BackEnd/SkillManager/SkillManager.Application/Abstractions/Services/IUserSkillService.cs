@@ -5,10 +5,10 @@ namespace SkillManager.Infrastructure.Abstractions.Services;
 
 public interface IUserSkillService
 {
-    Task<IEnumerable<UserSkillDto>> GetMySkillsAsync(string userId);
-    Task AddSkillAsync(string userId, AddUserSkillDto dto);
-    Task UpdateSkillAsync(string userId, UpdateUserSkillsDto dto);
+    Task<IEnumerable<UserSkillDto>> GetMySkillsAsync(int userId);
+    Task AddSkillAsync(int userId, AddUserSkillDto dto);
+    Task UpdateSkillAsync(int userId, UpdateUserSkillsDto dto);
     Task<IEnumerable<UserSkillDto>> GetAllUserSkillsAsync();
     Task<IEnumerable<UserSkillDto>> FilterBySkillAsync(string skillName);
-    Task DeleteUserSkillAsync(string userId);
+    Task DeleteUserSkillAsync(int userId);
 }

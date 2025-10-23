@@ -25,7 +25,6 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("all", policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
-builder.Services.AddScoped<IClaimsTransformation, RoleClaimsTransformer>();
 
 // --------------------------
 // Swagger / OpenAPI + JWT

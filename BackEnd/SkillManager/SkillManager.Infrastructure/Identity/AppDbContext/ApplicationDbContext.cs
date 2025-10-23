@@ -1,20 +1,16 @@
-﻿using System.Reflection.Emit;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SkillManager.Domain.Entities;
-using SkillManager.Infrastructure.Abstractions.Identity;
-using SkillManager.Infrastructure.Identity.Models;
 using AppEntity = SkillManager.Domain.Entities.Application;
 
-namespace SkillManager.Infrastructure.Identity.DbContext;
+namespace SkillManager.Infrastructure.Identity.AppDbContext;
 
-public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
+public class ApplicationDbContext : DbContext
 {
-    public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
 
     // DbSets
-    public DbSet<Domain.Entities.User> Users { get; set; }
+    public DbSet<User> Users { get; set; }
 
     public DbSet<UserRole> UserRoles { get; set; }
 
@@ -33,24 +29,18 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Domain.Entities.User>().HasIndex(u => u.UtCode).IsUnique();
+        modelBuilder.Entity<User>().HasIndex(u => u.UtCode).IsUnique();
 
-        modelBuilder.Entity<Domain.Entities.User>().HasIndex(u => u.RefId).IsUnique();
+        modelBuilder.Entity<User>().HasIndex(u => u.RefId).IsUnique();
 
         modelBuilder.Entity<UserRole>().HasIndex(r => r.Name).IsUnique();
 
         // Add unique constraint for Eid as well
-        modelBuilder.Entity<Domain.Entities.User>().HasIndex(u => u.Eid).IsUnique();
+        modelBuilder.Entity<User>().HasIndex(u => u.Eid).IsUnique();
         // Configure Enums
-        modelBuilder
-            .Entity<Domain.Entities.User>()
-            .Property(u => u.Status)
-            .HasConversion<string>();
+        modelBuilder.Entity<User>().Property(u => u.Status).HasConversion<string>();
 
-        modelBuilder
-            .Entity<Domain.Entities.User>()
-            .Property(u => u.DeliveryType)
-            .HasConversion<string>();
+        modelBuilder.Entity<User>().Property(u => u.DeliveryType).HasConversion<string>();
 
         // Configure composite keys
         modelBuilder.Entity<UserSkill>().HasKey(us => new { us.UserId, us.SkillId });
@@ -70,7 +60,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
 
         // User -> UserRole (Many-to-One)
         modelBuilder
-            .Entity<Domain.Entities.User>()
+            .Entity<User>()
             .HasOne(u => u.Role)
             .WithMany(r => r.Users)
             .HasForeignKey(u => u.RoleId)
@@ -78,7 +68,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
 
         // User -> UserSkills (One-to-Many)
         modelBuilder
-            .Entity<Domain.Entities.User>()
+            .Entity<User>()
             .HasMany(u => u.UserSkills)
             .WithOne(us => us.User)
             .HasForeignKey(us => us.UserId)
@@ -86,7 +76,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
 
         // User -> UserSMEs (One-to-Many)
         modelBuilder
-            .Entity<Domain.Entities.User>()
+            .Entity<User>()
             .HasMany(u => u.UserSMEs)
             .WithOne(us => us.User)
             .HasForeignKey(us => us.UserId)
@@ -174,7 +164,7 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
 
         // Application -> ApplicationSkills (One-to-Many)
         modelBuilder
-            .Entity<Domain.Entities.Application>()
+            .Entity<AppEntity>()
             .HasMany(a => a.ApplicationSkills)
             .WithOne(appSkill => appSkill.Application)
             .HasForeignKey(appSkill => appSkill.ApplicationId)
@@ -189,17 +179,17 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
             .OnDelete(DeleteBehavior.Cascade);
 
         // Configure string lengths and constraints
-        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.FirstName).HasMaxLength(100);
+        modelBuilder.Entity<User>().Property(u => u.FirstName).HasMaxLength(100);
 
-        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.LastName).HasMaxLength(100);
+        modelBuilder.Entity<User>().Property(u => u.LastName).HasMaxLength(100);
 
-        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.UtCode).HasMaxLength(50);
+        modelBuilder.Entity<User>().Property(u => u.UtCode).HasMaxLength(50);
 
-        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.RefId).HasMaxLength(100);
+        modelBuilder.Entity<User>().Property(u => u.RefId).HasMaxLength(100);
 
-        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.Domain).HasMaxLength(100);
+        modelBuilder.Entity<User>().Property(u => u.Domain).HasMaxLength(100);
 
-        modelBuilder.Entity<Domain.Entities.User>().Property(u => u.Eid).HasMaxLength(50);
+        modelBuilder.Entity<User>().Property(u => u.Eid).HasMaxLength(50);
 
         modelBuilder.Entity<UserRole>().Property(r => r.Name).HasMaxLength(50);
 
@@ -224,9 +214,9 @@ public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<ApplicationSuite>().Property(asu => asu.Perimeter).HasMaxLength(500);
 
         // Indexes for performance
-        modelBuilder.Entity<Domain.Entities.User>().HasIndex(u => u.UtCode).IsUnique();
+        modelBuilder.Entity<User>().HasIndex(u => u.UtCode).IsUnique();
 
-        modelBuilder.Entity<Domain.Entities.User>().HasIndex(u => u.Eid).IsUnique();
+        modelBuilder.Entity<User>().HasIndex(u => u.Eid).IsUnique();
 
         modelBuilder.Entity<UserRole>().HasIndex(r => r.Name).IsUnique();
 

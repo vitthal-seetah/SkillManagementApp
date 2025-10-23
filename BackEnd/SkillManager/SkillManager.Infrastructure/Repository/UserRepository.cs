@@ -1,76 +1,70 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SkillManager.Domain.Entities;
-using SkillManager.Infrastructure.Abstractions.Identity;
 using SkillManager.Infrastructure.Abstractions.Repository;
-using SkillManager.Infrastructure.Identity.Models;
-using User = SkillManager.Infrastructure.Abstractions.Identity.User;
+using SkillManager.Infrastructure.Identity.AppDbContext;
 
-namespace SkillManager.Infrastructure.Repositories;
-
-public class UserRepository : IUserRepository
+namespace SkillManager.Infrastructure.Repositories
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    public UserRepository(UserManager<ApplicationUser> userManager)
+    public class UserRepository : IUserRepository
     {
-        _userManager = userManager;
-    }
+        private readonly ApplicationDbContext _context;
 
-    // ------------------------------------------------------
-    // Get all users (Admin/Leader use case)
-    // ------------------------------------------------------
-    public async Task<IEnumerable<User>> GetAllAsync()
-    {
-        var users = await _userManager.Users.ToListAsync();
-        return users.Select(MapToDomain);
-    }
-
-    // ------------------------------------------------------
-    // Get a single user by ID
-    // ------------------------------------------------------
-    public async Task<User?> GetByIdAsync(string userId)
-    {
-        var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        return appUser == null ? null : MapToDomain(appUser);
-    }
-
-    // ------------------------------------------------------
-    // Update user (Admin/Manager use case)
-    // ------------------------------------------------------
-    public async Task UpdateAsync(User user)
-    {
-        var appUser = await _userManager.FindByIdAsync(user.Id);
-        if (appUser == null)
-            return;
-
-        appUser.FirstName = user.FirstName;
-        appUser.LastName = user.LastName;
-        appUser.UTCode = user.UTCode;
-        appUser.RefId = user.RefId;
-        appUser.RoleId = user.RoleId;
-        appUser.Status = user.Status;
-        appUser.DeliveryType = user.DeliveryType;
-
-        await _userManager.UpdateAsync(appUser);
-    }
-
-    // ------------------------------------------------------
-    // Helper: Map ApplicationUser → Domain User
-    // ------------------------------------------------------
-    private static User MapToDomain(ApplicationUser appUser)
-    {
-        return new User
+        public UserRepository(ApplicationDbContext context)
         {
-            Id = appUser.Id,
-            Email = appUser.Email ?? string.Empty,
-            FirstName = appUser.FirstName,
-            LastName = appUser.LastName,
-            UTCode = appUser.UTCode,
-            RefId = appUser.RefId,
-            RoleId = appUser.RoleId,
-            Status = appUser.Status,
-            DeliveryType = appUser.DeliveryType,
-        };
+            _context = context;
+        }
+
+        // ------------------------------------------------------
+        // Get all users (with roles included)
+        // ------------------------------------------------------
+        public async Task<IEnumerable<User>> GetAllAsync()
+        {
+            return await _context.Users.AsNoTracking().Include(u => u.Role).ToListAsync();
+        }
+
+        // ------------------------------------------------------
+        // Get single user by ID
+        // ------------------------------------------------------
+        public async Task<User?> GetByIdAsync(int userId)
+        {
+            return await _context
+                .Users.AsNoTracking()
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+        }
+
+        // ------------------------------------------------------
+        // Update user
+        // ------------------------------------------------------
+        public async Task UpdateAsync(User user)
+        {
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u =>
+                u.UserId == user.UserId
+            );
+
+            if (existingUser == null)
+                return;
+
+            existingUser.FirstName = user.FirstName;
+            existingUser.LastName = user.LastName;
+            existingUser.UtCode = user.UtCode;
+            existingUser.RefId = user.RefId;
+            existingUser.RoleId = user.RoleId;
+            existingUser.Status = user.Status;
+            existingUser.DeliveryType = user.DeliveryType;
+
+            await _context.SaveChangesAsync();
+        }
+
+        // ------------------------------------------------------
+        // Optional: get user by domain + Eid (for Windows Auth)
+        // ------------------------------------------------------
+        public async Task<User?> GetByDomainAndEidAsync(string domain, string eid)
+        {
+            return await _context
+                .Users.AsNoTracking()
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Domain == domain && u.Eid == eid);
+        }
     }
 }

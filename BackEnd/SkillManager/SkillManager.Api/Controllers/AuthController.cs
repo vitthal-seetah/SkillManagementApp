@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SkillManager.Infrastructure.Abstractions.Identity;
 
 namespace SkillManager.Api.Controllers;
 
@@ -8,23 +8,13 @@ namespace SkillManager.Api.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthenticationService _authenticationService;
-
-    public AuthController(IAuthenticationService authenticationService)
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult GetCurrentUser()
     {
-        this._authenticationService = authenticationService;
-    }
+        var username = HttpContext.User.Identity?.Name; // e.g. DOMAIN\username
+        var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
-    [HttpPost("login")]
-    public async Task<ActionResult<AuthResponse>> Login(AuthRequest request)
-    {
-        return Ok(await _authenticationService.Login(request));
-    }
-
-    [Authorize(Roles = "Admin")]
-    [HttpPost("register")]
-    public async Task<ActionResult<RegistrationResponse>> Register(RegistrationRequest request)
-    {
-        return Ok(await _authenticationService.Register(request));
+        return Ok(new { username, roles });
     }
 }
