@@ -92,8 +92,11 @@ public class UserSkillsController : ControllerBase
     [HttpGet("FilterBySkill")]
     public async Task<IActionResult> FilterBySkill([FromQuery] string skillName)
     {
-        var skills = await _userSkillService.FilterBySkillAsync(skillName);
-        return Ok(skills);
+        if (string.IsNullOrWhiteSpace(skillName))
+            return BadRequest(new { message = "Skill name is required" });
+
+        var userSkills = await _userSkillService.FilterBySkillAsync(skillName);
+        return Ok(userSkills);
     }
 
     // -------------------------

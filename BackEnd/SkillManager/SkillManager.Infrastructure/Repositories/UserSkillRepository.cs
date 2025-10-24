@@ -93,11 +93,15 @@ namespace SkillManager.Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<UserSkill>> FilterBySkillAsync(string skillName)
         {
             return await _context
-                .UserSkills.Include(us => us.Skill)
+                .UserSkills.Include(us => us.User)
+                .Include(us => us.Skill)
                 .ThenInclude(s => s.Category)
                 .ThenInclude(c => c.CategoryType)
                 .Include(us => us.Level)
-                .Where(us => EF.Functions.Like(us.Skill.Label, $"%{skillName}%"))
+                .Where(us =>
+                    EF.Functions.Like(us.Skill.Code, $"%{skillName}%")
+                    || EF.Functions.Like(us.Skill.Label, $"%{skillName}%")
+                )
                 .ToListAsync();
         }
 
