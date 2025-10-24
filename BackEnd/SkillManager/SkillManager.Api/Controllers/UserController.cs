@@ -1,10 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SkillManager.Application.Abstractions.Identity;
-using SkillManager.Domain.Entities;
-using SkillManager.Domain.Entities.Enums;
-using SkillManager.Infrastructure.Abstractions.Repository;
+using SkillManager.Application.Interfaces.Services;
 
 namespace SkillManager.API.Controllers;
 
@@ -13,28 +10,27 @@ namespace SkillManager.API.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly IUserRepository _userRepository;
 
-    public UsersController(IUserService userService, IUserRepository userRepository)
+    public UsersController(IUserService userService)
     {
         _userService = userService;
-        _userRepository = userRepository;
     }
 
-    // Anyone with access (Admin, Manager, User) can list users
+    // Anyone with access can list users
     [HttpGet]
-    [Authorize(Roles = "Admin,Manager,Employee,Tech Lead,SME")]
+    [Authorize(Policy = "EmployeePolicy")]
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await _userService.GetAllAsync();
         return Ok(users);
     }
 
+    // Get current authenticated user
     [HttpGet("current")]
-    [AllowAnonymous] // or [Authorize] if you want only authenticated users to access
+    [AllowAnonymous] // Or [Authorize(Policy = "EmployeePolicy")] if only authenticated users
     public IActionResult GetCurrentUser()
     {
-        var userFull = HttpContext.User.Identity?.Name; // e.g. DOMAIN\vitthal.seetah
+        var userFull = HttpContext.User.Identity?.Name;
 
         if (string.IsNullOrEmpty(userFull))
             return Ok("No user detected (Windows Auth might not be enabled).");
@@ -45,33 +41,32 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("debug-claims")]
+    [Authorize(Policy = "ManagerPolicy")]
     public IActionResult DebugClaims()
     {
         var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-
         return Ok(claims);
     }
 
-    [Authorize(Policy = "ManagerPolicy")]
     [HttpGet("check-roles")]
+    [Authorize(Policy = "ManagerPolicy")]
     public IActionResult CheckRoles()
     {
         var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
-
         return Ok(new { Username = User.Identity?.Name, Roles = roles });
     }
 
-    [Authorize(Policy = "AdminPolicy")]
     [HttpGet("admin-only")]
+    [Authorize(Policy = "AdminPolicy")]
     public IActionResult AdminEndpoint()
     {
         var username = User.Identity?.Name;
         return Ok($"Hello {username}, you are authorized as Admin!");
     }
 
-    // Anyone with access can get a user by ID
+    // Get user by ID
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,Manager,Employee,Tech Lead,SME")]
+    [Authorize(Policy = "EmployeePolicy")]
     public async Task<IActionResult> GetUserById(int id)
     {
         var user = await _userService.GetUserByIdAsync(id);
@@ -81,47 +76,39 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
-    // Admin: update ID-related fields (UtCode, RefId)
+    // Admin: update ID-related fields (UTCode, RefId)
     [HttpPost("update-identifiers")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminPolicy")]
     public async Task<IActionResult> UpdateUserIdentifiers(int userId, string utCode, string refId)
     {
-        var user = await _userRepository.GetByIdAsync(userId);
-        if (user == null)
+        var result = await _userService.UpdateUserIdentifiersAsync(userId, utCode, refId);
+        if (!result)
             return NotFound("User not found");
 
-        user.UtCode = utCode;
-        user.RefId = refId;
-
-        await _userRepository.UpdateAsync(user);
         return Ok("User identifiers updated successfully");
     }
 
-    // Manager: update other fields (FirstName, LastName, Status, DeliveryType)
+    // Manager: update personal info, status, delivery type
     [HttpPost("update-details")]
-    [Authorize(Roles = "Manager")]
+    [Authorize(Policy = "ManagerPolicy")]
     public async Task<IActionResult> UpdateUserDetails(
         int userId,
         string firstName,
         string lastName,
-        string status,
-        string deliveryType
+        string? status = null,
+        string? deliveryType = null
     )
     {
-        var user = await _userRepository.GetByIdAsync(userId);
-        if (user == null)
+        var result = await _userService.UpdateUserDetailsAsync(
+            userId,
+            firstName,
+            lastName,
+            status,
+            deliveryType
+        );
+        if (!result)
             return NotFound("User not found");
 
-        user.FirstName = firstName;
-        user.LastName = lastName;
-
-        if (Enum.TryParse(status, true, out UserStatus userStatus))
-            user.Status = userStatus;
-
-        if (Enum.TryParse(deliveryType, true, out DeliveryType userDeliveryType))
-            user.DeliveryType = userDeliveryType;
-
-        await _userRepository.UpdateAsync(user);
         return Ok("User details updated successfully");
     }
 }

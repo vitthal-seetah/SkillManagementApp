@@ -65,12 +65,6 @@ public class RoleClaimsTransformer : IClaimsTransformation
             if (user.Role != null)
             {
                 identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.Name));
-                _logger.LogInformation(
-                    "Assigned role '{Role}' to user {Domain}\\{Eid}.",
-                    user.Role.Name,
-                    domain,
-                    eid
-                );
             }
             else
             {

@@ -1,10 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SkillManager.Domain.Entities;
 
 namespace SkillManager.Application.Interfaces.Repositories
 {
-    internal interface IUserSkillRepository { }
+    public interface IUserSkillRepository
+    {
+        // Get skills for a specific user
+        Task<IEnumerable<UserSkill>> GetUserSkillsAsync(int userId);
+
+        // Get all user skills
+        Task<IEnumerable<UserSkill>> GetAllAsync();
+
+        // Get a single UserSkill by userId + skillId (composite key)
+        Task<UserSkill?> GetByCompositeKeyAsync(int userId, int skillId);
+
+        // Add a new UserSkill
+        Task AddAsync(UserSkill userSkill);
+
+        // Update an existing UserSkill
+        Task UpdateAsync(UserSkill userSkill);
+
+        // Delete a UserSkill by userId + skillId
+        Task DeleteAsync(int userId, int skillId);
+
+        // Filter skills by skill name
+        Task<IEnumerable<UserSkill>> FilterBySkillAsync(string skillName);
+
+        // Save changes to the database
+        Task SaveChangesAsync();
+    }
 }
