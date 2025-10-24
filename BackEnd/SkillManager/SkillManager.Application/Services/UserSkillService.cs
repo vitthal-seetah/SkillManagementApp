@@ -48,12 +48,7 @@ public class UserSkillService : IUserSkillService
         if (existing != null)
             throw new InvalidOperationException("Skill already exists for this user.");
 
-        var userSkill = new UserSkill
-        {
-            UserId = 4,
-            SkillId = dto.SkillId,
-            LevelId = dto.LevelId,
-        };
+        var userSkill = new UserSkill { SkillId = dto.SkillId, LevelId = dto.LevelId };
 
         await _userSkillRepository.AddAsync(userSkill);
         await _userSkillRepository.SaveChangesAsync();
@@ -109,7 +104,7 @@ public class UserSkillService : IUserSkillService
     {
         return new UserSkillDto
         {
-            UserId = "$",
+            UserId = us.UserId,
             SkillId = us.SkillId,
             LevelId = us.LevelId,
             SkillCode = us.Skill?.Code ?? "",

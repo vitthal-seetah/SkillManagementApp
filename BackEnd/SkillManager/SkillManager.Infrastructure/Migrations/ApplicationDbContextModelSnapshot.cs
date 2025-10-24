@@ -46,7 +46,7 @@ namespace SkillManager.Infrastructure.Migrations
 
                     b.HasIndex("SuiteId");
 
-                    b.ToTable("Applications");
+                    b.ToTable("Applications", (string)null);
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.ApplicationSkill", b =>
@@ -63,7 +63,7 @@ namespace SkillManager.Infrastructure.Migrations
 
                     b.HasIndex("SkillId");
 
-                    b.ToTable("ApplicationSkills");
+                    b.ToTable("ApplicationSkills", (string)null);
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.ApplicationSuite", b =>
@@ -86,7 +86,7 @@ namespace SkillManager.Infrastructure.Migrations
 
                     b.HasKey("SuiteId");
 
-                    b.ToTable("ApplicationSuites");
+                    b.ToTable("ApplicationSuites", (string)null);
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.Category", b =>
@@ -109,7 +109,47 @@ namespace SkillManager.Infrastructure.Migrations
 
                     b.HasIndex("CategoryTypeId");
 
-                    b.ToTable("Categories");
+                    b.HasIndex("Name");
+
+                    b.ToTable("Categories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            CategoryTypeId = 2,
+                            Name = "CONNAISSANCES METIER"
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            CategoryTypeId = 2,
+                            Name = "CONCEPTION SOLUTION SI"
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            CategoryTypeId = 1,
+                            Name = "CONNAISSANCE APPLI AMC"
+                        },
+                        new
+                        {
+                            CategoryId = 4,
+                            CategoryTypeId = 1,
+                            Name = "TECHNIQUES DE PROGRAMMATION"
+                        },
+                        new
+                        {
+                            CategoryId = 5,
+                            CategoryTypeId = 2,
+                            Name = "GESTION DE PROJET"
+                        },
+                        new
+                        {
+                            CategoryId = 6,
+                            CategoryTypeId = 2,
+                            Name = "AUTRES COMPETENCES"
+                        });
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.CategoryType", b =>
@@ -161,6 +201,32 @@ namespace SkillManager.Infrastructure.Migrations
                     b.HasKey("LevelId");
 
                     b.ToTable("Levels");
+
+                    b.HasData(
+                        new
+                        {
+                            LevelId = 1,
+                            Name = "Notion",
+                            Points = 1
+                        },
+                        new
+                        {
+                            LevelId = 2,
+                            Name = "Pratique",
+                            Points = 2
+                        },
+                        new
+                        {
+                            LevelId = 3,
+                            Name = "Maitrise",
+                            Points = 3
+                        },
+                        new
+                        {
+                            LevelId = 4,
+                            Name = "Expert",
+                            Points = 4
+                        });
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.Skill", b =>
@@ -246,7 +312,207 @@ namespace SkillManager.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("SubCategories");
+                    b.ToTable("SubCategories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            SubCategoryId = 1,
+                            CategoryId = 1,
+                            Name = "Finance"
+                        },
+                        new
+                        {
+                            SubCategoryId = 2,
+                            CategoryId = 2,
+                            Name = "01-Cadrage"
+                        },
+                        new
+                        {
+                            SubCategoryId = 3,
+                            CategoryId = 2,
+                            Name = "02-Design"
+                        },
+                        new
+                        {
+                            SubCategoryId = 4,
+                            CategoryId = 2,
+                            Name = "02-Design fonctionnel"
+                        },
+                        new
+                        {
+                            SubCategoryId = 5,
+                            CategoryId = 2,
+                            Name = "02-Design technique"
+                        },
+                        new
+                        {
+                            SubCategoryId = 6,
+                            CategoryId = 2,
+                            Name = "03-Data"
+                        },
+                        new
+                        {
+                            SubCategoryId = 7,
+                            CategoryId = 2,
+                            Name = "04-Analyse"
+                        },
+                        new
+                        {
+                            SubCategoryId = 8,
+                            CategoryId = 2,
+                            Name = "05-Testing"
+                        },
+                        new
+                        {
+                            SubCategoryId = 9,
+                            CategoryId = 2,
+                            Name = "06-Sécurité"
+                        },
+                        new
+                        {
+                            SubCategoryId = 10,
+                            CategoryId = 3,
+                            Name = "Outil Compta"
+                        },
+                        new
+                        {
+                            SubCategoryId = 11,
+                            CategoryId = 3,
+                            Name = "Outil CdG"
+                        },
+                        new
+                        {
+                            SubCategoryId = 12,
+                            CategoryId = 3,
+                            Name = "Outil Compta reglementaire"
+                        },
+                        new
+                        {
+                            SubCategoryId = 13,
+                            CategoryId = 3,
+                            Name = "Outil Conso"
+                        },
+                        new
+                        {
+                            SubCategoryId = 14,
+                            CategoryId = 3,
+                            Name = "Interprétation comptable"
+                        },
+                        new
+                        {
+                            SubCategoryId = 15,
+                            CategoryId = 3,
+                            Name = "Rapprochements"
+                        },
+                        new
+                        {
+                            SubCategoryId = 16,
+                            CategoryId = 3,
+                            Name = "Technique"
+                        },
+                        new
+                        {
+                            SubCategoryId = 17,
+                            CategoryId = 4,
+                            Name = "Langage de programmation"
+                        },
+                        new
+                        {
+                            SubCategoryId = 18,
+                            CategoryId = 4,
+                            Name = "Transfert de fichiers"
+                        },
+                        new
+                        {
+                            SubCategoryId = 19,
+                            CategoryId = 4,
+                            Name = "CI/CD"
+                        },
+                        new
+                        {
+                            SubCategoryId = 20,
+                            CategoryId = 4,
+                            Name = "Frameworks .NET"
+                        },
+                        new
+                        {
+                            SubCategoryId = 21,
+                            CategoryId = 4,
+                            Name = "Conso"
+                        },
+                        new
+                        {
+                            SubCategoryId = 22,
+                            CategoryId = 4,
+                            Name = "Scripting"
+                        },
+                        new
+                        {
+                            SubCategoryId = 23,
+                            CategoryId = 4,
+                            Name = "Front-End"
+                        },
+                        new
+                        {
+                            SubCategoryId = 24,
+                            CategoryId = 4,
+                            Name = "Middleware"
+                        },
+                        new
+                        {
+                            SubCategoryId = 25,
+                            CategoryId = 4,
+                            Name = "Gestion du code"
+                        },
+                        new
+                        {
+                            SubCategoryId = 26,
+                            CategoryId = 4,
+                            Name = "Base de données"
+                        },
+                        new
+                        {
+                            SubCategoryId = 27,
+                            CategoryId = 4,
+                            Name = "Testing"
+                        },
+                        new
+                        {
+                            SubCategoryId = 28,
+                            CategoryId = 4,
+                            Name = "Sécurité"
+                        },
+                        new
+                        {
+                            SubCategoryId = 29,
+                            CategoryId = 4,
+                            Name = "OS"
+                        },
+                        new
+                        {
+                            SubCategoryId = 30,
+                            CategoryId = 4,
+                            Name = "ETL"
+                        },
+                        new
+                        {
+                            SubCategoryId = 31,
+                            CategoryId = 4,
+                            Name = "Supervision / Monitoring"
+                        },
+                        new
+                        {
+                            SubCategoryId = 32,
+                            CategoryId = 4,
+                            Name = "Paramétrage progiciel"
+                        },
+                        new
+                        {
+                            SubCategoryId = 33,
+                            CategoryId = 6,
+                            Name = "Communication"
+                        });
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.User", b =>
@@ -376,7 +642,7 @@ namespace SkillManager.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSMEs");
+                    b.ToTable("UserSMEs", (string)null);
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.UserSkill", b =>
@@ -398,7 +664,7 @@ namespace SkillManager.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSkills");
+                    b.ToTable("UserSkills", (string)null);
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.Application", b =>
@@ -461,7 +727,7 @@ namespace SkillManager.Infrastructure.Migrations
                     b.HasOne("SkillManager.Domain.Entities.SubCategory", "SubCategory")
                         .WithMany("Skills")
                         .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
