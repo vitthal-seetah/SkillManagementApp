@@ -8,7 +8,7 @@ namespace SkillManager.Infrastructure.DTOs.Skill;
 
 public class UserSkillDto
 {
-    public string UserId { get; set; }
+    public int UserId { get; set; }
     public int SkillId { get; set; }
     public string SkillName { get; set; }
     public string SkillCode { get; set; }
