@@ -8,7 +8,7 @@
         "DebugTarget": "IIS Express"
       },
       {
-        "Path": "..\\..\\..\\..\\source\\repos\\skillManager\\skillManager\\SkillManager.web.csproj",
+        "Path": "skillManager\\skillManager\\SkillManager.web.csproj",
         "Action": "Start",
         "DebugTarget": "IIS Express"
       }

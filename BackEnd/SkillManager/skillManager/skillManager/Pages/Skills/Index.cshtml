@@ -1,0 +1,66 @@
+﻿
+@page
+@model SkillManager.Web.Pages.Skills.SkillIndexModel
+@{
+    ViewData["Title"] = "My Skills";
+}
+
+<h2>My Skills</h2>
+<p>Logged in as: @Model.Username</p>
+
+@if (!Model.MySkills.Any())
+{
+    <p>You have no skills assigned.</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Debug Info</th>
+                <th>Values</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Username</td>
+                <td>@Model.Username</td>
+            </tr>
+            <tr>
+                <td>Raw UID</td>
+                <td>@Model.UserId</td>
+            </tr>
+            <tr>
+                <td>Skills Loaded</td>
+                <td>@Model.MySkills.Count</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+   
+    
+    <table class="table">
+        <thead>
+            <p>@Model.UserId</p>
+            <tr>
+                <th>Skill</th>
+                <th>Code</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var skill in Model.MySkills)
+            {
+                <tr>
+                    <td>@skill.SkillName</td>
+                    <td>@skill.SkillCode</td>
+                    <td>@skill.CategoryName</td>
+                    <td>@skill.CategoryType</td>
+                    <td>@skill.LevelName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+ 
+}
