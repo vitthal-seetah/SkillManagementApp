@@ -35,7 +35,10 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(
         "EmployeePolicy",
-        policy => policy.RequireAuthenticatedUser() // all authenticated users are employees
+        policy =>
+            policy
+                .AddAuthenticationSchemes(NegotiateDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
     );
     options.AddPolicy(
         "ManagerPolicy",

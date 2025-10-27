@@ -21,6 +21,7 @@ namespace SkillManager.Web.Pages.Skills
         public string Username { get; set; } = "";
         public string UserId { get; set; } = "";
         public string DebugInfo { get; set; } = "";
+        public string UserRole { get; set; } = " ";
 
         public async Task OnGetAsync()
         {
@@ -36,6 +37,8 @@ namespace SkillManager.Web.Pages.Skills
             Console.WriteLine(claimsJson);
 
             // Simple UID extraction
+            UserRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "No role";
+
             var uidClaim = User.Claims.FirstOrDefault(c => c.Type == "uid");
             if (uidClaim != null && int.TryParse(uidClaim.Value, out int userId))
             {
