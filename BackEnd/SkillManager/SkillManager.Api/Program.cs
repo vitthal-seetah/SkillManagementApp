@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AppManagement.Application;
 using AppManagement.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Negotiate;
@@ -6,18 +7,44 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
+    options.AddPolicy(
+        "EmployeePolicy",
+        policy => policy.RequireAuthenticatedUser() // all authenticated users are employees
+    );
+    options.AddPolicy(
+        "ManagerPolicy",
+        policy =>
+            policy.RequireAssertion(context =>
+                context.User.HasClaim(c =>
+                    c.Type == ClaimTypes.Role && (c.Value == "Manager" || c.Value == "Admin")
+                ) // Admin inherits Manager
+            )
+    );
 
-    options.AddPolicy("EmployeePolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Employee"));
+    options.AddPolicy(
+        "AdminPolicy",
+        policy =>
+            policy.RequireAssertion(context =>
+                context.User.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "Admin")
+            )
+    );
 
-    options.AddPolicy("ManagerPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Manager"));
-
-    options.AddPolicy("TechLeadPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "TechLead"));
+    options.AddPolicy(
+        "TechLeadPolicy",
+        policy =>
+            policy.RequireAssertion(context =>
+                context.User.HasClaim(c =>
+                    c.Type == ClaimTypes.Role
+                    && (c.Value == "TechLead" || c.Value == "Manager" || c.Value == "Admin")
+                )
+            )
+    );
 });
 
 builder.Services.AddCors(options =>

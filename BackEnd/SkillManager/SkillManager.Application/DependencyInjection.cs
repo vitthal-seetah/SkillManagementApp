@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SkillManager.Infrastructure.Abstractions.Services;
-using SkillManager.Infrastructure.Services;
+using SkillManager.Application.Interfaces.Services;
+using SkillManager.Application.Services;
 
 namespace AppManagement.Application;
 
@@ -9,6 +9,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IUserSkillService, UserSkillService>();
+        services.AddScoped<IUserService, UserService>();
         return services;
     }
 }

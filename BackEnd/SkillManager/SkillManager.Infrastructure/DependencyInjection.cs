@@ -1,16 +1,9 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using SkillManager.Application.Abstractions.Identity;
-using SkillManager.Domain.Entities;
-using SkillManager.Infrastructure.Abstractions.Repository;
+using SkillManager.Application.Interfaces.Repositories;
 using SkillManager.Infrastructure.Identity.AppDbContext;
-using SkillManager.Infrastructure.Identity.Services;
 using SkillManager.Infrastructure.Persistence.Repositories;
 using SkillManager.Infrastructure.Repositories;
 
@@ -33,8 +26,6 @@ public static class DependencyInjection
         // --------------------------
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserSkillRepository, UserSkillRepository>();
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IClaimsTransformation, RoleClaimsTransformer>();
 
         return services;

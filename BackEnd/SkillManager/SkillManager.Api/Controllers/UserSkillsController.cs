@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SkillManager.Infrastructure.Abstractions.Services;
+using SkillManager.Application.Interfaces.Services;
 using SkillManager.Infrastructure.DTOs.Skill;
 
 namespace SkillManager.API.Controllers;
@@ -20,8 +20,9 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     // USER: View their own skills
     // -------------------------
-    [Authorize(Roles = "Admin,Manager,Tech Lead,SME")]
+
     [HttpGet("MySkills")]
+    [Authorize(Policy = "EmployeePolicy")]
     public async Task<IActionResult> GetMySkills()
     {
         if (!TryGetCurrentUserId(out int userId))
@@ -34,7 +35,7 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     // USER: Add a skill for themselves
     // -------------------------
-    [Authorize(Roles = "Admin,Manager,Tech Lead,SME")]
+    [Authorize(Policy = "EmployeePolicy")]
     [HttpPost("AddSkill")]
     public async Task<IActionResult> AddSkill([FromBody] AddUserSkillDto dto)
     {
@@ -55,7 +56,7 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     // USER: Update a skill for themselves
     // -------------------------
-    [Authorize(Roles = "Admin,Manager,Tech Lead,SME")]
+    [Authorize(Policy = "EmployeePolicy")]
     [HttpPut("UpdateSkill")]
     public async Task<IActionResult> UpdateSkill([FromBody] UpdateUserSkillsDto dto)
     {
@@ -76,7 +77,7 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     // LEADER / ADMIN: View all user skills
     // -------------------------
-    [Authorize(Roles = "Leader,Admin")]
+    [Authorize(Policy = "TechLeadPolicy")]
     [HttpGet("AllSkills")]
     public async Task<IActionResult> GetAllSkills()
     {
@@ -87,18 +88,21 @@ public class UserSkillsController : ControllerBase
     // -------------------------
     // LEADER / ADMIN: Filter users by skill name
     // -------------------------
-    [Authorize(Roles = "Leader,Admin,Manager")]
+    [Authorize(Policy = "TechLeadPolicy")]
     [HttpGet("FilterBySkill")]
     public async Task<IActionResult> FilterBySkill([FromQuery] string skillName)
     {
-        var skills = await _userSkillService.FilterBySkillAsync(skillName);
-        return Ok(skills);
+        if (string.IsNullOrWhiteSpace(skillName))
+            return BadRequest(new { message = "Skill name is required" });
+
+        var userSkills = await _userSkillService.FilterBySkillAsync(skillName);
+        return Ok(userSkills);
     }
 
     // -------------------------
     // ADMIN ONLY: Delete a user skill
     // -------------------------
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "ManagerPolicy")]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteSkill(int id)
     {

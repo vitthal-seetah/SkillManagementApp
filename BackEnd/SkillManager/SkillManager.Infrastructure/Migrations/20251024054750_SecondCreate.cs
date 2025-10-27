@@ -14,7 +14,8 @@ namespace SkillManager.Infrastructure.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Skills_SubCategories_SubCategoryId",
-                table: "Skills");
+                table: "Skills"
+            );
 
             migrationBuilder.InsertData(
                 table: "Categories",
@@ -26,8 +27,9 @@ namespace SkillManager.Infrastructure.Migrations
                     { 3, 1, "CONNAISSANCE APPLI AMC" },
                     { 4, 1, "TECHNIQUES DE PROGRAMMATION" },
                     { 5, 2, "GESTION DE PROJET" },
-                    { 6, 2, "AUTRES COMPETENCES" }
-                });
+                    { 6, 2, "AUTRES COMPETENCES" },
+                }
+            );
 
             migrationBuilder.InsertData(
                 table: "Levels",
@@ -37,8 +39,9 @@ namespace SkillManager.Infrastructure.Migrations
                     { 1, "Notion", 1 },
                     { 2, "Pratique", 2 },
                     { 3, "Maitrise", 3 },
-                    { 4, "Expert", 4 }
-                });
+                    { 4, "Expert", 4 },
+                }
+            );
 
             migrationBuilder.InsertData(
                 table: "SubCategories",
@@ -77,13 +80,15 @@ namespace SkillManager.Infrastructure.Migrations
                     { 30, 4, "ETL" },
                     { 31, 4, "Supervision / Monitoring" },
                     { 32, 4, "Paramétrage progiciel" },
-                    { 33, 6, "Communication" }
-                });
+                    { 33, 6, "Communication" },
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_Name",
                 table: "Categories",
-                column: "Name");
+                column: "Name"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Skills_SubCategories_SubCategoryId",
@@ -91,7 +96,8 @@ namespace SkillManager.Infrastructure.Migrations
                 column: "SubCategoryId",
                 principalTable: "SubCategories",
                 principalColumn: "SubCategoryId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
 
         /// <inheritdoc />
@@ -99,226 +105,228 @@ namespace SkillManager.Infrastructure.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Skills_SubCategories_SubCategoryId",
-                table: "Skills");
+                table: "Skills"
+            );
 
-            migrationBuilder.DropIndex(
-                name: "IX_Categories_Name",
-                table: "Categories");
+            migrationBuilder.DropIndex(name: "IX_Categories_Name", table: "Categories");
 
-            migrationBuilder.DeleteData(
-                table: "Categories",
-                keyColumn: "CategoryId",
-                keyValue: 5);
+            migrationBuilder.DeleteData(table: "Categories", keyColumn: "CategoryId", keyValue: 5);
 
-            migrationBuilder.DeleteData(
-                table: "Levels",
-                keyColumn: "LevelId",
-                keyValue: 1);
+            migrationBuilder.DeleteData(table: "Levels", keyColumn: "LevelId", keyValue: 1);
 
-            migrationBuilder.DeleteData(
-                table: "Levels",
-                keyColumn: "LevelId",
-                keyValue: 2);
+            migrationBuilder.DeleteData(table: "Levels", keyColumn: "LevelId", keyValue: 2);
 
-            migrationBuilder.DeleteData(
-                table: "Levels",
-                keyColumn: "LevelId",
-                keyValue: 3);
+            migrationBuilder.DeleteData(table: "Levels", keyColumn: "LevelId", keyValue: 3);
 
-            migrationBuilder.DeleteData(
-                table: "Levels",
-                keyColumn: "LevelId",
-                keyValue: 4);
+            migrationBuilder.DeleteData(table: "Levels", keyColumn: "LevelId", keyValue: 4);
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 1);
+                keyValue: 1
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 2);
+                keyValue: 2
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 3);
+                keyValue: 3
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 4);
+                keyValue: 4
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 5);
+                keyValue: 5
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 6);
+                keyValue: 6
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 7);
+                keyValue: 7
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 8);
+                keyValue: 8
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 9);
+                keyValue: 9
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 10);
+                keyValue: 10
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 11);
+                keyValue: 11
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 12);
+                keyValue: 12
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 13);
+                keyValue: 13
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 14);
+                keyValue: 14
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 15);
+                keyValue: 15
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 16);
+                keyValue: 16
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 17);
+                keyValue: 17
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 18);
+                keyValue: 18
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 19);
+                keyValue: 19
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 20);
+                keyValue: 20
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 21);
+                keyValue: 21
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 22);
+                keyValue: 22
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 23);
+                keyValue: 23
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 24);
+                keyValue: 24
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 25);
+                keyValue: 25
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 26);
+                keyValue: 26
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 27);
+                keyValue: 27
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 28);
+                keyValue: 28
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 29);
+                keyValue: 29
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 30);
+                keyValue: 30
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 31);
+                keyValue: 31
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 32);
+                keyValue: 32
+            );
 
             migrationBuilder.DeleteData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryId",
-                keyValue: 33);
+                keyValue: 33
+            );
 
-            migrationBuilder.DeleteData(
-                table: "Categories",
-                keyColumn: "CategoryId",
-                keyValue: 1);
+            migrationBuilder.DeleteData(table: "Categories", keyColumn: "CategoryId", keyValue: 1);
 
-            migrationBuilder.DeleteData(
-                table: "Categories",
-                keyColumn: "CategoryId",
-                keyValue: 2);
+            migrationBuilder.DeleteData(table: "Categories", keyColumn: "CategoryId", keyValue: 2);
 
-            migrationBuilder.DeleteData(
-                table: "Categories",
-                keyColumn: "CategoryId",
-                keyValue: 3);
+            migrationBuilder.DeleteData(table: "Categories", keyColumn: "CategoryId", keyValue: 3);
 
-            migrationBuilder.DeleteData(
-                table: "Categories",
-                keyColumn: "CategoryId",
-                keyValue: 4);
+            migrationBuilder.DeleteData(table: "Categories", keyColumn: "CategoryId", keyValue: 4);
 
-            migrationBuilder.DeleteData(
-                table: "Categories",
-                keyColumn: "CategoryId",
-                keyValue: 6);
+            migrationBuilder.DeleteData(table: "Categories", keyColumn: "CategoryId", keyValue: 6);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Skills_SubCategories_SubCategoryId",
@@ -326,7 +334,8 @@ namespace SkillManager.Infrastructure.Migrations
                 column: "SubCategoryId",
                 principalTable: "SubCategories",
                 principalColumn: "SubCategoryId",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Restrict
+            );
         }
     }
 }

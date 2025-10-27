@@ -6,7 +6,5 @@ using System.Threading.Tasks;
 
 namespace SkillManager.Infrastructure.Repositories
 {
-    internal class SkillRepository
-    {
-    }
+    internal class SkillRepository { }
 }
