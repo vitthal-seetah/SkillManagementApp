@@ -6,4 +6,12 @@ using System.Threading.Tasks;
 
 namespace SkillManager.Application.Interfaces.Repositories;
 
-internal interface IReportRepository { }
+public interface IReportRepository {
+
+
+
+
+
+
+
+}
