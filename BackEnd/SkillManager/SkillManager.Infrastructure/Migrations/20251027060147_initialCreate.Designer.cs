@@ -11,8 +11,8 @@ using SkillManager.Infrastructure.Identity.AppDbContext;
 namespace SkillManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251024114353_3rdCreate")]
-    partial class _3rdCreate
+    [Migration("20251027060147_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -794,6 +794,34 @@ namespace SkillManager.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 2,
+                            DeliveryType = "Onshore",
+                            Domain = "DIR",
+                            Eid = "vithal.seetah",
+                            FirstName = "Vitthal",
+                            LastName = "Seetah",
+                            RefId = "Rf001",
+                            RoleId = 1,
+                            Status = "Active",
+                            UtCode = "UT002"
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            DeliveryType = "Onshore",
+                            Domain = "DIR",
+                            Eid = "girish.s.jagroop",
+                            FirstName = "Girish",
+                            LastName = "Jagroop",
+                            RefId = "Rf002",
+                            RoleId = 1,
+                            Status = "Active",
+                            UtCode = "UT003"
+                        });
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.UserRole", b =>
