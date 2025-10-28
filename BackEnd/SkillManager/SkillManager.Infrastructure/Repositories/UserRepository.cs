@@ -28,8 +28,7 @@ namespace SkillManager.Infrastructure.Repositories
         public async Task<User?> GetByIdAsync(int userId)
         {
             return await _context
-                .Users.AsNoTracking()
-                .Include(u => u.Role)
+                .Users.Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
@@ -54,6 +53,16 @@ namespace SkillManager.Infrastructure.Repositories
             existingUser.DeliveryType = user.DeliveryType;
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<UserRole?> GetRoleByNameAsync(string roleName)
+        {
+            if (string.IsNullOrWhiteSpace(roleName))
+                return null;
+
+            return await _context.UserRoles.FirstOrDefaultAsync(r =>
+                r.Name.ToLower() == roleName.ToLower()
+            );
         }
 
         // ------------------------------------------------------

@@ -1,0 +1,283 @@
+﻿@page
+@model SkillManager.Web.Pages.Users.IndexModel
+@{
+    ViewData["Title"] = "User Management";
+    bool isAdmin = Model.Roles.Contains("Admin");
+    bool isManager = Model.Roles.Contains("Manager");
+    bool canEdit = isAdmin || isManager;
+}
+
+<h2 class="mb-3">User Management</h2>
+
+<!-- 🔍 FILTER + SORT CONTROLS -->
+<form method="get" class="row g-3 align-items-end mb-4">
+    <div class="col-auto">
+        <label for="SelectedRole" class="form-label fw-semibold">Filter by Role</label>
+        <select name="SelectedRole" id="SelectedRole" class="form-select" onchange="this.form.submit()">
+            <option value="All" selected="@(Model.SelectedRole == null || Model.SelectedRole == "All")">All Roles</option>
+            <option value="Admin" selected="@(Model.SelectedRole == "Admin")">Admin</option>
+            <option value="Manager" selected="@(Model.SelectedRole == "Manager")">Manager</option>
+            <option value="TechLead" selected="@(Model.SelectedRole == "TechLead")">TechLead</option>
+            <option value="Employee" selected="@(Model.SelectedRole == "Employee")">Employee</option>
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label for="SelectedStatus" class="form-label fw-semibold">Filter by Status</label>
+        <select name="SelectedStatus" id="SelectedStatus" class="form-select" onchange="this.form.submit()">
+            <option value="All" selected="@(Model.SelectedStatus == null || Model.SelectedStatus == "All")">All Statuses</option>
+            @foreach (var value in Enum.GetNames(typeof(SkillManager.Domain.Entities.UserStatus)))
+            {
+                <option value="@value" selected="@(Model.SelectedStatus == value)">@value</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label for="SelectedDelivery" class="form-label fw-semibold">Filter by Delivery Type</label>
+        <select name="SelectedDelivery" id="SelectedDelivery" class="form-select" onchange="this.form.submit()">
+            <option value="All" selected="@(Model.SelectedDelivery == null || Model.SelectedDelivery == "All")">All Types</option>
+            @foreach (var value in Enum.GetNames(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
+            {
+                <option value="@value" selected="@(Model.SelectedDelivery == value)">@value</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label for="SortBy" class="form-label fw-semibold">Sort by</label>
+        <select name="SortBy" id="SortBy" class="form-select" onchange="this.form.submit()">
+            <option value="">Default</option>
+            <option value="FirstNameAsc" selected="@(Model.SortBy == "FirstNameAsc")">First Name (A → Z)</option>
+            <option value="FirstNameDesc" selected="@(Model.SortBy == "FirstNameDesc")">First Name (Z → A)</option>
+            <option value="LastNameAsc" selected="@(Model.SortBy == "LastNameAsc")">Last Name (A → Z)</option>
+            <option value="LastNameDesc" selected="@(Model.SortBy == "LastNameDesc")">Last Name (Z → A)</option>
+            <option value="FullNameAsc" selected="@(Model.SortBy == "FullNameAsc")">Full Name (A → Z)</option>
+            <option value="FullNameDesc" selected="@(Model.SortBy == "FullNameDesc")">Full Name (Z → A)</option>
+            <option value="UTCodeAsc" selected="@(Model.SortBy == "UTCodeAsc")">UT Code (A → Z)</option>
+            <option value="UTCodeDesc" selected="@(Model.SortBy == "UTCodeDesc")">UT Code (Z → A)</option>
+            <option value="RoleAsc" selected="@(Model.SortBy == "RoleAsc")">Role (A → Z)</option>
+            <option value="RoleDesc" selected="@(Model.SortBy == "RoleDesc")">Role (Z → A)</option>
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Apply</button>
+        <a href="/Users/Index" class="btn btn-outline-secondary">Reset</a>
+    </div>
+</form>
+
+<!-- ✅ Success/Error Alerts -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<!-- 👥 USER TABLE -->
+<table class="table table-bordered table-striped align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Status</th>
+            <th>Delivery Type</th>
+            <th>UT Code</th>
+            <th>Ref ID</th>
+            <th>Role</th>
+            @if (canEdit)
+            {
+                <th style="width: 220px;">Actions</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            var rowId = $"row-{user.UserId}";
+            string role = user.RoleName ?? "Employee";
+
+            <tr id="@rowId">
+                <form method="post" asp-page-handler="Save">
+                    <input type="hidden" name="userId" value="@user.UserId" />
+
+                <td>
+                    <input name="firstName" class="form-control" value="@user.FirstName" disabled />
+                </td>
+
+                <td>
+                    <input name="lastName" class="form-control" value="@user.LastName" disabled />
+                </td>
+
+                <td>
+                    <select name="status" class="form-select" disabled>
+                        @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
+                        {
+                            <option value="@value" selected="@(user.Status == (SkillManager.Domain.Entities.UserStatus)value)">
+                                @value
+                            </option>
+                        }
+                    </select>
+                </td>
+
+                <td>
+                    <select name="deliveryType" class="form-select" disabled>
+                        @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
+                        {
+                            <option value="@value" selected="@(user.DeliveryType == (SkillManager.Domain.Entities.Enums.DeliveryType)value)">
+                                @value
+                            </option>
+                        }
+                    </select>
+                </td>
+
+                <td>
+                    @if (isAdmin)
+                    {
+                        <input name="utCode" class="form-control" value="@user.UtCode" disabled />
+                    }
+                    else
+                    {
+                        <input type="hidden" name="utCode" value="@user.UtCode" />
+                        <input class="form-control" value="@user.UtCode" disabled />
+                    }
+                </td>
+
+                <td>
+                    @if (isAdmin)
+                    {
+                        <input name="refId" class="form-control" value="@user.RefId" disabled />
+                    }
+                    else
+                    {
+                        <input type="hidden" name="refId" value="@user.RefId" />
+                        <input class="form-control" value="@user.RefId" disabled />
+                    }
+                </td>
+
+                <td>
+                    @if (isAdmin)
+                    {
+                        <select name="roleName" class="form-select" disabled>
+                            <option value="Employee" selected="@(role == "Employee")">Employee</option>
+                            <option value="TechLead" selected="@(role == "TechLead")">TechLead</option>
+                            <option value="Manager" selected="@(role == "Manager")">Manager</option>
+                            <option value="Admin" selected="@(role == "Admin")">Admin</option>
+                        </select>
+                    }
+                    else
+                    {
+                        <span class="badge @GetRoleBadgeClass(role) px-3 py-2">@role</span>
+                    }
+                </td>
+
+                @if (canEdit)
+                {
+                    <td style="white-space:nowrap;">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="enableEdit('@rowId')">Edit</button>
+                        <button type="submit" class="btn btn-sm btn-success d-none save-btn">Save</button>
+                    </td>
+                }
+                </form>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- 📄 PAGINATION -->
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="User pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-route-PageNumber="@(Model.PageNumber - 1)"
+                   asp-route-SelectedRole="@Model.SelectedRole"
+                   asp-route-SelectedStatus="@Model.SelectedStatus"
+                   asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                   asp-route-SortBy="@Model.SortBy">
+                    Previous
+                </a>
+            </li>
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link"
+                       asp-route-PageNumber="@i"
+                       asp-route-SelectedRole="@Model.SelectedRole"
+                       asp-route-SelectedStatus="@Model.SelectedStatus"
+                       asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                       asp-route-SortBy="@Model.SortBy">
+                        @i
+                    </a>
+                </li>
+            }
+
+            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-route-PageNumber="@(Model.PageNumber + 1)"
+                   asp-route-SelectedRole="@Model.SelectedRole"
+                   asp-route-SelectedStatus="@Model.SelectedStatus"
+                   asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                   asp-route-SortBy="@Model.SortBy">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+}
+
+@section Scripts {
+    <style>
+        .bg-purple {
+            background-color: rebeccapurple !important;
+            color: white !important;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            border-radius: 0.5rem;
+        }
+
+        form.row.g-3 select {
+            min-width: 150px;
+        }
+    </style>
+
+    <script>
+        function enableEdit(rowId) {
+            const row = document.getElementById(rowId);
+            const inputs = row.querySelectorAll("input, select");
+            const saveBtn = row.querySelector(".save-btn");
+
+            const isAdmin = row.querySelector("select[name='roleName']") !== null;
+
+            inputs.forEach(i => {
+                // Admin can edit all; Manager can edit only personal info
+                if (isAdmin || (i.name !== 'utCode' && i.name !== 'refId' && i.name !== 'roleName')) {
+                    i.disabled = false;
+                }
+            });
+
+            saveBtn?.classList.remove("d-none");
+        }
+    </script>
+}
+
+@functions {
+    private string GetRoleBadgeClass(string role)
+    {
+        return role switch
+        {
+            "Admin" => "bg-danger text-white",
+            "Manager" => "bg-primary text-white",
+            "TechLead" => "bg-purple text-white",
+            "Employee" => "bg-success text-white",
+            _ => "bg-secondary text-white"
+        };
+    }
+}
