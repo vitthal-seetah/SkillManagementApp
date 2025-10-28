@@ -9,7 +9,8 @@ namespace SkillManager.Application.Interfaces.Repositories
 {
     public interface ICategoryRepository
     {
-        Task<Category> GetByIdAsync(int id);
+        Task<Category?> GetByIdAsync(int id);
+        Task<SubCategory?> GetSubCategoryByIdAsync(int id);
 
         Task<IEnumerable<Category>> GetAllAsync();
 

@@ -5,11 +5,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="DTOs\Category\**" />
     <Compile Remove="DTOs\SkillSection\**" />
-    <EmbeddedResource Remove="DTOs\Category\**" />
     <EmbeddedResource Remove="DTOs\SkillSection\**" />
-    <None Remove="DTOs\Category\**" />
     <None Remove="DTOs\SkillSection\**" />
   </ItemGroup>
   <ItemGroup>

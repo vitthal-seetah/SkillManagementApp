@@ -6,6 +6,7 @@ using SkillManager.Application.Interfaces.Repositories;
 using SkillManager.Infrastructure.Identity.AppDbContext;
 using SkillManager.Infrastructure.Persistence.Repositories;
 using SkillManager.Infrastructure.Repositories;
+using SkillManager.Infrastructure.Repositories.SkillManager.Infrastructure.Repositories;
 
 namespace AppManagement.Infrastructure;
 
@@ -28,7 +29,8 @@ public static class DependencyInjection
         services.AddScoped<IUserSkillRepository, UserSkillRepository>();
         services.AddScoped<IClaimsTransformation, RoleClaimsTransformer>();
         services.AddScoped<ILevelRepository, LevelRepository>();
-
+        services.AddScoped<ISkillRepository, SkillRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
         return services;
     }
 

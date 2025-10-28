@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SkillManager.Application.Interfaces.Repositories;
 using SkillManager.Application.Interfaces.Repositories.m;
 using SkillManager.Application.Interfaces.Services;
 using SkillManager.Application.Services;
@@ -12,6 +13,7 @@ public static class DependencyInjection
         services.AddScoped<IUserSkillService, UserSkillService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ILevelService, LevelService>();
+        services.AddScoped<ISkillService, SkillService>();
 
         return services;
     }

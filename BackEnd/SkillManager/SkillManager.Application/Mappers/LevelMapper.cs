@@ -10,11 +10,6 @@ namespace SkillManager.Application.Mappers
 {
     public static class LevelMapper
     {
-        public static Level ToLevel(this LevelDto levelDto)
-        {
-            return new Level { Name = levelDto.Name, Points = levelDto.Points };
-        }
-
         public static LevelDto ToLevelDto(this Level level)
         {
             return new LevelDto
