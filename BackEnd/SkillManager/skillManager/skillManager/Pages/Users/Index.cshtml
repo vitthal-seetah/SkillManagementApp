@@ -1,0 +1,177 @@
+﻿@page
+@model SkillManager.Web.Pages.Users.IndexModel
+@{
+    ViewData["Title"] = "User Management";
+    bool isAdmin = Model.Roles.Contains("Admin");
+    bool isManager = Model.Roles.Contains("Manager");
+    bool canEdit = isAdmin || isManager;
+}
+
+<h2 class="mb-3">User Management</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table table-bordered table-striped align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Status</th>
+            <th>Delivery Type</th>
+            <th>UT Code</th>
+            <th>Ref ID</th>
+            <th>Role</th>
+            @if (canEdit)
+            {
+                <th style="width: 220px;">Actions</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            var rowId = $"row-{user.UserId}";
+            string role = user.RoleName ?? "Employee";
+
+            <tr id="@rowId">
+                <form method="post" asp-page-handler="Save">
+                    <input type="hidden" name="userId" value="@user.UserId" />
+
+                <td>
+                    <input name="firstName" class="form-control" value="@user.FirstName" disabled />
+                </td>
+
+                <td>
+                    <input name="lastName" class="form-control" value="@user.LastName" disabled />
+                </td>
+
+                <td>
+                    <select name="status" class="form-select" disabled>
+                        @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
+                        {
+                            <option value="@value" selected="@(user.Status == (SkillManager.Domain.Entities.UserStatus)value)">
+                                @value
+                            </option>
+                        }
+                    </select>
+                </td>
+
+                <td>
+                    <select name="deliveryType" class="form-select" disabled>
+                        @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
+                        {
+                            <option value="@value" selected="@(user.DeliveryType == (SkillManager.Domain.Entities.Enums.DeliveryType)value)">
+                                @value
+                            </option>
+                        }
+                    </select>
+                </td>
+
+                <td>
+                    @if (isAdmin)
+                    {
+                        <input name="utCode" class="form-control" value="@user.UtCode" disabled />
+                    }
+                    else
+                    {
+                        <!-- Managers & others: input disabled & not posted -->
+                        <input type="hidden" name="utCode" value="@user.UtCode" />
+                        <input class="form-control" value="@user.UtCode" disabled />
+                    }
+                </td>
+
+                <td>
+                    @if (isAdmin)
+                    {
+                        <input name="refId" class="form-control" value="@user.RefId" disabled />
+                    }
+                    else
+                    {
+                        <!-- Managers & others: input disabled & not posted -->
+                        <input type="hidden" name="refId" value="@user.RefId" />
+                        <input class="form-control" value="@user.RefId" disabled />
+                    }
+                </td>
+
+                <td>
+                    @if (isAdmin)
+                    {
+                        <select name="roleName" class="form-select" disabled>
+                            <option value="Employee" selected="@(role == "Employee")">Employee</option>
+                            <option value="TechLead" selected="@(role == "TechLead")">TechLead</option>
+                            <option value="Manager" selected="@(role == "Manager")">Manager</option>
+                            <option value="Admin" selected="@(role == "Admin")">Admin</option>
+                        </select>
+                    }
+                    else
+                    {
+                        <span class="badge @GetRoleBadgeClass(role) px-3 py-2">@role</span>
+                    }
+                </td>
+
+                @if (canEdit)
+                {
+                    <td style="white-space:nowrap;">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="enableEdit('@rowId')">Edit</button>
+                        <button type="submit" class="btn btn-sm btn-success d-none save-btn">Save</button>
+                    </td>
+                }
+                </form>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <style>
+        .bg-purple {
+            background-color: rebeccapurple !important;
+            color: white !important;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+
+    <script>
+        function enableEdit(rowId) {
+            const row = document.getElementById(rowId);
+            const inputs = row.querySelectorAll("input, select");
+            const saveBtn = row.querySelector(".save-btn");
+
+            const isAdmin = row.querySelector("select[name='roleName']") !== null;
+
+            inputs.forEach(i => {
+                // Admin can edit all; Manager can edit only personal info
+                if (isAdmin || (i.name !== 'utCode' && i.name !== 'refId' && i.name !== 'roleName')) {
+                    i.disabled = false;
+                }
+            });
+
+            saveBtn?.classList.remove("d-none");
+        }
+    </script>
+}
+
+@functions {
+    private string GetRoleBadgeClass(string role)
+    {
+        return role switch
+        {
+            "Admin" => "bg-danger text-white",
+            "Manager" => "bg-primary text-white",
+            "TechLead" => "bg-purple text-white",
+            "Employee" => "bg-success text-white",
+            _ => "bg-secondary text-white"
+        };
+    }
+}

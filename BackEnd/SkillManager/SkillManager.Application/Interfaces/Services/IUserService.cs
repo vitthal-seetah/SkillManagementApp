@@ -21,4 +21,5 @@ public interface IUserService
         string? status = null,
         string? deliveryType = null
     );
+    Task<bool> UpdateUserRoleAsync(int userId, string roleName);
 }

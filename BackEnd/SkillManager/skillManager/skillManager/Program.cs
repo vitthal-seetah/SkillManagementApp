@@ -1,49 +1,44 @@
-using System;
 using System.Security.Claims;
-using FluentAssertions.Common;
+using AppManagement.Application;
+using AppManagement.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Negotiate;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using SkillManager.Application.Interfaces.Repositories;
-using SkillManager.Application.Interfaces.Services;
-using SkillManager.Application.Services;
-using SkillManager.Infrastructure.Identity.AppDbContext;
-using SkillManager.Infrastructure.Persistence.Repositories;
-using SkillManager.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// --------------------
+// Application & Infrastructure
+// --------------------
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// --------------------
+// Add Razor Pages
+// --------------------
 builder.Services.AddRazorPages();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
-// Repositories
-builder.Services.AddScoped<IUserSkillRepository, UserSkillRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IClaimsTransformation, RoleClaimsTransformer>();
-
-// Services
-builder.Services.AddScoped<IUserSkillService, UserSkillService>();
+// --------------------
+// Windows Authentication
+// --------------------
 builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
 
+// --------------------
+// Authorization policies
+// --------------------
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(
         "EmployeePolicy",
         policy => policy.RequireAuthenticatedUser() // all authenticated users are employees
     );
+
     options.AddPolicy(
         "ManagerPolicy",
         policy =>
             policy.RequireAssertion(context =>
                 context.User.HasClaim(c =>
                     c.Type == ClaimTypes.Role && (c.Value == "Manager" || c.Value == "Admin")
-                ) // Admin inherits Manager
+                )
             )
     );
 
@@ -66,38 +61,54 @@ builder.Services.AddAuthorization(options =>
             )
     );
 });
-builder
-    .Services.AddHttpClient(
-        "MyApi",
-        client =>
-        {
-            client.BaseAddress = new Uri("https://localhost:44366/api/"); // your API URL
-        }
-    )
-    .ConfigurePrimaryHttpMessageHandler(() =>
-        new HttpClientHandler
-        {
-            UseDefaultCredentials = true, // passes Windows Auth credentials
-        }
-    );
 
+// --------------------
+// CORS (optional for intranet scenarios)
+// --------------------
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("all", policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
+
+// --------------------
+// Build the app
+// --------------------
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --------------------
+// Middleware
+// --------------------
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
+app.UseCors("all");
 
 app.UseAuthentication();
+
+// Claims transformation (optional, if you have RoleClaimsTransformer)
+app.Use(
+    async (context, next) =>
+    {
+        if (context.User.Identity?.IsAuthenticated == true)
+        {
+            var transformer = context.RequestServices.GetRequiredService<IClaimsTransformation>();
+            context.User = await transformer.TransformAsync(context.User);
+        }
+        await next();
+    }
+);
+
 app.UseAuthorization();
+
+// --------------------
+// Map Razor Pages
+// --------------------
 app.MapRazorPages();
 
 app.Run();

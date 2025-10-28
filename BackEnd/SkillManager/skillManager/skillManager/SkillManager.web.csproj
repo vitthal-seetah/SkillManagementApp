@@ -5,16 +5,23 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Pages\Manager\" />
-    <Folder Include="Pages\Employee\" />
-    <Folder Include="Pages\TechLead\" />
+    <Compile Remove="Pages\Employee\**" />
+    <Compile Remove="Pages\Manager\**" />
+    <Compile Remove="Pages\TechLead\**" />
+    <Content Remove="Pages\Employee\**" />
+    <Content Remove="Pages\Manager\**" />
+    <Content Remove="Pages\TechLead\**" />
+    <EmbeddedResource Remove="Pages\Employee\**" />
+    <EmbeddedResource Remove="Pages\Manager\**" />
+    <EmbeddedResource Remove="Pages\TechLead\**" />
+    <None Remove="Pages\Employee\**" />
+    <None Remove="Pages\Manager\**" />
+    <None Remove="Pages\TechLead\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.8.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SkillManager.Api\SkillManager.Api.csproj" />
-    <ProjectReference Include="..\..\SkillManager.Application.UnitTest\SkillManager.Application.UnitTest.csproj" />
     <ProjectReference Include="..\..\SkillManager.Application\SkillManager.Application.csproj" />
     <ProjectReference Include="..\..\SkillManager.Domain\SkillManager.Domain.csproj" />
     <ProjectReference Include="..\..\SkillManager.Infrastructure\SkillManager.Infrastructure.csproj" />

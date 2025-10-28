@@ -1,4 +1,5 @@
-﻿using SkillManager.Application.DTOs.User;
+﻿using System.Data;
+using SkillManager.Application.DTOs.User;
 using SkillManager.Application.Interfaces.Repositories;
 using SkillManager.Application.Interfaces.Services;
 using SkillManager.Domain.Entities;
@@ -21,7 +22,6 @@ public sealed class UserService : IUserService
     public async Task<IEnumerable<UserDto>> GetAllAsync()
     {
         var users = await _userRepository.GetAllAsync();
-
         return users.Select(u => MapToDto(u));
     }
 
@@ -43,15 +43,28 @@ public sealed class UserService : IUserService
         if (user == null)
             return false;
 
-        user.UtCode = utCode;
-        user.RefId = refId;
+        bool changed = false;
 
-        await _userRepository.UpdateAsync(user);
-        return true;
+        if (user.UtCode != utCode)
+        {
+            user.UtCode = utCode;
+            changed = true;
+        }
+
+        if (user.RefId != refId)
+        {
+            user.RefId = refId;
+            changed = true;
+        }
+
+        if (changed)
+            await _userRepository.UpdateAsync(user);
+
+        return changed;
     }
 
     // -----------------------------
-    // Manager: Update personal info and status/delivery
+    // Manager/Admin: Update personal info and status/delivery
     // -----------------------------
     public async Task<bool> UpdateUserDetailsAsync(
         int userId,
@@ -65,15 +78,30 @@ public sealed class UserService : IUserService
         if (user == null)
             return false;
 
-        user.FirstName = firstName;
-        user.LastName = lastName;
+        bool changed = false;
+
+        if (user.FirstName != firstName)
+        {
+            user.FirstName = firstName;
+            changed = true;
+        }
+
+        if (user.LastName != lastName)
+        {
+            user.LastName = lastName;
+            changed = true;
+        }
 
         if (
             !string.IsNullOrEmpty(status)
             && Enum.TryParse(status, true, out UserStatus parsedStatus)
         )
         {
-            user.Status = parsedStatus;
+            if (user.Status != parsedStatus)
+            {
+                user.Status = parsedStatus;
+                changed = true;
+            }
         }
 
         if (
@@ -81,11 +109,44 @@ public sealed class UserService : IUserService
             && Enum.TryParse(deliveryType, true, out DeliveryType parsedDelivery)
         )
         {
-            user.DeliveryType = parsedDelivery;
+            if (user.DeliveryType != parsedDelivery)
+            {
+                user.DeliveryType = parsedDelivery;
+                changed = true;
+            }
         }
 
+        if (changed)
+            await _userRepository.UpdateAsync(user);
+
+        return changed;
+    }
+
+    // -----------------------------
+    // Admin: Update role
+    // -----------------------------
+    public async Task<bool> UpdateUserRoleAsync(int userId, string roleName)
+    {
+        if (string.IsNullOrWhiteSpace(roleName))
+            return false;
+
+        var role = await _userRepository.GetRoleByNameAsync(roleName);
+        if (role == null)
+            return false;
+
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            return false;
+
+        if (user.RoleId == role.RoleId)
+            return false; // no change
+
+        user.RoleId = role.RoleId;
         await _userRepository.UpdateAsync(user);
-        return true;
+
+        // Reload user to ensure Role navigation property is updated
+        var updatedUser = await _userRepository.GetByIdAsync(userId);
+        return updatedUser.RoleId == role.RoleId;
     }
 
     // -----------------------------
@@ -100,7 +161,7 @@ public sealed class UserService : IUserService
             LastName = u.LastName,
             UtCode = u.UtCode,
             RefId = u.RefId ?? string.Empty,
-            RoleName = u.Role?.Name ?? string.Empty,
+            RoleName = u.Role?.Name ?? string.Empty, // correctly included
             Domain = u.Domain,
             Eid = u.Eid,
             Status = u.Status,
