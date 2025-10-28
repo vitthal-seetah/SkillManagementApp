@@ -9,6 +9,65 @@
 
 <h2 class="mb-3">User Management</h2>
 
+<!-- 🔍 FILTER + SORT CONTROLS -->
+<form method="get" class="row g-3 align-items-end mb-4">
+    <div class="col-auto">
+        <label for="SelectedRole" class="form-label fw-semibold">Filter by Role</label>
+        <select name="SelectedRole" id="SelectedRole" class="form-select" onchange="this.form.submit()">
+            <option value="All" selected="@(Model.SelectedRole == null || Model.SelectedRole == "All")">All Roles</option>
+            <option value="Admin" selected="@(Model.SelectedRole == "Admin")">Admin</option>
+            <option value="Manager" selected="@(Model.SelectedRole == "Manager")">Manager</option>
+            <option value="TechLead" selected="@(Model.SelectedRole == "TechLead")">TechLead</option>
+            <option value="Employee" selected="@(Model.SelectedRole == "Employee")">Employee</option>
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label for="SelectedStatus" class="form-label fw-semibold">Filter by Status</label>
+        <select name="SelectedStatus" id="SelectedStatus" class="form-select" onchange="this.form.submit()">
+            <option value="All" selected="@(Model.SelectedStatus == null || Model.SelectedStatus == "All")">All Statuses</option>
+            @foreach (var value in Enum.GetNames(typeof(SkillManager.Domain.Entities.UserStatus)))
+            {
+                <option value="@value" selected="@(Model.SelectedStatus == value)">@value</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label for="SelectedDelivery" class="form-label fw-semibold">Filter by Delivery Type</label>
+        <select name="SelectedDelivery" id="SelectedDelivery" class="form-select" onchange="this.form.submit()">
+            <option value="All" selected="@(Model.SelectedDelivery == null || Model.SelectedDelivery == "All")">All Types</option>
+            @foreach (var value in Enum.GetNames(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
+            {
+                <option value="@value" selected="@(Model.SelectedDelivery == value)">@value</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label for="SortBy" class="form-label fw-semibold">Sort by</label>
+        <select name="SortBy" id="SortBy" class="form-select" onchange="this.form.submit()">
+            <option value="">Default</option>
+            <option value="FirstNameAsc" selected="@(Model.SortBy == "FirstNameAsc")">First Name (A → Z)</option>
+            <option value="FirstNameDesc" selected="@(Model.SortBy == "FirstNameDesc")">First Name (Z → A)</option>
+            <option value="LastNameAsc" selected="@(Model.SortBy == "LastNameAsc")">Last Name (A → Z)</option>
+            <option value="LastNameDesc" selected="@(Model.SortBy == "LastNameDesc")">Last Name (Z → A)</option>
+            <option value="FullNameAsc" selected="@(Model.SortBy == "FullNameAsc")">Full Name (A → Z)</option>
+            <option value="FullNameDesc" selected="@(Model.SortBy == "FullNameDesc")">Full Name (Z → A)</option>
+            <option value="UTCodeAsc" selected="@(Model.SortBy == "UTCodeAsc")">UT Code (A → Z)</option>
+            <option value="UTCodeDesc" selected="@(Model.SortBy == "UTCodeDesc")">UT Code (Z → A)</option>
+            <option value="RoleAsc" selected="@(Model.SortBy == "RoleAsc")">Role (A → Z)</option>
+            <option value="RoleDesc" selected="@(Model.SortBy == "RoleDesc")">Role (Z → A)</option>
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Apply</button>
+        <a href="/Users/Index" class="btn btn-outline-secondary">Reset</a>
+    </div>
+</form>
+
+<!-- ✅ Success/Error Alerts -->
 @if (TempData["Success"] != null)
 {
     <div class="alert alert-success">@TempData["Success"]</div>
@@ -18,6 +77,7 @@
     <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
+<!-- 👥 USER TABLE -->
 <table class="table table-bordered table-striped align-middle">
     <thead class="table-dark">
         <tr>
@@ -81,7 +141,6 @@
                     }
                     else
                     {
-                        <!-- Managers & others: input disabled & not posted -->
                         <input type="hidden" name="utCode" value="@user.UtCode" />
                         <input class="form-control" value="@user.UtCode" disabled />
                     }
@@ -94,7 +153,6 @@
                     }
                     else
                     {
-                        <!-- Managers & others: input disabled & not posted -->
                         <input type="hidden" name="refId" value="@user.RefId" />
                         <input class="form-control" value="@user.RefId" disabled />
                     }
@@ -129,6 +187,50 @@
     </tbody>
 </table>
 
+<!-- 📄 PAGINATION -->
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="User pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-route-PageNumber="@(Model.PageNumber - 1)"
+                   asp-route-SelectedRole="@Model.SelectedRole"
+                   asp-route-SelectedStatus="@Model.SelectedStatus"
+                   asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                   asp-route-SortBy="@Model.SortBy">
+                    Previous
+                </a>
+            </li>
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link"
+                       asp-route-PageNumber="@i"
+                       asp-route-SelectedRole="@Model.SelectedRole"
+                       asp-route-SelectedStatus="@Model.SelectedStatus"
+                       asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                       asp-route-SortBy="@Model.SortBy">
+                        @i
+                    </a>
+                </li>
+            }
+
+            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-route-PageNumber="@(Model.PageNumber + 1)"
+                   asp-route-SelectedRole="@Model.SelectedRole"
+                   asp-route-SelectedStatus="@Model.SelectedStatus"
+                   asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                   asp-route-SortBy="@Model.SortBy">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+}
+
 @section Scripts {
     <style>
         .bg-purple {
@@ -139,6 +241,10 @@
         .badge {
             font-size: 0.9rem;
             border-radius: 0.5rem;
+        }
+
+        form.row.g-3 select {
+            min-width: 150px;
         }
     </style>
 

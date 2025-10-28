@@ -22,15 +22,70 @@ public class IndexModel : PageModel
     public string FullName { get; set; } = "";
     public List<string> Roles { get; set; } = new();
 
+    // --- Filtering & Sorting ---
+    [BindProperty(SupportsGet = true)]
+    public string? SelectedRole { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string? SelectedStatus { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string? SelectedDelivery { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string? SortBy { get; set; }
+
+    // --- Pagination ---
+    [BindProperty(SupportsGet = true)]
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
+    public int TotalPages { get; set; }
+
     public async Task OnGetAsync()
     {
         FullName = User.Identity?.Name ?? "Unavailable";
         Username = FullName.Contains('\\') ? FullName.Split('\\').Last() : FullName;
         Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
-        Users = await _userService.GetAllAsync();
+
+        var allUsers = await _userService.GetAllAsync();
+
+        // --- Filters ---
+        if (!string.IsNullOrWhiteSpace(SelectedRole) && SelectedRole != "All")
+            allUsers = allUsers.Where(u =>
+                string.Equals(u.RoleName, SelectedRole, StringComparison.OrdinalIgnoreCase)
+            );
+
+        if (!string.IsNullOrWhiteSpace(SelectedStatus) && SelectedStatus != "All")
+            allUsers = allUsers.Where(u => u.Status.ToString() == SelectedStatus);
+
+        if (!string.IsNullOrWhiteSpace(SelectedDelivery) && SelectedDelivery != "All")
+            allUsers = allUsers.Where(u => u.DeliveryType.ToString() == SelectedDelivery);
+
+        // --- Sorting ---
+        allUsers = SortBy switch
+        {
+            "FirstNameAsc" => allUsers.OrderBy(u => u.FirstName),
+            "FirstNameDesc" => allUsers.OrderByDescending(u => u.FirstName),
+            "LastNameAsc" => allUsers.OrderBy(u => u.LastName),
+            "LastNameDesc" => allUsers.OrderByDescending(u => u.LastName),
+            "FullNameAsc" => allUsers.OrderBy(u => $"{u.FirstName} {u.LastName}"),
+            "FullNameDesc" => allUsers.OrderByDescending(u => $"{u.FirstName} {u.LastName}"),
+            "UTCodeAsc" => allUsers.OrderBy(u => u.UtCode),
+            "UTCodeDesc" => allUsers.OrderByDescending(u => u.UtCode),
+            "RoleAsc" => allUsers.OrderBy(u => u.RoleName),
+            "RoleDesc" => allUsers.OrderByDescending(u => u.RoleName),
+            _ => allUsers,
+        };
+
+        // --- Pagination ---
+        var totalUsers = allUsers.Count();
+        TotalPages = (int)Math.Ceiling(totalUsers / (double)PageSize);
+        PageNumber = Math.Clamp(PageNumber, 1, Math.Max(1, TotalPages));
+
+        Users = allUsers.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToList();
     }
 
-    // Combined Save handler for Admins (updates details + identifiers + role)
+    // --- Save handler ---
     [Authorize(Policy = "AdminPolicy")]
     public async Task<IActionResult> OnPostSaveAsync(
         int userId,
@@ -45,7 +100,6 @@ public class IndexModel : PageModel
     {
         var messages = new List<string>();
 
-        // Update personal details
         var detailsUpdated = await _userService.UpdateUserDetailsAsync(
             userId,
             firstName,
@@ -53,21 +107,17 @@ public class IndexModel : PageModel
             status,
             deliveryType
         );
-
         if (detailsUpdated)
             messages.Add("User details updated successfully.");
 
-        // Update identifiers
         var identifiersUpdated = await _userService.UpdateUserIdentifiersAsync(
             userId,
             utCode,
             refId
         );
-
         if (identifiersUpdated)
             messages.Add("UT Code and Ref ID updated successfully.");
 
-        // Update role (only if roleName provided)
         if (!string.IsNullOrWhiteSpace(roleName))
         {
             var roleUpdated = await _userService.UpdateUserRoleAsync(userId, roleName);
@@ -75,15 +125,20 @@ public class IndexModel : PageModel
                 messages.Add($"Role updated successfully to '{roleName}'.");
         }
 
-        if (messages.Count > 0)
-        {
+        if (messages.Any())
             TempData["Success"] = string.Join(" ", messages);
-        }
         else
-        {
             TempData["Error"] = "No changes were applied or update failed.";
-        }
 
-        return RedirectToPage();
+        return RedirectToPage(
+            new
+            {
+                SelectedRole,
+                SelectedStatus,
+                SelectedDelivery,
+                SortBy,
+                PageNumber,
+            }
+        );
     }
 }
