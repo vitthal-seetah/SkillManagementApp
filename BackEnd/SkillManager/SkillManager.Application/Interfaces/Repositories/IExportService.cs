@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SkillManager.Application.Interfaces.Services
+namespace SkillManager.Application.Interfaces.Repositories
 {
-    internal interface IExportService
-    {
-    }
+    internal interface IExportService { }
 }
