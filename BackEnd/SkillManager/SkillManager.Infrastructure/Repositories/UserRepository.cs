@@ -33,7 +33,7 @@ namespace SkillManager.Infrastructure.Repositories
         }
 
         // ------------------------------------------------------
-        // Update user
+        // Update existing user (including Domain + Eid)
         // ------------------------------------------------------
         public async Task UpdateAsync(User user)
         {
@@ -52,21 +52,63 @@ namespace SkillManager.Infrastructure.Repositories
             existingUser.Status = user.Status;
             existingUser.DeliveryType = user.DeliveryType;
 
+            // -------------------------------
+            // Update Domain and Eid if provided
+            // -------------------------------
+            if (!string.IsNullOrWhiteSpace(user.Domain))
+                existingUser.Domain = user.Domain;
+
+            if (!string.IsNullOrWhiteSpace(user.Eid))
+                existingUser.Eid = user.Eid;
+
             await _context.SaveChangesAsync();
         }
 
+        // ------------------------------------------------------
+        // Get Role by Name
+        // ------------------------------------------------------
         public async Task<UserRole?> GetRoleByNameAsync(string roleName)
         {
             if (string.IsNullOrWhiteSpace(roleName))
                 return null;
 
-            return await _context.UserRoles.FirstOrDefaultAsync(r =>
-                r.Name.ToLower() == roleName.ToLower()
-            );
+            return await _context
+                .UserRoles.AsNoTracking()
+                .FirstOrDefaultAsync(r => r.Name.ToLower() == roleName.ToLower());
         }
 
         // ------------------------------------------------------
-        // Optional: get user by domain + Eid (for Windows Auth)
+        // Get User by UT Code (for preventing duplicates)
+        // ------------------------------------------------------
+        public async Task<User?> GetByUtCodeAsync(string utCode)
+        {
+            if (string.IsNullOrWhiteSpace(utCode))
+                return null;
+
+            return await _context
+                .Users.AsNoTracking()
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.UtCode == utCode);
+        }
+
+        // ------------------------------------------------------
+        // Add New User
+        // ------------------------------------------------------
+        public async Task AddAsync(User user)
+        {
+            await _context.Users.AddAsync(user);
+        }
+
+        // ------------------------------------------------------
+        // Save Changes
+        // ------------------------------------------------------
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        // ------------------------------------------------------
+        // Optional: Get user by Domain + Eid (for Windows Auth)
         // ------------------------------------------------------
         public async Task<User?> GetByDomainAndEidAsync(string domain, string eid)
         {

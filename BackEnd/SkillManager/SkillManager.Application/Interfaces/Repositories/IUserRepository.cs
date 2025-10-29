@@ -8,4 +8,7 @@ public interface IUserRepository
     Task<IEnumerable<User>> GetAllAsync();
     Task UpdateAsync(User user);
     Task<UserRole?> GetRoleByNameAsync(string roleName);
+    Task<User?> GetByUtCodeAsync(string utCode);
+    Task AddAsync(User user);
+    Task SaveChangesAsync();
 }

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -91,6 +92,8 @@ public class IndexModel : PageModel
         int userId,
         string firstName,
         string lastName,
+        string domain,
+        string eid,
         string status,
         string deliveryType,
         string utCode,
@@ -104,6 +107,8 @@ public class IndexModel : PageModel
             userId,
             firstName,
             lastName,
+            domain,
+            eid,
             status,
             deliveryType
         );
@@ -129,6 +134,55 @@ public class IndexModel : PageModel
             TempData["Success"] = string.Join(" ", messages);
         else
             TempData["Error"] = "No changes were applied or update failed.";
+
+        return RedirectToPage(
+            new
+            {
+                SelectedRole,
+                SelectedStatus,
+                SelectedDelivery,
+                SortBy,
+                PageNumber,
+            }
+        );
+    }
+
+    [Authorize(Policy = "AdminPolicy")]
+    public async Task<IActionResult> OnPostCreateAsync(
+        string firstName,
+        string lastName,
+        string domain,
+        string eid,
+        string status,
+        string deliveryType,
+        string utCode,
+        string refId,
+        string roleName
+    )
+    {
+        try
+        {
+            var created = await _userService.CreateUserAsync(
+                firstName,
+                lastName,
+                domain,
+                eid,
+                status,
+                deliveryType,
+                utCode,
+                refId,
+                roleName
+            );
+
+            if (created)
+                TempData["Success"] = $"User '{firstName} {lastName}' created successfully.";
+            else
+                TempData["Error"] = "Failed to create user. Please check input data.";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"An error occurred: {ex.Message}";
+        }
 
         return RedirectToPage(
             new
