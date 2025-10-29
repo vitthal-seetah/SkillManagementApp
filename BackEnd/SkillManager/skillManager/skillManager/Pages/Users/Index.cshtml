@@ -163,7 +163,7 @@
                 <td>
                     @if (isAdmin)
                     {
-                        <input name="utCode" class="form-control" value="@user.UtCode" />
+                        <input name="utCode" class="form-control" value="@user.UtCode" disabled />
                     }
                     else
                     {
@@ -175,7 +175,7 @@
                 <td>
                     @if (isAdmin)
                     {
-                        <input name="refId" class="form-control" value="@user.RefId" />
+                        <input name="refId" class="form-control" value="@user.RefId" disabled/>
                     }
                     else
                     {
@@ -338,10 +338,11 @@
             const row = document.getElementById(rowId);
             const inputs = row.querySelectorAll("input, select");
             const saveBtn = row.querySelector(".save-btn");
-            const isAdmin = row.querySelector("select[name='roleName']") !== null;
 
+            // Allow editing for all relevant fields — including UTCode and RefId — only after Edit is pressed
             inputs.forEach(i => {
-                if (isAdmin || (i.name !== 'utCode' && i.name !== 'refId' && i.name !== 'roleName')) {
+                // Skip hidden inputs
+                if (i.type !== "hidden") {
                     i.disabled = false;
                 }
             });
@@ -349,6 +350,7 @@
             saveBtn?.classList.remove("d-none");
         }
     </script>
+
 }
 
 @functions {
