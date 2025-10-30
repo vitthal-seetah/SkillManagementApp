@@ -70,6 +70,8 @@ public sealed class UserService : IUserService
         int userId,
         string firstName,
         string lastName,
+        string domain,
+        string eid,
         string? status = null,
         string? deliveryType = null
     )
@@ -80,6 +82,7 @@ public sealed class UserService : IUserService
 
         bool changed = false;
 
+        // Update first & last name
         if (user.FirstName != firstName)
         {
             user.FirstName = firstName;
@@ -92,6 +95,20 @@ public sealed class UserService : IUserService
             changed = true;
         }
 
+        // Update Domain & Eid
+        if (!string.IsNullOrWhiteSpace(domain) && user.Domain != domain)
+        {
+            user.Domain = domain;
+            changed = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(eid) && user.Eid != eid)
+        {
+            user.Eid = eid;
+            changed = true;
+        }
+
+        // Update status
         if (
             !string.IsNullOrEmpty(status)
             && Enum.TryParse(status, true, out UserStatus parsedStatus)
@@ -104,6 +121,7 @@ public sealed class UserService : IUserService
             }
         }
 
+        // Update delivery type
         if (
             !string.IsNullOrEmpty(deliveryType)
             && Enum.TryParse(deliveryType, true, out DeliveryType parsedDelivery)
@@ -147,6 +165,45 @@ public sealed class UserService : IUserService
         // Reload user to ensure Role navigation property is updated
         var updatedUser = await _userRepository.GetByIdAsync(userId);
         return updatedUser.RoleId == role.RoleId;
+    }
+
+    public async Task<bool> CreateUserAsync(
+        string firstName,
+        string lastName,
+        string domain,
+        string eid,
+        string status,
+        string deliveryType,
+        string utCode,
+        string refId,
+        string roleName
+    )
+    {
+        var existing = await _userRepository.GetByUtCodeAsync(utCode);
+        if (existing != null)
+            return false; // prevent duplicate UT Codes
+
+        var userRole = await _userRepository.GetRoleByNameAsync(roleName);
+        if (userRole == null)
+            return false;
+
+        var user = new User
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Domain = domain,
+            Eid = eid,
+            Status = Enum.Parse<UserStatus>(status),
+            DeliveryType = Enum.Parse<DeliveryType>(deliveryType),
+            UtCode = utCode,
+            RefId = refId,
+            RoleId = userRole.RoleId,
+        };
+
+        await _userRepository.AddAsync(user);
+        await _userRepository.SaveChangesAsync();
+
+        return true;
     }
 
     // -----------------------------

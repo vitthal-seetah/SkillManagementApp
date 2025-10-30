@@ -9,6 +9,15 @@
 
 <h2 class="mb-3">User Management</h2>
 
+@if (isAdmin)
+{
+    <div class="mb-3 text-end">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createUserModal">
+            <i class="bi bi-person-plus"></i> Create New User
+        </button>
+    </div>
+}
+
 <!-- 🔍 FILTER + SORT CONTROLS -->
 <form method="get" class="row g-3 align-items-end mb-4">
     <div class="col-auto">
@@ -21,7 +30,6 @@
             <option value="Employee" selected="@(Model.SelectedRole == "Employee")">Employee</option>
         </select>
     </div>
-
     <div class="col-auto">
         <label for="SelectedStatus" class="form-label fw-semibold">Filter by Status</label>
         <select name="SelectedStatus" id="SelectedStatus" class="form-select" onchange="this.form.submit()">
@@ -32,7 +40,6 @@
             }
         </select>
     </div>
-
     <div class="col-auto">
         <label for="SelectedDelivery" class="form-label fw-semibold">Filter by Delivery Type</label>
         <select name="SelectedDelivery" id="SelectedDelivery" class="form-select" onchange="this.form.submit()">
@@ -43,7 +50,6 @@
             }
         </select>
     </div>
-
     <div class="col-auto">
         <label for="SortBy" class="form-label fw-semibold">Sort by</label>
         <select name="SortBy" id="SortBy" class="form-select" onchange="this.form.submit()">
@@ -60,7 +66,6 @@
             <option value="RoleDesc" selected="@(Model.SortBy == "RoleDesc")">Role (Z → A)</option>
         </select>
     </div>
-
     <div class="col-auto">
         <button type="submit" class="btn btn-primary">Apply</button>
         <a href="/Users/Index" class="btn btn-outline-secondary">Reset</a>
@@ -78,61 +83,83 @@
 }
 
 <!-- 👥 USER TABLE -->
-<table class="table table-bordered table-striped align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Status</th>
-            <th>Delivery Type</th>
-            <th>UT Code</th>
-            <th>Ref ID</th>
-            <th>Role</th>
-            @if (canEdit)
+<div class="table-responsive" style="overflow-x:auto; -webkit-overflow-scrolling: touch;">
+    <table class="table table-bordered table-striped align-middle mb-0" style="min-width:1300px;">
+        <thead class="table-dark">
+            <tr>
+                <th style="min-width:140px;">First Name</th>
+                <th style="min-width:140px;">Last Name</th>
+                <th style="min-width:70px;">Domain</th>
+                <th style="min-width:150px;">EID</th>
+                <th style="min-width:140px;">Status</th>
+                <th style="min-width:130px;">Delivery Type</th>
+                <th style="min-width:120px;">UT Code</th>
+                <th style="min-width:120px;">Ref ID</th>
+                <th style="min-width:140px;">Role</th>
+                @if (canEdit)
+                {
+                    <th style="min-width:140px; width:140px;">Actions</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.Users)
             {
-                <th style="width: 220px;">Actions</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model.Users)
-        {
-            var rowId = $"row-{user.UserId}";
-            string role = user.RoleName ?? "Employee";
+                var rowId = $"row-{user.UserId}";
+                string role = user.RoleName ?? "Employee";
 
-            <tr id="@rowId">
-                <form method="post" asp-page-handler="Save">
-                    <input type="hidden" name="userId" value="@user.UserId" />
+                <tr id="@rowId">
+                    <form method="post" asp-page-handler="Save">
+                        <input type="hidden" name="userId" value="@user.UserId" />
 
-                <td>
-                    <input name="firstName" class="form-control" value="@user.FirstName" disabled />
-                </td>
+                    <td><input name="firstName" class="form-control" value="@user.FirstName" disabled /></td>
+                    <td><input name="lastName" class="form-control" value="@user.LastName" disabled /></td>
 
-                <td>
-                    <input name="lastName" class="form-control" value="@user.LastName" disabled />
-                </td>
-
-                <td>
-                    <select name="status" class="form-select" disabled>
-                        @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
+                    <td>
+                        @if (isAdmin)
                         {
-                            <option value="@value" selected="@(user.Status == (SkillManager.Domain.Entities.UserStatus)value)">
-                                @value
-                            </option>
+                            <input name="domain" class="form-control" value="@user.Domain" disabled />
                         }
-                    </select>
-                </td>
-
-                <td>
-                    <select name="deliveryType" class="form-select" disabled>
-                        @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
+                        else
                         {
-                            <option value="@value" selected="@(user.DeliveryType == (SkillManager.Domain.Entities.Enums.DeliveryType)value)">
-                                @value
-                            </option>
+                            <input type="hidden" name="domain" value="@user.Domain" />
+                            <input class="form-control" value="@user.Domain" disabled />
                         }
-                    </select>
-                </td>
+                    </td>
+
+                    <td>
+                        @if (isAdmin)
+                        {
+                            <input name="eid" class="form-control" value="@user.Eid" disabled />
+                        }
+                        else
+                        {
+                            <input type="hidden" name="eid" value="@user.Eid" />
+                            <input class="form-control" value="@user.Eid" disabled />
+                        }
+                    </td>
+
+                    <td>
+                        <select name="status" class="form-select" disabled>
+                            @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
+                            {
+                                <option value="@value" selected="@(user.Status == (SkillManager.Domain.Entities.UserStatus)value)">
+                                    @value
+                                </option>
+                            }
+                        </select>
+                    </td>
+
+                    <td>
+                        <select name="deliveryType" class="form-select" disabled>
+                            @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
+                            {
+                                <option value="@value" selected="@(user.DeliveryType == (SkillManager.Domain.Entities.Enums.DeliveryType)value)">
+                                    @value
+                                </option>
+                            }
+                        </select>
+                    </td>
 
                 <td>
                     @if (isAdmin)
@@ -142,37 +169,37 @@
                     else
                     {
                         <input type="hidden" name="utCode" value="@user.UtCode" />
-                        <input class="form-control" value="@user.UtCode" disabled />
+                        <span class="form-control-plaintext">@user.UtCode</span>
                     }
                 </td>
 
                 <td>
                     @if (isAdmin)
                     {
-                        <input name="refId" class="form-control" value="@user.RefId" disabled />
+                        <input name="refId" class="form-control" value="@user.RefId" disabled/>
                     }
                     else
                     {
                         <input type="hidden" name="refId" value="@user.RefId" />
-                        <input class="form-control" value="@user.RefId" disabled />
+                        <span class="form-control-plaintext">@user.RefId</span>
                     }
                 </td>
 
-                <td>
-                    @if (isAdmin)
-                    {
-                        <select name="roleName" class="form-select" disabled>
-                            <option value="Employee" selected="@(role == "Employee")">Employee</option>
-                            <option value="TechLead" selected="@(role == "TechLead")">TechLead</option>
-                            <option value="Manager" selected="@(role == "Manager")">Manager</option>
-                            <option value="Admin" selected="@(role == "Admin")">Admin</option>
-                        </select>
-                    }
-                    else
-                    {
-                        <span class="badge @GetRoleBadgeClass(role) px-3 py-2">@role</span>
-                    }
-                </td>
+                    <td>
+                        @if (isAdmin)
+                        {
+                            <select name="roleName" class="form-select" disabled>
+                                <option value="Employee" selected="@(role == "Employee")">Employee</option>
+                                <option value="TechLead" selected="@(role == "TechLead")">TechLead</option>
+                                <option value="Manager" selected="@(role == "Manager")">Manager</option>
+                                <option value="Admin" selected="@(role == "Admin")">Admin</option>
+                            </select>
+                        }
+                        else
+                        {
+                            <span class="badge @GetRoleBadgeClass(role) px-3 py-2">@role</span>
+                        }
+                    </td>
 
                 @if (canEdit)
                 {
@@ -187,45 +214,105 @@
     </tbody>
 </table>
 
+<!-- 🧍 CREATE USER MODAL -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="Create">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="createUserLabel">Create New User</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">First Name</label>
+                        <input name="firstName" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Last Name</label>
+                        <input name="lastName" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Domain</label>
+                        <input name="domain" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">EID</label>
+                        <input name="eid" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Status</label>
+                        <select name="status" class="form-select">
+                            @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
+                            {
+                                <option value="@value">@value</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Delivery Type</label>
+                        <select name="deliveryType" class="form-select">
+                            @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
+                            {
+                                <option value="@value">@value</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">UT Code</label>
+                        <input name="utCode" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Ref ID</label>
+                        <input name="refId" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Role</label>
+                        <select name="roleName" class="form-select">
+                            <option value="Employee">Employee</option>
+                            <option value="TechLead">TechLead</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- 📄 PAGINATION -->
 @if (Model.TotalPages > 1)
 {
     <nav aria-label="User pagination" class="mt-4">
         <ul class="pagination justify-content-center">
             <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
-                <a class="page-link"
-                   asp-route-PageNumber="@(Model.PageNumber - 1)"
+                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)"
                    asp-route-SelectedRole="@Model.SelectedRole"
                    asp-route-SelectedStatus="@Model.SelectedStatus"
                    asp-route-SelectedDelivery="@Model.SelectedDelivery"
-                   asp-route-SortBy="@Model.SortBy">
-                    Previous
-                </a>
+                   asp-route-SortBy="@Model.SortBy">Previous</a>
             </li>
-
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
                 <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                    <a class="page-link"
-                       asp-route-PageNumber="@i"
+                    <a class="page-link" asp-route-PageNumber="@i"
                        asp-route-SelectedRole="@Model.SelectedRole"
                        asp-route-SelectedStatus="@Model.SelectedStatus"
                        asp-route-SelectedDelivery="@Model.SelectedDelivery"
-                       asp-route-SortBy="@Model.SortBy">
-                        @i
-                    </a>
+                       asp-route-SortBy="@Model.SortBy">@i</a>
                 </li>
             }
-
             <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
-                <a class="page-link"
-                   asp-route-PageNumber="@(Model.PageNumber + 1)"
+                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)"
                    asp-route-SelectedRole="@Model.SelectedRole"
                    asp-route-SelectedStatus="@Model.SelectedStatus"
                    asp-route-SelectedDelivery="@Model.SelectedDelivery"
-                   asp-route-SortBy="@Model.SortBy">
-                    Next
-                </a>
+                   asp-route-SortBy="@Model.SortBy">Next</a>
             </li>
         </ul>
     </nav>
@@ -247,18 +334,16 @@
             min-width: 150px;
         }
     </style>
-
     <script>
         function enableEdit(rowId) {
             const row = document.getElementById(rowId);
             const inputs = row.querySelectorAll("input, select");
             const saveBtn = row.querySelector(".save-btn");
 
-            const isAdmin = row.querySelector("select[name='roleName']") !== null;
-
+            // Allow editing for all relevant fields — including UTCode and RefId — only after Edit is pressed
             inputs.forEach(i => {
-                // Admin can edit all; Manager can edit only personal info
-                if (isAdmin || (i.name !== 'utCode' && i.name !== 'refId' && i.name !== 'roleName')) {
+                // Skip hidden inputs
+                if (i.type !== "hidden") {
                     i.disabled = false;
                 }
             });
@@ -266,6 +351,7 @@
             saveBtn?.classList.remove("d-none");
         }
     </script>
+
 }
 
 @functions {

@@ -18,8 +18,22 @@ public interface IUserService
         int userId,
         string firstName,
         string lastName,
+        string domain,
+        string eid,
         string? status = null,
         string? deliveryType = null
     );
     Task<bool> UpdateUserRoleAsync(int userId, string roleName);
+
+    Task<bool> CreateUserAsync(
+        string firstName,
+        string lastName,
+        string domain,
+        string eid,
+        string status,
+        string deliveryType,
+        string utCode,
+        string refId,
+        string roleName
+    );
 }
