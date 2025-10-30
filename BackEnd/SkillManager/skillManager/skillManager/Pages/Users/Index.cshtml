@@ -77,9 +77,22 @@
 {
     <div class="alert alert-success">@TempData["Success"]</div>
 }
+
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
 }
 
 <!-- 👥 USER TABLE -->
@@ -112,30 +125,37 @@
                     <form method="post" asp-page-handler="Save">
                         <input type="hidden" name="userId" value="@user.UserId" />
 
-                    <td><input name="firstName" class="form-control" value="@user.FirstName" disabled /></td>
-                    <td><input name="lastName" class="form-control" value="@user.LastName" disabled /></td>
+                    <td><input name="firstName" class="form-control" value="@user.FirstName" disabled /><div class="invalid-feedback"></div></td>
+
+                    <td><input name="lastName" class="form-control" value="@user.LastName" disabled /><div class="invalid-feedback"></div></td>
 
                     <td>
-                        @if (isAdmin)
+                        @if (isAdmin|isManager)
                         {
                             <input name="domain" class="form-control" value="@user.Domain" disabled />
+                    
+                            <div class="invalid-feedback"></div>
                         }
                         else
                         {
                             <input type="hidden" name="domain" value="@user.Domain" />
                             <input class="form-control" value="@user.Domain" disabled />
+                            <div class="invalid-feedback"></div>
                         }
                     </td>
 
                     <td>
-                        @if (isAdmin)
+                        @if (isAdmin | isManager)
                         {
                             <input name="eid" class="form-control" value="@user.Eid" disabled />
+                            <div class="invalid-feedback"></div>
                         }
                         else
                         {
                             <input type="hidden" name="eid" value="@user.Eid" />
                             <input class="form-control" value="@user.Eid" disabled />
+                            <div class="invalid-feedback"></div>
+
                         }
                     </td>
 
@@ -148,10 +168,12 @@
                                 </option>
                             }
                         </select>
+                        <div class="invalid-feedback"></div>
                     </td>
 
                     <td>
                         <select name="deliveryType" class="form-select" disabled>
+                            
                             @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
                             {
                                 <option value="@value" selected="@(user.DeliveryType == (SkillManager.Domain.Entities.Enums.DeliveryType)value)">
@@ -159,12 +181,14 @@
                                 </option>
                             }
                         </select>
+                        <div class="invalid-feedback"></div>
                     </td>
 
                 <td>
                     @if (isAdmin)
                     {
-                        <input name="utCode" class="form-control" value="@user.UtCode" disabled />
+                            <input name="utCode" class="form-control" value="@user.UtCode" disabled />                  
+                            <div class="invalid-feedback"></div>
                     }
                     else
                     {
@@ -176,7 +200,8 @@
                 <td>
                     @if (isAdmin)
                     {
-                        <input name="refId" class="form-control" value="@user.RefId" disabled/>
+                            <input name="refId" class="form-control" value="@user.RefId" disabled />                 
+                            <div class="invalid-feedback"></div>
                     }
                     else
                     {
@@ -189,6 +214,7 @@
                         @if (isAdmin)
                         {
                             <select name="roleName" class="form-select" disabled>
+                                <div class="invalid-feedback"></div>
                                 <option value="Employee" selected="@(role == "Employee")">Employee</option>
                                 <option value="TechLead" selected="@(role == "TechLead")">TechLead</option>
                                 <option value="Manager" selected="@(role == "Manager")">Manager</option>

@@ -3,23 +3,16 @@ using SkillManager.Domain.Entities.Enums;
 
 namespace SkillManager.Application.DTOs.User;
 
-public class UserDto
+public class CreateUserDto
 {
-    public int UserId { get; set; }
-
     public string FirstName { get; set; } = string.Empty;
-
     public string LastName { get; set; } = string.Empty;
-
     public string UtCode { get; set; } = string.Empty;
-
     public string RefId { get; set; } = string.Empty;
-
-    public string RoleName { get; set; } = string.Empty; // Role.Name
-
     public string Domain { get; set; } = string.Empty;
-
     public string Eid { get; set; } = string.Empty;
-    public UserStatus Status { get; set; }
-    public DeliveryType DeliveryType { get; set; }
+
+    public string? Status { get; set; } // <-- string
+    public string? DeliveryType { get; set; } // <-- string
+    public string RoleName { get; set; } = string.Empty;
 }
