@@ -7,13 +7,19 @@
     <title>@ViewData["Title"] - SkillManager</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <!-- Render the Styles section if defined -->
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-primary border-bottom mb-3">
             <div class="container">
                 <!-- Brand on the left -->
-                <a class="navbar-brand" asp-area="" asp-page="/Index">SkillManager</a>
+                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                    <i class="bi bi-diagram-3 me-2"></i>SkillManager
+                </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,10 +29,19 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Index">Home</a>
+                            <a class="nav-link" asp-page="/Index">
+                                <i class="bi bi-house me-1"></i>Home
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Auth/Me">My Profile</a>
+                            <a class="nav-link" asp-page="/Skills/Index">
+                                <i class="bi bi-search me-1"></i>Skills Catalog
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Auth/Me">
+                                <i class="bi bi-person me-1"></i>My Profile
+                            </a>
                         </li>
                     </ul>
 
@@ -39,11 +54,12 @@
                             .Where(c => c.Type == ClaimTypes.Role)
                             .Select(c => c.Value));
 
+                            <i class="bi bi-person-circle me-1"></i>
                             @($"{username} ({roles})")
                         }
                         else
                         {
-                            <text>Not logged in</text>
+                            <text><i class="bi bi-person-x me-1"></i>Not logged in</text>
                         }
                     </span>
                 </div>
@@ -51,7 +67,7 @@
         </nav>
     </header>
 
-    <div class="container">
+    <div class="container-fluid">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -63,7 +79,11 @@
         </div>
     </footer>
 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- Render the Scripts section if defined -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

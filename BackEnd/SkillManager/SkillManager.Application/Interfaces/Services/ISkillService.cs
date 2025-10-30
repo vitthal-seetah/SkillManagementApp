@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SkillManager.Application.DTOs.Skill;
+using SkillManager.Application.Models;
 
 namespace SkillManager.Application.Interfaces.Repositories
 {

@@ -1,5 +1,9 @@
-﻿using SkillManager.Application.Interfaces.Repositories;
+﻿using SkillManager.Application.DTOs.Category;
+using SkillManager.Application.DTOs.Skill;
+using SkillManager.Application.Interfaces.Repositories;
 using SkillManager.Application.Interfaces.Services;
+using SkillManager.Application.Mappers;
+using SkillManager.Application.Models;
 using SkillManager.Domain.Entities;
 using SkillManager.Infrastructure.DTOs.Skill;
 
@@ -9,14 +13,17 @@ namespace SkillManager.Application.Services
     {
         private readonly IUserSkillRepository _userSkillRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
         public UserSkillService(
             IUserSkillRepository userSkillRepository,
-            IUserRepository userRepository
+            IUserRepository userRepository,
+            ICategoryRepository categoryRepository
         )
         {
             _userSkillRepository = userSkillRepository;
             _userRepository = userRepository;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<IEnumerable<UserSkillDto>> GetMySkillsAsync(int userId)
@@ -27,6 +34,31 @@ namespace SkillManager.Application.Services
 
             var skills = await _userSkillRepository.GetUserSkillsAsync(userId);
             return skills.Select(MapToDto);
+        }
+
+        public async Task<IEnumerable<UserSkillsWithLevels>> GetUserSkillsByCategoryAsync(
+            int categoryId,
+            int userId
+        )
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+                throw new InvalidOperationException("User not found.");
+
+            var category = await _categoryRepository.GetByIdAsync(categoryId);
+            if (category == null)
+            {
+                throw new InvalidOperationException("category not found");
+            }
+
+            // get all skills by category
+
+            var skills = await _userSkillRepository.GetSkillsByCategory(category, user);
+            if (skills == null)
+            {
+                throw new InvalidOperationException("category not found");
+            }
+            return skills.Select(s => s.ToUserSkillsWithLevels());
         }
 
         public async Task AddSkillAsync(int userId, AddUserSkillDto dto)
@@ -50,7 +82,7 @@ namespace SkillManager.Application.Services
             await _userSkillRepository.SaveChangesAsync();
         }
 
-        public async Task UpdateSkillAsync(int userId, UpdateUserSkillsDto dto)
+        public async Task<bool> UpdateSkillAsync(int userId, UpdateUserSkillsDto dto)
         {
             var userSkill = await _userSkillRepository.GetByCompositeKeyAsync(userId, dto.SkillId);
             if (userSkill == null)
@@ -60,6 +92,7 @@ namespace SkillManager.Application.Services
 
             await _userSkillRepository.UpdateAsync(userSkill);
             await _userSkillRepository.SaveChangesAsync();
+            return true;
         }
 
         public async Task<IEnumerable<UserSkillDto>> GetAllUserSkillsAsync()
@@ -86,6 +119,68 @@ namespace SkillManager.Application.Services
             }
 
             await _userSkillRepository.SaveChangesAsync();
+        }
+
+        public async Task<CategoryNavigationViewModel> GetCategoryNavigationAsync(
+            int? selectedCategoryId = null,
+            int? userId = null
+        )
+        {
+            // First create the viewModel without the async data
+            var viewModel = new CategoryNavigationViewModel
+            {
+                CategoryTypes = await GetCategoryTypesWithCategoriesAsync(),
+                SelectedCategoryId = selectedCategoryId,
+            };
+
+            // Then load user skills separately if needed
+            if (selectedCategoryId.HasValue && userId.HasValue)
+            {
+                try
+                {
+                    // Move the async call outside the property assignment
+                    var userSkills = await GetUserSkillsByCategoryAsync(
+                        selectedCategoryId.Value,
+                        userId.Value
+                    );
+                    viewModel.UserSkills = userSkills.ToList();
+                }
+                catch (Exception)
+                {
+                    viewModel.UserSkills = new List<UserSkillsWithLevels>();
+                }
+            }
+            else
+            {
+                viewModel.UserSkills = new List<UserSkillsWithLevels>();
+            }
+
+            return viewModel;
+        }
+
+        public async Task<List<CategoryTypeWithCategories>> GetCategoryTypesWithCategoriesAsync()
+        {
+            var categories = await _categoryRepository.GetAllAsync();
+
+            // Group categories by their CategoryType
+            var result = categories
+                .GroupBy(c => new { c.CategoryTypeId, c.CategoryType.Name })
+                .Select(g => new CategoryTypeWithCategories
+                {
+                    CategoryTypeId = g.Key.CategoryTypeId,
+                    Name = g.Key.Name,
+                    Categories = g.Select(c => new CategoryDto
+                        {
+                            Id = c.CategoryId,
+                            Name = c.Name,
+                            CategoryTypeId = c.CategoryTypeId,
+                        })
+                        .ToList(),
+                })
+                .OrderBy(ct => ct.Name)
+                .ToList();
+
+            return result;
         }
 
         private static UserSkillDto MapToDto(UserSkill us)

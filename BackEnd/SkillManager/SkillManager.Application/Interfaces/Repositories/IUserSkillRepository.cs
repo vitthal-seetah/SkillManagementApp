@@ -16,6 +16,8 @@ namespace SkillManager.Application.Interfaces.Repositories
         // Add a new UserSkill
         Task AddAsync(UserSkill userSkill);
 
+        Task<IEnumerable<UserSkill>?> GetSkillsByCategory(Category category, User user);
+
         // Update an existing UserSkill
         Task UpdateAsync(UserSkill userSkill);
 

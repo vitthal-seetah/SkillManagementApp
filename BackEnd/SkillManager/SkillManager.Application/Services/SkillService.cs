@@ -2,7 +2,9 @@
 using global::SkillManager.Application.DTOs.Skill;
 using global::SkillManager.Application.Interfaces.Repositories;
 using global::SkillManager.Infrastructure.Exceptions;
+using SkillManager.Application.DTOs.Category;
 using SkillManager.Application.Mappers;
+using SkillManager.Application.Models;
 
 namespace SkillManager.Application.Services
 {

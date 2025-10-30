@@ -26,6 +26,11 @@ namespace SkillManager.Infrastructure.Repositories
                 .FirstOrDefaultAsync(c => c.CategoryId == id);
         }
 
+        //  public async Task<CategoryType> GetAllCategoryTypeAsync()
+        //  {
+        //      return await _context.CategoryTypes.Include(c => c.ca);
+        //  }
+
         public async Task<SubCategory?> GetSubCategoryByIdAsync(int id)
         {
             return await _context.SubCategories.FirstOrDefaultAsync(sc => sc.SubCategoryId == id);
@@ -34,8 +39,11 @@ namespace SkillManager.Infrastructure.Repositories
         public async Task<IEnumerable<Category>> GetAllAsync()
         {
             return await _context
-                .Categories.Include(c => c.SubCategories)
-                .OrderBy(c => c.Name)
+                .Categories.Include(c => c.CategoryType) // Make sure this is included
+                .Include(c => c.Skills)
+                .Include(c => c.SubCategories)
+                .OrderBy(c => c.CategoryType.Name)
+                .ThenBy(c => c.Name)
                 .ToListAsync();
         }
 

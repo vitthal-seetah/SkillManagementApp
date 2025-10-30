@@ -14,6 +14,17 @@ namespace SkillManager.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<UserSkill>?> GetSkillsByCategory(Category category, User user)
+        {
+            return await _context
+                .UserSkills.Include(us => us.Skill)
+                .ThenInclude(s => s.Category)
+                .Include(us => us.Level)
+                .Where(us => us.UserId == user.UserId && us.Skill.CategoryId == category.CategoryId)
+                .OrderBy(us => us.Skill.Code)
+                .ToListAsync();
+        }
+
         // -------------------------
         // Get skills for a specific user
         // -------------------------

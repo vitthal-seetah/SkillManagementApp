@@ -1,66 +1,495 @@
-﻿
-@page
+﻿@page
 @model SkillManager.Web.Pages.Skills.SkillIndexModel
+
 @{
-    ViewData["Title"] = "My Skills";
+    ViewData["Title"] = "Skills Catalog";
 }
 
-<h2>My Skills</h2>
-<p>Logged in as: @Model.Username</p>
-<p>@Model.UserRole</p>
-@if (!Model.MySkills.Any())
-{
-    <p>You have no skills assigned.</p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Debug Info</th>
-                <th>Values</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Username</td>
-                <td>@Model.Username</td>
-            </tr>
-            <tr>
-                <td>Raw UID</td>
-                <td>@Model.UserId</td>
-            </tr>
-            <tr>
-                <td>Skills Loaded</td>
-                <td>@Model.MySkills.Count</td>
-            </tr>
-        </tbody>
-    </table>
-}
-else
-{
-   
-    
-    <table class="table">
-        <thead>
-            <p>@Model.UserId</p>
-            <tr>
-                <th>Skill</th>
-                <th>Code</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Level</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var skill in Model.MySkills)
-            {
-                <tr>
-                    <td>@skill.SkillName</td>
-                    <td>@skill.SkillCode</td>
-                    <td>@skill.CategoryName</td>
-                    <td>@skill.CategoryType</td>
-                    <td>@skill.LevelName</td>
-                </tr>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 sidebar bg-light">
+            <div class="sidebar-sticky">
+                <div class="sidebar-header p-1 border-bottom">
+                    <h5 class="mb-0">
+                        Skills Categories
+                    </h5>
+                </div>
+
+                <nav class="sidebar-nav">
+                    @foreach (var categoryType in Model.ViewModel.CategoryTypes)
+                    {
+                        <div class="category-type-section">
+                            <div class="category-type-header p-2 border-bottom"
+                                 data-bs-toggle="collapse"
+                                 href="#categoryType-@categoryType.CategoryTypeId"
+                                 role="button">
+                                <h6 class="mb-0 d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-primary">
+                                        <i class="bi bi-folder-fill me-1"></i>@categoryType.Name
+                                    </span>
+                                    <i class="bi bi-chevron-down"></i>
+                                </h6>
+                            </div>
+
+                            <div class="collapse show" id="categoryType-@categoryType.CategoryTypeId">
+                                <ul class="list-unstyled mb-0">
+                                    @foreach (var category in categoryType.Categories)
+                                    {
+                                        <li class="category-item">
+                                            <a asp-page="/Skills/Index"
+                                               asp-route-categoryId="@category.Id"
+                                               class="category-link d-block px-3 py-2 text-decoration-none @(Model.ViewModel.SelectedCategoryId == category.Id ? "active" : "")">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span style="font-size: 0.75rem;" class="category-name fw-bold ">@category.Name</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </nav>
+
+                @if (!Model.ViewModel.CategoryTypes.Any())
+                {
+                    <div class="p-3 text-center text-muted">
+                        <i class="bi bi-inbox"></i>
+                        <div>No categories available</div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 main-content">
+            <div class="p-4">
+                @if (Model.ViewModel.SelectedCategoryId.HasValue)
+                {
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>My Skills</h4>
+                        <div class="text-muted">
+                            @{
+                                var selectedCategory = Model.ViewModel.CategoryTypes
+                                .SelectMany(ct => ct.Categories)
+                                .FirstOrDefault(c => c.Id == Model.ViewModel.SelectedCategoryId);
+                            }
+                            @if (selectedCategory != null)
+                            {
+                                <span>Category: <strong>@selectedCategory.Name</strong></span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Success/Error Messages -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (Model.ViewModel.UserSkills?.Any() == true)
+                    {
+                        
+                
+                        <div class="row">
+                            @foreach (var userSkill in Model.ViewModel.UserSkills)
+                            {
+                                <div class="col-xl-6 col-lg-12 mb-4">
+                                    <div class="card skill-card h-100 shadow-sm">
+                                        <div class="card-body">
+                                            <!-- Code and My Level on the same line -->
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="card-title mb-0 text-primary">@userSkill.Code</h6>
+                                                <span class="text-muted small">My Level</span>
+                                            </div>
+
+                                            <!-- Required Level below Code -->
+                                            <div class="mb-3">
+                                                <p class="text-muted small mb-1">
+                                                    Required Level:
+                                                    <span class="badge @GetLevelColorClass(GetLevelNameFromNumber(userSkill.RequiredLevel))">
+                                                        @GetLevelNameFromNumber(userSkill.RequiredLevel)
+                                                    </span>
+                                                </p>
+                                            </div>
+
+                                            <!-- Dropdown and Update button below My Level -->
+                                            <form method="post" asp-page-handler="UpdateSkillLevel">
+                                                <input type="hidden" name="skillId" value="@userSkill.SkillId" />
+                                                <input type="hidden" name="categoryId" value="@Model.ViewModel.SelectedCategoryId" />
+                                                <div class="row align-items-center">
+                                                    <div class="col-8">
+                                                        <div class="dropdown">
+                                                            <button class="btn dropdown-toggle level-dropdown @GetLevelColorClass(userSkill.LevelName) w-100 text-start"
+                                                                    type="button"
+                                                                    id="levelDropdown-@userSkill.SkillId"
+                                                                    data-bs-toggle="dropdown"
+                                                                    aria-expanded="false">
+                                                                <span class="level-name">@userSkill.LevelName</span>
+                                                                <input type="hidden" name="levelId" value="@userSkill.LevelId" class="level-input" />
+                                                            </button>
+                                                            <ul class="dropdown-menu level-dropdown-menu" aria-labelledby="levelDropdown-@userSkill.SkillId">
+                                                                @foreach (var level in Model.AvailableLevels)
+                                                                {
+                                                                    <li>
+                                                                        <a class="dropdown-item level-option @GetLevelColorClass(level.Name)"
+                                                                           href="#"
+                                                                           data-level-id="@level.Id"
+                                                                           data-level-name="@level.Name">
+                                                                            <span>@level.Name</span>
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4 text-end">
+                                                        <button type="submit" class="btn btn-primary btn-sm">
+                                                            <i class="bi bi-check-lg"></i> Update
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="mt-3">
+                            <p class="text-muted">Showing @Model.ViewModel.UserSkills.Count skill(s) in this category</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-emoji-frown display-1 text-muted"></i>
+                            <h5 class="mt-3">No Skills Found</h5>
+                            <p class="text-muted">You haven't added any skills in this category yet.</p>
+                            <a asp-page="/Skills/Index" class="btn btn-outline-primary mt-2">
+                                <i class="bi bi-arrow-left"></i> Back to Categories
+                            </a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-search display-1 text-primary"></i>
+                        <h4 class="mt-3">Welcome to Skills Catalog</h4>
+                        <p class="text-muted">Select a category from the sidebar to view and manage your skills.</p>
+                        <div class="mt-4">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-folder2-open display-4 text-primary"></i>
+                                            <h6 class="mt-2">Browse by Category</h6>
+                                            <p class="small text-muted">Explore and manage skills by categories</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-graph-up display-4 text-success"></i>
+                                            <h6 class="mt-2">Track Progress</h6>
+                                            <p class="small text-muted">Update your skill levels as you improve</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-bullseye display-4 text-warning"></i>
+                                            <h6 class="mt-2">Set Goals</h6>
+                                            <p class="small text-muted">Aim for required skill levels</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .sidebar {
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .category-type-header {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+            .category-type-header:hover {
+                background-color: #e9ecef;
             }
-        </tbody>
-    </table>
- 
+
+        .category-link {
+            color: #495057;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+            .category-link:hover {
+                background-color: #f8f9fa;
+                border-left-color: #007bff;
+                color: #007bff;
+            }
+
+            .category-link.active {
+                background-color: #007bff;
+                color: white;
+                border-left-color: #0056b3;
+            }
+
+        .skill-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+            .skill-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+            }
+
+        /* Level Dropdown Styles */
+        .level-dropdown {
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            color: white;
+            position: relative;
+        }
+
+            .level-dropdown:hover, .level-dropdown:focus {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .level-dropdown::after {
+                margin-left: 10px;
+                transition: transform 0.3s ease;
+            }
+
+            .level-dropdown.show::after {
+                transform: rotate(180deg);
+            }
+
+        .level-dropdown-menu {
+            width: 100%;
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            padding: 0;
+        }
+
+        .level-option {
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+            color: white;
+            font-weight: 500;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+            .level-option:hover, .level-option:focus {
+                transform: translateX(5px);
+                padding-left: 1.25rem;
+                background-color: transparent;
+                color: white;
+            }
+
+            .level-option:last-child {
+                border-bottom: none;
+            }
+
+        /* LEVEL COLOR CLASSES - ONLY 4 LEVELS */
+        .level-expert {
+            background: linear-gradient(135deg, #FF5722, #e64a19);
+        }
+
+        .level-maitrise {
+            background: linear-gradient(135deg, #9C27B0, #7b1fa2);
+        }
+
+        .level-pratique {
+            background: linear-gradient(135deg, #2196F3, #1976d2);
+        }
+
+        .level-connaissance {
+            background: linear-gradient(135deg, #FFC107, #e6ac00);
+        }
+
+        /* Ensure all level options have colors too */
+        .dropdown-item.level-expert {
+            background: linear-gradient(135deg, #FF5722, #e64a19);
+        }
+
+        .dropdown-item.level-maitrise {
+            background: linear-gradient(135deg, #9C27B0, #7b1fa2);
+        }
+
+        .dropdown-item.level-pratique {
+            background: linear-gradient(135deg, #2196F3, #1976d2);
+        }
+
+        .dropdown-item.level-connaissance {
+            background: linear-gradient(135deg, #FFC107, #e6ac00);
+        }
+
+        /* Custom scrollbar for sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+            .sidebar::-webkit-scrollbar-thumb:hover {
+                background: #a8a8a8;
+            }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-collapse other category types when one is opened
+            var categoryTypeHeaders = document.querySelectorAll('.category-type-header');
+
+            categoryTypeHeaders.forEach(function(header) {
+                header.addEventListener('click', function() {
+                    var target = this.getAttribute('href');
+                    var collapseElement = document.querySelector(target);
+
+                    // Toggle chevron icon
+                    var icon = this.querySelector('.bi-chevron-down');
+                    if (icon) {
+                        icon.classList.toggle('bi-chevron-down');
+                        icon.classList.toggle('bi-chevron-up');
+                    }
+                });
+            });
+
+            // Handle level selection
+            document.querySelectorAll('.level-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const dropdown = this.closest('.dropdown');
+                    const dropdownToggle = dropdown.querySelector('.level-dropdown');
+                    const levelNameSpan = dropdown.querySelector('.level-name');
+                    const levelInput = dropdown.querySelector('.level-input');
+
+                    const levelId = this.getAttribute('data-level-id');
+                    const levelName = this.getAttribute('data-level-name');
+
+                    console.log('Level selected:', levelName, 'ID:', levelId);
+
+                    // Update dropdown button text and hidden input
+                    levelNameSpan.textContent = levelName;
+                    levelInput.value = levelId;
+
+                    // Remove all existing level color classes
+                    const levelClasses = ['level-expert', 'level-maitrise', 'level-pratique', 'level-connaissance'];
+                    levelClasses.forEach(levelClass => {
+                        dropdownToggle.classList.remove(levelClass);
+                    });
+
+                    // Add the new level color class
+                    const newLevelClass = 'level-' + levelName.toLowerCase();
+                    dropdownToggle.classList.add(newLevelClass);
+                });
+            });
+        });
+    </script>
+}
+
+@functions {
+
+    private string GetLevelNameFromNumber(string levelNumber)
+    {
+        if (int.TryParse(levelNumber, out int number))
+        {
+            return number switch
+            {
+                1 => "Connaissance",
+                2 => "Pratique",
+                3 => "Maitrise",
+                4 => "Expert",
+                _ => "Connaissance"
+            };
+        }
+        return "Connaissance"; // default if parsing fails
+    }
+    private string GetCriticalityBadgeClass(string criticalityLevel)
+    {
+        return criticalityLevel?.ToLower() switch
+        {
+            "high" => "bg-danger",
+            "medium" => "bg-warning",
+            "low" => "bg-success",
+            _ => "bg-secondary"
+        };
+    }
+
+    private string GetLevelBadgeClass(string levelName)
+    {
+        return levelName?.ToLower() switch
+        {
+            "expert" => "bg-success",
+            "maitrise" => "bg-primary",
+            "pratique" => "bg-info",
+            "connaissance" => "bg-warning",
+            _ => "bg-light text-dark"
+        };
+    }
+
+    private string GetLevelColorClass(string levelName)
+    {
+        return levelName?.ToLower() switch
+        {
+            "expert" => "level-expert",
+            "maitrise" => "level-maitrise",
+            "pratique" => "level-pratique",
+            "connaissance" => "level-connaissance",
+            _ => "level-connaissance" // default fallback
+        };
+    }
 }

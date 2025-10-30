@@ -20,3 +20,138 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Sidebar specific styles */
+.sidebar {
+    background: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+}
+
+.sidebar-sticky {
+    position: sticky;
+    top: 0;
+}
+
+.category-type-section {
+    border-bottom: 1px solid #dee2e6;
+}
+
+    .category-type-section:last-child {
+        border-bottom: none;
+    }
+
+.category-item:not(:last-child) {
+    border-bottom: 1px solid #f1f1f1;
+}
+
+/* Main content area */
+.main-content {
+    background: #ffffff;
+    min-height: 100vh;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .sidebar {
+        height: auto;
+        position: relative;
+    }
+
+    .main-content {
+        margin-top: 1rem;
+    }
+}
+
+<style >
+/* Level Dropdown Styles */
+.level-dropdown {
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: white;
+    position: relative;
+}
+
+.level-dropdown:hover, .level-dropdown:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.level-dropdown::after {
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+.level-dropdown.show::after {
+    transform: rotate(180deg);
+}
+
+.level-dropdown-menu {
+    width: 100%;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    padding: 0;
+}
+
+.level-option {
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+    color: white;
+    font-weight: 500;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+    .level-option:hover, .level-option:focus {
+        transform: translateX(5px);
+        padding-left: 1.25rem;
+        background-color: transparent;
+        color: white;
+    }
+
+    .level-option:last-child {
+        border-bottom: none;
+    }
+
+/* Level Color Classes */
+.level-novice {
+    background: linear-gradient(135deg, #4CAF50, #3d8b40);
+}
+
+.level-beginner {
+    background: linear-gradient(135deg, #8BC34A, #71a736);
+}
+
+.level-intermediate {
+    background: linear-gradient(135deg, #FFC107, #e6ac00);
+}
+
+.level-advanced {
+    background: linear-gradient(135deg, #FF9800, #f57c00);
+}
+
+.level-expert {
+    background: linear-gradient(135deg, #FF5722, #e64a19);
+}
+
+.level-master {
+    background: linear-gradient(135deg, #9C27B0, #7b1fa2);
+}
+
+/* Fallback colors for any unexpected levels */
+.level-default {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+}
+
+</style >
