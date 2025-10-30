@@ -61,6 +61,22 @@ namespace SkillManager.Application.Services
             return skills.Select(s => s.ToUserSkillsWithLevels());
         }
 
+        public async Task<List<SkillGapDto>> GetSkillGapsAsync(int userId)
+        {
+            return await _userSkillRepository.GetSkillGapsAsync(userId);
+        }
+
+        public async Task<List<CategoryGapDto>> GetSkillGapsByCategoryAsync(int userId)
+        {
+            return await _userSkillRepository.GetSkillGapsByCategoryAsync(userId);
+        }
+
+        public async Task<List<UserSkillsViewModel>> GetUserSkillsLevels()
+        {
+            var userSkills = await _userSkillRepository.GetAllUserSkillsLevels();
+            return userSkills.Select(us => us.ToUserSkillsViewModel()).ToList();
+        }
+
         public async Task AddSkillAsync(int userId, AddUserSkillDto dto)
         {
             var user = await _userRepository.GetByIdAsync(userId);
@@ -119,6 +135,12 @@ namespace SkillManager.Application.Services
             }
 
             await _userSkillRepository.SaveChangesAsync();
+        }
+
+        public async Task<List<CategoryDto>> GetAllCategories()
+        {
+            var categories = await _categoryRepository.GetAllAsync();
+            return categories.Select(c => c.ToDto()).ToList();
         }
 
         public async Task<CategoryNavigationViewModel> GetCategoryNavigationAsync(

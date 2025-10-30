@@ -1,0 +1,383 @@
+﻿@page
+@model SkillManager.Web.Pages.SkillGap.IndexModel
+
+@{
+    ViewData["Title"] = "Skill Gap Analysis";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Skill Gap Analysis</h2>
+                <div class="text-muted">
+                    <span class="badge bg-success me-2">On Track</span>
+                    <span class="badge bg-warning me-2">Needs Improvement</span>
+                    <span class="badge bg-danger">Critical Gap</span>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card border-0 bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h4 class="card-title">@Model.TotalSkills</h4>
+                            <p class="card-text mb-0">Total Skills</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card border-0 bg-success text-white">
+                        <div class="card-body text-center">
+                            <h4 class="card-title">@Model.MeetingTarget</h4>
+                            <p class="card-text mb-0">Meeting Target</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card border-0 bg-warning text-white">
+                        <div class="card-body text-center">
+                            <h4 class="card-title">@Model.NeedsImprovement</h4>
+                            <p class="card-text mb-0">Needs Improvement</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card border-0 bg-danger text-white">
+                        <div class="card-body text-center">
+                            <h4 class="card-title">@Model.CriticalGaps</h4>
+                            <p class="card-text mb-0">Critical Gaps</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skill Gap Table -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Skill Gap Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Skill Code</th>
+                                    <th>Skill Name</th>
+                                    <th>Your Level</th>
+                                    <th>Required Level</th>
+                                    <th>Project Required</th>
+                                    <th>Gap Status</th>
+                                    <th>Points Gap</th>
+                                    <th>Progress</th>
+                                    <th>Priority</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var gap in Model.SkillGaps)
+                                {
+                                    <tr class="@GetGapRowClass(gap.GapSize)">
+                                        <td class="fw-bold">@gap.SkillCode</td>
+                                        <td>@gap.SkillName</td>
+                                        <td>
+                                            <span class="badge @GetLevelColorClass(gap.UserLevelName)">
+                                                @gap.UserLevelName
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge @GetLevelColorClass(GetLevelNameFromPoints(gap.RequiredLevel))">
+                                                @GetLevelNameFromPoints(gap.RequiredLevel)
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if (gap.ProjectRequiresSkill)
+                                            {
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle"></i> Required
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">
+                                                    <i class="bi bi-dash-circle"></i> Optional
+                                                </span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="badge @GetGapBadgeClass(gap.GapSize)">
+                                                @GetGapStatusText(gap.GapSize)
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if (gap.GapSize > 0)
+                                            {
+                                                <span class="text-danger fw-bold">-@gap.GapSize</span>
+                                            }
+                                            else if (gap.GapSize < 0)
+                                            {
+                                                <span class="text-success fw-bold">+@Math.Abs(gap.GapSize)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-success fw-bold">0</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 8px;">
+                                                @{
+                                                    var progressPercentage = gap.UserLevel >= gap.RequiredLevel ? 100 : 
+                                                                             (gap.UserLevel * 100) / gap.RequiredLevel;
+                                                    var progressClass = gap.UserLevel >= gap.RequiredLevel ? "bg-success" : 
+                                                                       gap.GapSize == 1 ? "bg-warning" : "bg-danger";
+                                                }
+                                                <div class="progress-bar @progressClass" 
+                                                     role="progressbar" 
+                                                     style="width: @progressPercentage%" 
+                                                     aria-valuenow="@progressPercentage" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">@gap.UserLevel/@gap.RequiredLevel</small>
+                                        </td>
+                                        <td>
+                                            @if (gap.GapSize > 0)
+                                            {
+                                                <span class="badge @GetPriorityBadgeClass(gap.GapSize)">
+                                                    @GetPriorityText(gap.GapSize)
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Achieved</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gap Analysis by Project Requirement -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Gaps by Project Requirement</h5>
+                        </div>
+                        <div class="card-body">
+                            @{
+                                var requiredSkills = Model.SkillGaps.Where(s => s.ProjectRequiresSkill).ToList();
+                                var optionalSkills = Model.SkillGaps.Where(s => !s.ProjectRequiresSkill).ToList();
+                            }
+                            
+                            <div class="mb-4">
+                                <h6>Project Required Skills (@requiredSkills.Count)</h6>
+                                <div class="progress" style="height: 12px;">
+                                    @{
+                                        var requiredOnTrack = requiredSkills.Count(s => s.GapSize <= 0);
+                                        var requiredNeedsImprovement = requiredSkills.Count(s => s.GapSize == 1);
+                                        var requiredCritical = requiredSkills.Count(s => s.GapSize >= 2);
+                                        var requiredTotal = requiredSkills.Count;
+                                    }
+                                    <div class="progress-bar bg-success" style="width: @((requiredOnTrack * 100) / requiredTotal)%" 
+                                         title="@requiredOnTrack On Track"></div>
+                                    <div class="progress-bar bg-warning" style="width: @((requiredNeedsImprovement * 100) / requiredTotal)%" 
+                                         title="@requiredNeedsImprovement Needs Improvement"></div>
+                                    <div class="progress-bar bg-danger" style="width: @((requiredCritical * 100) / requiredTotal)%" 
+                                         title="@requiredCritical Critical"></div>
+                                </div>
+                                <small class="text-muted">
+                                    @requiredOnTrack On Track • @requiredNeedsImprovement Needs Improvement • @requiredCritical Critical
+                                </small>
+                            </div>
+
+                            <div>
+                                <h6>Optional Skills (@optionalSkills.Count)</h6>
+                                <div class="progress" style="height: 12px;">
+                                    @{
+                                        var optionalOnTrack = optionalSkills.Count(s => s.GapSize <= 0);
+                                        var optionalNeedsImprovement = optionalSkills.Count(s => s.GapSize == 1);
+                                        var optionalCritical = optionalSkills.Count(s => s.GapSize >= 2);
+                                        var optionalTotal = optionalSkills.Count;
+                                    }
+                                    <div class="progress-bar bg-success" style="width: @((optionalOnTrack * 100) / optionalTotal)%" 
+                                         title="@optionalOnTrack On Track"></div>
+                                    <div class="progress-bar bg-warning" style="width: @((optionalNeedsImprovement * 100) / optionalTotal)%" 
+                                         title="@optionalNeedsImprovement Needs Improvement"></div>
+                                    <div class="progress-bar bg-danger" style="width: @((optionalCritical * 100) / optionalTotal)%" 
+                                         title="@optionalCritical Critical"></div>
+                                </div>
+                                <small class="text-muted">
+                                    @optionalOnTrack On Track • @optionalNeedsImprovement Needs Improvement • @optionalCritical Critical
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Improvement Recommendations</h5>
+                        </div>
+                        <div class="card-body">
+                            @{
+                                var criticalRequiredSkills = Model.SkillGaps.Where(s => s.ProjectRequiresSkill && s.GapSize >= 2).ToList();
+                                var needsImprovementRequiredSkills = Model.SkillGaps.Where(s => s.ProjectRequiresSkill && s.GapSize == 1).ToList();
+                            }
+                            
+                            @if (criticalRequiredSkills.Any())
+                            {
+                                <div class="alert alert-danger">
+                                    <h6><i class="bi bi-exclamation-triangle"></i> Critical Project Gaps</h6>
+                                    <p>Focus on these <strong>project-required skills</strong> first:</p>
+                                    <ul class="mb-0">
+                                        @foreach (var skill in criticalRequiredSkills.Take(3))
+                                        {
+                                            <li>
+                                                <strong>@skill.SkillName</strong> - 
+                                                Improve from @GetLevelNameFromPoints(skill.UserLevel) to @GetLevelNameFromPoints(skill.RequiredLevel)
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                            
+                            @if (needsImprovementRequiredSkills.Any())
+                            {
+                                <div class="alert alert-warning">
+                                    <h6><i class="bi bi-lightbulb"></i> Project Skill Improvements</h6>
+                                    <p>These project-required skills need attention:</p>
+                                    <ul class="mb-0">
+                                        @foreach (var skill in needsImprovementRequiredSkills.Take(3))
+                                        {
+                                            <li>
+                                                <strong>@skill.SkillName</strong> - 
+                                                Close the gap from @GetLevelNameFromPoints(skill.UserLevel) to @GetLevelNameFromPoints(skill.RequiredLevel)
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+
+                            @if (Model.MeetingTarget == Model.TotalSkills)
+                            {
+                                <div class="alert alert-success">
+                                    <h6><i class="bi bi-check-circle"></i> Excellent Progress!</h6>
+                                    <p class="mb-0">You are meeting all required skill levels. Keep up the great work!</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .level-expert { background: linear-gradient(135deg, #FF5722, #e64a19); }
+        .level-maitrise { background: linear-gradient(135deg, #9C27B0, #7b1fa2); }
+        .level-pratique { background: linear-gradient(135deg, #2196F3, #1976d2); }
+        .level-connaissance { background: linear-gradient(135deg, #FFC107, #e6ac00); }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        .progress {
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+        }
+    </style>
+}
+
+@functions {
+    private string GetLevelColorClass(string levelName)
+    {
+        return levelName?.ToLower() switch
+        {
+            "expert" => "level-expert",
+            "maitrise" => "level-maitrise", 
+            "pratique" => "level-pratique",
+            "connaissance" => "level-connaissance",
+            _ => "level-connaissance"
+        };
+    }
+    
+    private string GetLevelNameFromPoints(int points)
+    {
+        return points switch
+        {
+            1 => "Connaissance",
+            2 => "Pratique", 
+            3 => "Maitrise",
+            4 => "Expert",
+            _ => "Not Set"
+        };
+    }
+    
+    private string GetGapBadgeClass(int gapSize)
+    {
+        return gapSize switch
+        {
+            <= 0 => "bg-success",
+            1 => "bg-warning",
+            >= 2 => "bg-danger",
+        };
+    }
+    
+    private string GetGapStatusText(int gapSize)
+    {
+        return gapSize switch
+        {
+            <= 0 => "On Track",
+            1 => "Needs Improvement", 
+            >= 2 => "Critical Gap",
+           
+        };
+    }
+    
+    private string GetPriorityBadgeClass(int gapSize)
+    {
+        return gapSize switch
+        {
+            1 => "bg-warning",
+            2 => "bg-danger",
+            >= 3 => "bg-dark",
+            _ => "bg-secondary"
+        };
+    }
+    
+    private string GetPriorityText(int gapSize)
+    {
+        return gapSize switch
+        {
+            1 => "Medium",
+            2 => "High",
+            >= 3 => "Critical",
+            _ => "Low"
+        };
+    }
+    
+    private string GetGapRowClass(int gapSize)
+    {
+        return gapSize switch
+        {
+            <= 0 => "table-success",
+            1 => "table-warning",
+            >= 2 => "table-danger",
+          
+        };
+    }
+}

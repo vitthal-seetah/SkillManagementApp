@@ -1,4 +1,7 @@
-﻿using SkillManager.Application.Models;
+﻿using SkillManager.Application.DTOs.Category;
+using SkillManager.Application.DTOs.Skill;
+using SkillManager.Application.Models;
+using SkillManager.Domain.Entities;
 using SkillManager.Infrastructure.DTOs.Skill;
 
 namespace SkillManager.Application.Interfaces.Services;
@@ -18,7 +21,12 @@ public interface IUserSkillService
         int? selectedCategoryId = null,
         int? userId = null
     );
+    Task<List<CategoryDto>> GetAllCategories();
 
+    Task<List<UserSkillsViewModel>> GetUserSkillsLevels();
+
+    Task<List<SkillGapDto>> GetSkillGapsAsync(int userId);
+    Task<List<CategoryGapDto>> GetSkillGapsByCategoryAsync(int userId);
     Task<List<CategoryTypeWithCategories>> GetCategoryTypesWithCategoriesAsync();
     Task DeleteUserSkillAsync(int userId);
 }

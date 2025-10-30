@@ -1,4 +1,6 @@
-﻿using SkillManager.Domain.Entities;
+﻿using SkillManager.Application.DTOs.Category;
+using SkillManager.Application.DTOs.Skill;
+using SkillManager.Domain.Entities;
 
 namespace SkillManager.Application.Interfaces.Repositories
 {
@@ -20,6 +22,7 @@ namespace SkillManager.Application.Interfaces.Repositories
 
         // Update an existing UserSkill
         Task UpdateAsync(UserSkill userSkill);
+        Task<IEnumerable<UserSkill>> GetAllUserSkillsLevels();
 
         // Delete a UserSkill by userId + skillId
         Task DeleteAsync(int userId, int skillId);
@@ -29,5 +32,7 @@ namespace SkillManager.Application.Interfaces.Repositories
 
         // Save changes to the database
         Task SaveChangesAsync();
+        Task<List<CategoryGapDto>> GetSkillGapsByCategoryAsync(int userId);
+        Task<List<SkillGapDto>> GetSkillGapsAsync(int userId);
     }
 }
