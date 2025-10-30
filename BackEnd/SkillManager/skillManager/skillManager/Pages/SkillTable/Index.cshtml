@@ -34,7 +34,7 @@
                 <option value="All" selected="@(Model.SelectedCategory == null || Model.SelectedCategory == "All")">All Categories</option>
                 @foreach (var category in Model.AvailableCategories)
                 {
-                    <option value="@category.Id" selected="@(Model.SelectedCategory == category.Id.ToString())">
+                    <option value="@category.CategoryId" selected="@(Model.SelectedCategory == category.CategoryId.ToString())">
                         @category.Name
                     </option>
                 }

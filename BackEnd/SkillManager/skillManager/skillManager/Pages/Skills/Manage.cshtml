@@ -96,47 +96,48 @@
                     <form method="post" asp-page-handler="Save">
                         <input type="hidden" name="SkillId" value="@skill.SkillId" />
 
-                    <td><input name="Code" class="form-control" value="@skill.Code" disabled /></td>
-                    <td><input name="Label" class="form-control" value="@skill.Label" disabled /></td>
+                        <td><input name="Code" class="form-control" value="@skill.Code" disabled /></td>
+                        <td><input name="Label" class="form-control" value="@skill.Label" disabled /></td>
 
-                    <td>
-                        <select name="CategoryName" class="form-select" disabled>
-                            @foreach (var category in Model.Categories)
-                            {
-                                <option value="@category.Name" selected="@(category.Name == skill.CategoryName)">
-                                    @category.Name
-                                </option>
-                            }
-                        </select>
-                    </td>
-
-                    <td>
-                        <select name="CategoryTypeName" class="form-select" disabled>
-                            @foreach (var type in Model.CategoryTypes)
-                            {
-                                <option value="@type.Name" selected="@(type.Name == skill.CategoryTypeName)">
-                                    @type.Name
-                                </option>
-                            }
-                        </select>
-                    </td>
-
-
-                    <td>
-                        <input name="RequiredLevel" type="number" class="form-control" value="@skill.RequiredLevel" disabled />
-                    </td>
-
-                    <td>
-                        <textarea name="FirstLevelDescription" class="form-control" rows="1" disabled>@skill.FirstLevelDescription</textarea>
-                    </td>
-
-                    @if (canEdit)
-                    {
-                        <td style="white-space:nowrap;">
-                            <button type="button" class="btn btn-sm btn-secondary" onclick="enableEdit('@rowId')">Edit</button>
-                            <button type="submit" class="btn btn-sm btn-success d-none save-btn">Save</button>
+                        <td>
+                            <select name="CategoryName" class="form-select" disabled>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.Name" selected="@(category.Name == skill.CategoryName)">
+                                        @category.Name
+                                    </option>
+                                }
+                            </select>
                         </td>
-                    }
+
+                        <td>
+                            <select name="CategoryTypeName" class="form-select" disabled>
+                                @foreach (var type in Model.CategoryTypes)
+                                {
+                                    <option value="@type.Name" selected="@(type.Name == skill.CategoryTypeName)">
+                                        @type.Name
+                                    </option>
+                                }
+                            </select>
+                        </td>
+
+                        <td>
+                            <input name="CriticalityLevel" class="form-control" value="@skill.CriticalityLevel" disabled />
+                        </td>
+
+                        <td>
+                            <input name="RequiredLevel" type="number" class="form-control" value="@skill.RequiredLevel" disabled />
+                        </td>
+
+                        <td><textarea name="FirstLevelDescription" class="form-control" rows="1" disabled>@skill.FirstLevelDescription</textarea></td>
+
+                        @if (canEdit)
+                        {
+                            <td style="white-space:nowrap;">
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="enableEdit('@rowId')">Edit</button>
+                                <button type="submit" class="btn btn-sm btn-success d-none save-btn">Save</button>
+                            </td>
+                        }
                     </form>
                 </tr>
             }
@@ -183,12 +184,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Criticality</label>
-                            <select name="CriticalityLevel" class="form-select">
-                                @foreach (var value in Enum.GetNames(typeof(SkillManager.Domain.Entities.Enums.CriticalityLevel)))
-                                {
-                                    <option value="@value">@value</option>
-                                }
-                            </select>
+                            <input name="CriticalityLevel" class="form-control" />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Required Level</label>

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SkillManager.Application.DTOs.Category;
+﻿using SkillManager.Application.DTOs.Category;
 using SkillManager.Domain.Entities;
 
 namespace SkillManager.Application.Mappers
@@ -18,7 +13,7 @@ namespace SkillManager.Application.Mappers
 
             return new CategoryDto
             {
-                Id = category.CategoryId,
+                CategoryId = category.CategoryId,
                 Name = category.Name,
                 CategoryTypeId = category.CategoryTypeId,
             };
