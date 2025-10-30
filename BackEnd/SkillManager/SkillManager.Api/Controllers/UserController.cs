@@ -75,40 +75,41 @@ public class UsersController : ControllerBase
 
         return Ok(user);
     }
-
-    // Admin: update ID-related fields (UTCode, RefId)
-    [HttpPost("update-identifiers")]
-    [Authorize(Policy = "AdminPolicy")]
-    public async Task<IActionResult> UpdateUserIdentifiers(int userId, string utCode, string refId)
-    {
-        var result = await _userService.UpdateUserIdentifiersAsync(userId, utCode, refId);
-        if (!result)
-            return NotFound("User not found");
-
-        return Ok("User identifiers updated successfully");
-    }
-
-    // Manager: update personal info, status, delivery type
-    [HttpPost("update-details")]
-    [Authorize(Policy = "ManagerPolicy")]
-    public async Task<IActionResult> UpdateUserDetails(
-        int userId,
-        string firstName,
-        string lastName,
-        string? status = null,
-        string? deliveryType = null
-    )
-    {
-        var result = await _userService.UpdateUserDetailsAsync(
-            userId,
-            firstName,
-            lastName,
-            status,
-            deliveryType
-        );
-        if (!result)
-            return NotFound("User not found");
-
-        return Ok("User details updated successfully");
-    }
 }
+
+//    // Admin: update ID-related fields (UTCode, RefId)
+//    [HttpPost("update-identifiers")]
+//    [Authorize(Policy = "AdminPolicy")]
+//    public async Task<IActionResult> UpdateUserIdentifiers(int userId, string utCode, string refId)
+//    {
+//        var result = await _userService.UpdateUserIdentifiersAsync(userId, utCode, refId);
+//        if (!result)
+//            return NotFound("User not found");
+
+//        return Ok("User identifiers updated successfully");
+//    }
+
+//    // Manager: update personal info, status, delivery type
+//    [HttpPost("update-details")]
+//    [Authorize(Policy = "ManagerPolicy")]
+//    public async Task<IActionResult> UpdateUserDetails(
+//        int userId,
+//        string firstName,
+//        string lastName,
+//        string? status = null,
+//        string? deliveryType = null
+//    )
+//    {
+//        var result = await _userService.UpdateUserDetailsAsync(
+//            userId,
+//            firstName,
+//            lastName,
+//            status,
+//            deliveryType
+//        );
+//        if (!result)
+//            return NotFound("User not found");
+
+//        return Ok("User details updated successfully");
+//    }
+//}

@@ -12,14 +12,17 @@ namespace SkillManager.Application.Services
     {
         private readonly ISkillRepository _skillRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IValidator<UpdateSkillDto> _updateSkillValidator;
 
         public SkillService(
             ISkillRepository skillRepository,
-            ICategoryRepository categoryRepository
+            ICategoryRepository categoryRepository,
+            IValidator<UpdateSkillDto> updateSkillValidator
         )
         {
             _skillRepository = skillRepository;
             _categoryRepository = categoryRepository;
+            _updateSkillValidator = updateSkillValidator;
         }
 
         public async Task<SkillDto> GetSkillByIdAsync(int skillId)
@@ -83,91 +86,47 @@ namespace SkillManager.Application.Services
                 throw new NotFoundException($"Skill with ID {skillId} not found.");
             }
 
-            // Validate update data
-
-            // Update only provided properties
-            if (updateDto.CategoryId.HasValue)
+            // --- Run FluentValidation ---
+            var validationResult = await _updateSkillValidator.ValidateAsync(updateDto);
+            if (!validationResult.IsValid)
             {
-                var category = await _categoryRepository.GetByIdAsync(updateDto.CategoryId.Value);
-                if (category == null)
-                {
-                    throw new ValidationException(
-                        $"Category with ID {updateDto.CategoryId.Value} not found."
-                    );
-                }
-                existingSkill.CategoryId = updateDto.CategoryId.Value;
+                var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new ValidationException(errors);
             }
+
+            // --- Apply updates only for provided properties ---
+            if (updateDto.CategoryId.HasValue)
+                existingSkill.CategoryId = updateDto.CategoryId.Value;
 
             if (updateDto.SubCategoryId.HasValue)
-            {
-                var subCategory = await _categoryRepository.GetSubCategoryByIdAsync(
-                    updateDto.SubCategoryId.Value
-                );
-                if (subCategory == null)
-                {
-                    throw new ValidationException(
-                        $"SubCategory with ID {updateDto.SubCategoryId.Value} not found."
-                    );
-                }
                 existingSkill.SubCategoryId = updateDto.SubCategoryId.Value;
-            }
 
             if (!string.IsNullOrWhiteSpace(updateDto.Code))
-            {
-                // Check if new code already exists (excluding current skill)
-                var skillWithSameCode = await _skillRepository.GetByCodeAsync(updateDto.Code);
-                if (skillWithSameCode != null && skillWithSameCode.SkillId != skillId)
-                {
-                    throw new ValidationException(
-                        $"Skill with code '{updateDto.Code}' already exists."
-                    );
-                }
                 existingSkill.Code = updateDto.Code.Trim();
-            }
 
             if (!string.IsNullOrWhiteSpace(updateDto.Label))
-            {
                 existingSkill.Label = updateDto.Label.Trim();
-            }
 
             if (!string.IsNullOrWhiteSpace(updateDto.CriticalityLevel))
-            {
                 existingSkill.CriticalityLevel = updateDto.CriticalityLevel;
-            }
 
             if (updateDto.ProjectRequiresSkill.HasValue)
-            {
                 existingSkill.ProjectRequiresSkill = updateDto.ProjectRequiresSkill.Value;
-            }
 
             if (updateDto.RequiredLevel.HasValue)
-            {
-                if (updateDto.RequiredLevel.Value < 1 || updateDto.RequiredLevel.Value > 4)
-                {
-                    throw new ValidationException("Required level must be between 1 and 4.");
-                }
                 existingSkill.RequiredLevel = updateDto.RequiredLevel.Value;
-            }
 
             if (updateDto.FirstLevelDescription != null)
-            {
                 existingSkill.FirstLevelDescription = updateDto.FirstLevelDescription;
-            }
 
             if (updateDto.SecondLevelDescription != null)
-            {
                 existingSkill.SecondLevelDescription = updateDto.SecondLevelDescription;
-            }
 
             if (updateDto.ThirdLevelDescription != null)
-            {
                 existingSkill.ThirdLevelDescription = updateDto.ThirdLevelDescription;
-            }
 
             if (updateDto.FourthLevelDescription != null)
-            {
                 existingSkill.FourthLevelDescription = updateDto.FourthLevelDescription;
-            }
 
             var updated = await _skillRepository.UpdateAsync(existingSkill);
             if (!updated)
@@ -175,7 +134,6 @@ namespace SkillManager.Application.Services
                 throw new ApplicationException("Failed to update skill.");
             }
 
-            // Reload the skill to get updated related entities
             var updatedSkill = await _skillRepository.GetByIdAsync(skillId);
             return updatedSkill.ToSkillDto();
         }

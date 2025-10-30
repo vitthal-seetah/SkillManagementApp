@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SkillManager.Application.Interfaces.Repositories;
 using SkillManager.Domain.Entities;
 using SkillManager.Infrastructure.Identity.AppDbContext;
-using SkillManager.Infrastructure.Persistence;
 
 namespace SkillManager.Infrastructure.Repositories
 {
@@ -142,6 +137,16 @@ namespace SkillManager.Infrastructure.Repositories
                 .SubCategories.Where(sc => sc.CategoryId == categoryId)
                 .OrderBy(sc => sc.Name)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<CategoryType>> GetAllCategoryTypesAsync()
+        {
+            return await _context.CategoryTypes.OrderBy(ct => ct.Name).ToListAsync();
+        }
+
+        public async Task<CategoryType?> GetCategoryTypeByIdAsync(int id)
+        {
+            return await _context.CategoryTypes.FirstOrDefaultAsync(ct => ct.CategoryTypeId == id);
         }
     }
 }

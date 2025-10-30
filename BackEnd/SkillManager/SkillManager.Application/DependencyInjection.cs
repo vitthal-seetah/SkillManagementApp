@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using SkillManager.Application.DTOs.User;
 using SkillManager.Application.Interfaces.Repositories;
@@ -24,7 +23,8 @@ public static class DependencyInjection
 
         // For scanning an assembly to register all validators
         services.AddValidatorsFromAssemblyContaining<UpdateUserValidator>();
-
+        services.AddValidatorsFromAssemblyContaining<CreateSkillValidator>();
+        services.AddValidatorsFromAssemblyContaining<UpdateSkillValidator>();
         return services;
     }
 }

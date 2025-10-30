@@ -193,7 +193,7 @@ namespace SkillManager.Application.Services
                     Name = g.Key.Name,
                     Categories = g.Select(c => new CategoryDto
                         {
-                            Id = c.CategoryId,
+                            CategoryId = c.CategoryId,
                             Name = c.Name,
                             CategoryTypeId = c.CategoryTypeId,
                         })
