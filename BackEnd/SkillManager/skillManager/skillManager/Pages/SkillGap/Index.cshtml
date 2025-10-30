@@ -284,7 +284,7 @@
         .level-expert { background: linear-gradient(135deg, #FF5722, #e64a19); }
         .level-maitrise { background: linear-gradient(135deg, #9C27B0, #7b1fa2); }
         .level-pratique { background: linear-gradient(135deg, #2196F3, #1976d2); }
-        .level-connaissance { background: linear-gradient(135deg, #FFC107, #e6ac00); }
+        .level-notion { background: linear-gradient(135deg, #FFC107, #e6ac00); }
         
         .table-hover tbody tr:hover {
             background-color: rgba(0, 0, 0, 0.02);
@@ -310,7 +310,7 @@
             "expert" => "level-expert",
             "maitrise" => "level-maitrise", 
             "pratique" => "level-pratique",
-            "connaissance" => "level-connaissance",
+            "notion" => "level-notion",
             _ => "level-connaissance"
         };
     }
@@ -319,7 +319,7 @@
     {
         return points switch
         {
-            1 => "Connaissance",
+            1 => "notion",
             2 => "Pratique", 
             3 => "Maitrise",
             4 => "Expert",

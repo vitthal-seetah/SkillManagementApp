@@ -367,7 +367,7 @@
             background: linear-gradient(135deg, #2196F3, #1976d2);
         }
 
-        .level-connaissance {
+        .level-notion {
             background: linear-gradient(135deg, #FFC107, #e6ac00);
         }
 
@@ -384,7 +384,7 @@
             background: linear-gradient(135deg, #2196F3, #1976d2);
         }
 
-        .dropdown-item.level-connaissance {
+        .dropdown-item.level-notion {
             background: linear-gradient(135deg, #FFC107, #e6ac00);
         }
 
@@ -448,7 +448,7 @@
                     levelInput.value = levelId;
 
                     // Remove all existing level color classes
-                    const levelClasses = ['level-expert', 'level-maitrise', 'level-pratique', 'level-connaissance'];
+                    const levelClasses = ['level-expert', 'level-maitrise', 'level-pratique', 'level-notion'];
                     levelClasses.forEach(levelClass => {
                         dropdownToggle.classList.remove(levelClass);
                     });
@@ -470,14 +470,14 @@
         {
             return number switch
             {
-                1 => "Connaissance",
+                1 => "notion",
                 2 => "Pratique",
                 3 => "Maitrise",
                 4 => "Expert",
-                _ => "Connaissance"
+                _ => "notion"
             };
         }
-        return "Connaissance"; // default if parsing fails
+        return "notion"; // default if parsing fails
     }
     private string GetCriticalityBadgeClass(string criticalityLevel)
     {
@@ -497,7 +497,7 @@
             "expert" => "bg-success",
             "maitrise" => "bg-primary",
             "pratique" => "bg-info",
-            "connaissance" => "bg-warning",
+            "notion" => "bg-warning",
             _ => "bg-light text-dark"
         };
     }
@@ -509,8 +509,8 @@
             "expert" => "level-expert",
             "maitrise" => "level-maitrise",
             "pratique" => "level-pratique",
-            "connaissance" => "level-connaissance",
-            _ => "level-connaissance" // default fallback
+            "notion" => "level-notion",
+            _ => "level-notion" // default fallback
         };
     }
 }
