@@ -10,5 +10,6 @@ public interface IUserRepository
     Task<UserRole?> GetRoleByNameAsync(string roleName);
     Task<User?> GetByUtCodeAsync(string utCode);
     Task AddAsync(User user);
+    Task<User?> GetByRefIdAsync(string refId);
     Task SaveChangesAsync();
 }

@@ -33,14 +33,13 @@ namespace SkillManager.Infrastructure.Repositories
         }
 
         // ------------------------------------------------------
-        // Update existing user (including Domain + Eid)
+        // Update existing user
         // ------------------------------------------------------
         public async Task UpdateAsync(User user)
         {
             var existingUser = await _context.Users.FirstOrDefaultAsync(u =>
                 u.UserId == user.UserId
             );
-
             if (existingUser == null)
                 return;
 
@@ -52,9 +51,6 @@ namespace SkillManager.Infrastructure.Repositories
             existingUser.Status = user.Status;
             existingUser.DeliveryType = user.DeliveryType;
 
-            // -------------------------------
-            // Update Domain and Eid if provided
-            // -------------------------------
             if (!string.IsNullOrWhiteSpace(user.Domain))
                 existingUser.Domain = user.Domain;
 
@@ -89,6 +85,20 @@ namespace SkillManager.Infrastructure.Repositories
                 .Users.AsNoTracking()
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.UtCode == utCode);
+        }
+
+        // ------------------------------------------------------
+        // ✅ NEW: Get User by RefId (for preventing duplicates)
+        // ------------------------------------------------------
+        public async Task<User?> GetByRefIdAsync(string refId)
+        {
+            if (string.IsNullOrWhiteSpace(refId))
+                return null;
+
+            return await _context
+                .Users.AsNoTracking()
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.RefId == refId);
         }
 
         // ------------------------------------------------------

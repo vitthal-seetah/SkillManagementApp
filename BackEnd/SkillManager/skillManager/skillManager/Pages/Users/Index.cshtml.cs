@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -41,6 +40,13 @@ public class IndexModel : PageModel
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
     public int TotalPages { get; set; }
+
+    // --- Bind Create / Update DTOs ---
+    [BindProperty]
+    public CreateUserDto CreateUserModel { get; set; } = new();
+
+    [BindProperty]
+    public UpdateUserDto UpdateUserModel { get; set; } = new();
 
     public async Task OnGetAsync()
     {
@@ -86,54 +92,47 @@ public class IndexModel : PageModel
         Users = allUsers.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToList();
     }
 
-    // --- Save handler ---
+    // --- Save / Update Handler (AJAX-friendly) ---
     [Authorize(Policy = "AdminPolicy")]
-    public async Task<IActionResult> OnPostSaveAsync(
-        int userId,
-        string firstName,
-        string lastName,
-        string domain,
-        string eid,
-        string status,
-        string deliveryType,
-        string utCode,
-        string refId,
-        string roleName
-    )
+    public async Task<IActionResult> OnPostSaveAsync()
     {
-        var messages = new List<string>();
+        // --- Validate fields manually (or rely on UpdateUserDto validation attributes) ---
+        var errors = new Dictionary<string, string>();
 
-        var detailsUpdated = await _userService.UpdateUserDetailsAsync(
-            userId,
-            firstName,
-            lastName,
-            domain,
-            eid,
-            status,
-            deliveryType
-        );
-        if (detailsUpdated)
-            messages.Add("User details updated successfully.");
+        if (string.IsNullOrWhiteSpace(UpdateUserModel.FirstName))
+            errors["firstName"] = "First Name is required";
+        if (string.IsNullOrWhiteSpace(UpdateUserModel.LastName))
+            errors["lastName"] = "Last Name is required";
+        if (string.IsNullOrWhiteSpace(UpdateUserModel.Domain))
+            errors["domain"] = "Domain is required";
+        if (string.IsNullOrWhiteSpace(UpdateUserModel.Eid))
+            errors["eid"] = "EID is required";
 
-        var identifiersUpdated = await _userService.UpdateUserIdentifiersAsync(
-            userId,
-            utCode,
-            refId
-        );
-        if (identifiersUpdated)
-            messages.Add("UT Code and Ref ID updated successfully.");
-
-        if (!string.IsNullOrWhiteSpace(roleName))
+        // if errors exist and it's an AJAX request, return JSON
+        if (errors.Any() && Request.Headers["X-Requested-With"] == "XMLHttpRequest")
         {
-            var roleUpdated = await _userService.UpdateUserRoleAsync(userId, roleName);
-            if (roleUpdated)
-                messages.Add($"Role updated successfully to '{roleName}'.");
+            return new JsonResult(new { success = false, errors });
         }
 
-        if (messages.Any())
-            TempData["Success"] = string.Join(" ", messages);
+        var (success, message, _) = await _userService.UpdateUserAsync(UpdateUserModel);
+
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+        {
+            if (success)
+                return new JsonResult(new { success = true, message });
+            return new JsonResult(
+                new { success = false, errors = new Dictionary<string, string> { { "", message } } }
+            );
+        }
+
+        if (success)
+            TempData["Success"] = message;
         else
-            TempData["Error"] = "No changes were applied or update failed.";
+        {
+            ModelState.AddModelError(string.Empty, message);
+            await OnGetAsync(); // re-populate Users table
+            return Page();
+        }
 
         return RedirectToPage(
             new
@@ -147,41 +146,19 @@ public class IndexModel : PageModel
         );
     }
 
+    // --- Create Handler ---
     [Authorize(Policy = "AdminPolicy")]
-    public async Task<IActionResult> OnPostCreateAsync(
-        string firstName,
-        string lastName,
-        string domain,
-        string eid,
-        string status,
-        string deliveryType,
-        string utCode,
-        string refId,
-        string roleName
-    )
+    public async Task<IActionResult> OnPostCreateAsync()
     {
-        try
-        {
-            var created = await _userService.CreateUserAsync(
-                firstName,
-                lastName,
-                domain,
-                eid,
-                status,
-                deliveryType,
-                utCode,
-                refId,
-                roleName
-            );
+        var (success, message, _) = await _userService.CreateUserAsync(CreateUserModel);
 
-            if (created)
-                TempData["Success"] = $"User '{firstName} {lastName}' created successfully.";
-            else
-                TempData["Error"] = "Failed to create user. Please check input data.";
-        }
-        catch (Exception ex)
+        if (success)
+            TempData["Success"] = message;
+        else
         {
-            TempData["Error"] = $"An error occurred: {ex.Message}";
+            ModelState.AddModelError(string.Empty, message);
+            await OnGetAsync(); // re-populate Users table
+            return Page();
         }
 
         return RedirectToPage(
