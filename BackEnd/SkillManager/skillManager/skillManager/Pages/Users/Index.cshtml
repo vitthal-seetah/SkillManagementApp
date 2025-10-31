@@ -97,8 +97,8 @@
 
 <!-- 👥 USER TABLE -->
 <div class="table-responsive" style="overflow-x:auto; -webkit-overflow-scrolling: touch;">
-    <table class="table table-bordered table-striped align-middle mb-0" style="min-width:1300px;">
-        <thead class="table-dark">
+    <table class="table table-hover align-middle mb-0" style="min-width:1300px;">
+        <thead class="table-light">
             <tr>
                 <th style="min-width:140px;">First Name</th>
                 <th style="min-width:140px;">Last Name</th>
@@ -122,7 +122,7 @@
                 string role = user.RoleName ?? "Employee";
 
                 <tr id="@rowId">
-                    <form method="post" asp-page-handler="Save">
+                    <form method="post" asp-page-handler="Save" class="user-form">
                         <input type="hidden" name="userId" value="@user.UserId" />
 
                     <td><input name="firstName" class="form-control" value="@user.FirstName" disabled /><div class="invalid-feedback"></div></td>
@@ -130,10 +130,10 @@
                     <td><input name="lastName" class="form-control" value="@user.LastName" disabled /><div class="invalid-feedback"></div></td>
 
                     <td>
-                        @if (isAdmin|isManager)
+                        @if (isAdmin | isManager)
                         {
                             <input name="domain" class="form-control" value="@user.Domain" disabled />
-                    
+
                             <div class="invalid-feedback"></div>
                         }
                         else
@@ -173,7 +173,7 @@
 
                     <td>
                         <select name="deliveryType" class="form-select" disabled>
-                            
+
                             @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
                             {
                                 <option value="@value" selected="@(user.DeliveryType == (SkillManager.Domain.Entities.Enums.DeliveryType)value)">
@@ -184,31 +184,31 @@
                         <div class="invalid-feedback"></div>
                     </td>
 
-                <td>
-                    @if (isAdmin)
-                    {
-                            <input name="utCode" class="form-control" value="@user.UtCode" disabled />                  
+                    <td>
+                        @if (isAdmin)
+                        {
+                            <input name="utCode" class="form-control" value="@user.UtCode" disabled />
                             <div class="invalid-feedback"></div>
-                    }
-                    else
-                    {
-                        <input type="hidden" name="utCode" value="@user.UtCode" />
-                        <span class="form-control-plaintext">@user.UtCode</span>
-                    }
-                </td>
+                        }
+                        else
+                        {
+                            <input type="hidden" name="utCode" value="@user.UtCode" />
+                            <span class="form-control-plaintext">@user.UtCode</span>
+                        }
+                    </td>
 
-                <td>
-                    @if (isAdmin)
-                    {
-                            <input name="refId" class="form-control" value="@user.RefId" disabled />                 
+                    <td>
+                        @if (isAdmin)
+                        {
+                            <input name="refId" class="form-control" value="@user.RefId" disabled />
                             <div class="invalid-feedback"></div>
-                    }
-                    else
-                    {
-                        <input type="hidden" name="refId" value="@user.RefId" />
-                        <span class="form-control-plaintext">@user.RefId</span>
-                    }
-                </td>
+                        }
+                        else
+                        {
+                            <input type="hidden" name="refId" value="@user.RefId" />
+                            <span class="form-control-plaintext">@user.RefId</span>
+                        }
+                    </td>
 
                     <td>
                         @if (isAdmin)
@@ -227,157 +227,240 @@
                         }
                     </td>
 
-                @if (canEdit)
-                {
-                    <td style="white-space:nowrap;">
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="enableEdit('@rowId')">Edit</button>
-                        <button type="submit" class="btn btn-sm btn-success d-none save-btn">Save</button>
-                    </td>
-                }
-                </form>
-            </tr>
-        }
-    </tbody>
-</table>
+                    @if (canEdit)
+                    {
+                        <td style="white-space:nowrap;">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-outline-primary edit-btn" onclick="enableEdit('@rowId')">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="submit" class="btn btn-outline-success save-btn d-none">
+                                    <i class="bi bi-check"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary cancel-btn d-none" onclick="cancelEdit('@rowId')">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        </td>
+                    }
+                    </form>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<!-- 🧍 CREATE USER MODAL -->
-<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form method="post" asp-page-handler="Create">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="createUserLabel">Create New User</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">First Name</label>
-                        <input name="firstName" class="form-control" required />
+    <!-- 🧍 CREATE USER MODAL -->
+    <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="post" asp-page-handler="Create">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="createUserLabel">Create New User</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Last Name</label>
-                        <input name="lastName" class="form-control" required />
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">First Name</label>
+                            <input name="firstName" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Last Name</label>
+                            <input name="lastName" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Domain</label>
+                            <input name="domain" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">EID</label>
+                            <input name="eid" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select name="status" class="form-select">
+                                @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
+                                {
+                                    <option value="@value">@value</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Delivery Type</label>
+                            <select name="deliveryType" class="form-select">
+                                @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
+                                {
+                                    <option value="@value">@value</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">UT Code</label>
+                            <input name="utCode" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ref ID</label>
+                            <input name="refId" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Role</label>
+                            <select name="roleName" class="form-select">
+                                <option value="Employee">Employee</option>
+                                <option value="TechLead">TechLead</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Domain</label>
-                        <input name="domain" class="form-control" required />
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Create</button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">EID</label>
-                        <input name="eid" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Status</label>
-                        <select name="status" class="form-select">
-                            @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
-                            {
-                                <option value="@value">@value</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Delivery Type</label>
-                        <select name="deliveryType" class="form-select">
-                            @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
-                            {
-                                <option value="@value">@value</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">UT Code</label>
-                        <input name="utCode" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Ref ID</label>
-                        <input name="refId" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Role</label>
-                        <select name="roleName" class="form-select">
-                            <option value="Employee">Employee</option>
-                            <option value="TechLead">TechLead</option>
-                            <option value="Manager">Manager</option>
-                            <option value="Admin">Admin</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Create</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- 📄 PAGINATION -->
+    <!-- 📄 PAGINATION -->
 @if (Model.TotalPages > 1)
 {
-    <nav aria-label="User pagination" class="mt-4">
-        <ul class="pagination justify-content-center">
-            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
-                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)"
-                   asp-route-SelectedRole="@Model.SelectedRole"
-                   asp-route-SelectedStatus="@Model.SelectedStatus"
-                   asp-route-SelectedDelivery="@Model.SelectedDelivery"
-                   asp-route-SortBy="@Model.SortBy">Previous</a>
-            </li>
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                    <a class="page-link" asp-route-PageNumber="@i"
+        <nav aria-label="User pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)"
                        asp-route-SelectedRole="@Model.SelectedRole"
                        asp-route-SelectedStatus="@Model.SelectedStatus"
                        asp-route-SelectedDelivery="@Model.SelectedDelivery"
-                       asp-route-SortBy="@Model.SortBy">@i</a>
+                       asp-route-SortBy="@Model.SortBy">Previous</a>
                 </li>
-            }
-            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
-                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)"
-                   asp-route-SelectedRole="@Model.SelectedRole"
-                   asp-route-SelectedStatus="@Model.SelectedStatus"
-                   asp-route-SelectedDelivery="@Model.SelectedDelivery"
-                   asp-route-SortBy="@Model.SortBy">Next</a>
-            </li>
-        </ul>
-    </nav>
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" asp-route-PageNumber="@i"
+                           asp-route-SelectedRole="@Model.SelectedRole"
+                           asp-route-SelectedStatus="@Model.SelectedStatus"
+                           asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                           asp-route-SortBy="@Model.SortBy">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)"
+                       asp-route-SelectedRole="@Model.SelectedRole"
+                       asp-route-SelectedStatus="@Model.SelectedStatus"
+                       asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                       asp-route-SortBy="@Model.SortBy">Next</a>
+                </li>
+            </ul>
+        </nav>
 }
 
 @section Scripts {
-    <style>
-        .bg-purple {
-            background-color: rebeccapurple !important;
-            color: white !important;
-        }
+        <style>
+            .bg-purple {
+                background-color: rebeccapurple !important;
+                color: white !important;
+            }
 
-        .badge {
-            font-size: 0.9rem;
-            border-radius: 0.5rem;
-        }
+            .badge {
+                font-size: 0.9rem;
+                border-radius: 0.5rem;
+            }
 
-        form.row.g-3 select {
-            min-width: 150px;
-        }
-    </style>
-    <script>
-        function enableEdit(rowId) {
-            const row = document.getElementById(rowId);
-            const inputs = row.querySelectorAll("input, select");
-            const saveBtn = row.querySelector(".save-btn");
+            form.row.g-3 select {
+                min-width: 150px;
+            }
 
-            // Allow editing for all relevant fields — including UTCode and RefId — only after Edit is pressed
-            inputs.forEach(i => {
-                // Skip hidden inputs
-                if (i.type !== "hidden") {
-                    i.disabled = false;
+            .btn-group {
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        </style>
+        <script>
+            let originalValues = {};
+
+            function enableEdit(rowId) {
+                const row = document.getElementById(rowId);
+                const inputs = row.querySelectorAll("input, select");
+                const editBtn = row.querySelector(".edit-btn");
+                const saveBtn = row.querySelector(".save-btn");
+                const cancelBtn = row.querySelector(".cancel-btn");
+
+                // Store original values
+                originalValues[rowId] = {};
+                inputs.forEach(input => {
+                    if (input.type !== 'hidden') {
+                        originalValues[rowId][input.name] = input.value;
+                    }
+                });
+
+                // Enable inputs
+                inputs.forEach(i => {
+                    if (i.type !== "hidden" && !i.classList.contains('form-control-plaintext')) {
+                        i.disabled = false;
+                    }
+                });
+
+                // Toggle buttons
+                editBtn.classList.add("d-none");
+                saveBtn.classList.remove("d-none");
+                cancelBtn.classList.remove("d-none");
+            }
+
+            function cancelEdit(rowId) {
+                const row = document.getElementById(rowId);
+                const inputs = row.querySelectorAll("input, select");
+                const editBtn = row.querySelector(".edit-btn");
+                const saveBtn = row.querySelector(".save-btn");
+                const cancelBtn = row.querySelector(".cancel-btn");
+
+                // Restore original values
+                if (originalValues[rowId]) {
+                    inputs.forEach(input => {
+                        if (originalValues[rowId][input.name] !== undefined &&
+                            input.type !== 'hidden' &&
+                            !input.classList.contains('form-control-plaintext')) {
+                            input.value = originalValues[rowId][input.name];
+                        }
+                    });
                 }
+
+                // Disable inputs
+                inputs.forEach(i => {
+                    if (i.type !== "hidden" && !i.classList.contains('form-control-plaintext')) {
+                        i.disabled = true;
+                    }
+                });
+
+                // Toggle buttons
+                editBtn.classList.remove("d-none");
+                saveBtn.classList.add("d-none");
+                cancelBtn.classList.add("d-none");
+
+                // Clear validation
+                const invalidFeedback = row.querySelectorAll('.invalid-feedback');
+                invalidFeedback.forEach(feedback => {
+                    feedback.textContent = '';
+                });
+                inputs.forEach(input => {
+                    input.classList.remove('is-invalid');
+                });
+            }
+
+            // Handle form submission
+            document.addEventListener('DOMContentLoaded', function() {
+                const forms = document.querySelectorAll('.user-form');
+                forms.forEach(form => {
+                    form.addEventListener('submit', function(e) {
+                        const rowId = this.closest('tr').id;
+                        const saveBtn = this.querySelector('.save-btn');
+
+                        // If save button is visible, we're in edit mode
+                        if (!saveBtn.classList.contains('d-none')) {
+                            // You can add validation here if needed
+                            console.log('Saving user data for row:', rowId);
+                        }
+                    });
+                });
             });
-
-            saveBtn?.classList.remove("d-none");
-        }
-    </script>
-
+        </script>
 }
 
 @functions {

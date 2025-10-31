@@ -88,9 +88,6 @@ public class ManageModel : PageModel
         }
     }
 
-    // ------------------------------------------------------------
-    // Handler for loading subcategories (AJAX)
-    // ------------------------------------------------------------
     public async Task<JsonResult> OnGetSubCategories(int categoryId)
     {
         try
