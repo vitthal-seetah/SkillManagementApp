@@ -29,7 +29,7 @@ public class UpdateSkillValidator : AbstractValidator<UpdateSkillDto>
 
         // Label: optional, max 100
         RuleFor(x => x.Label)
-            .MaximumLength(100)
+            .MaximumLength(200)
             .WithMessage("Skill label cannot exceed 100 characters.");
 
         // CategoryId: optional, must exist

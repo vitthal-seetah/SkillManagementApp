@@ -17,7 +17,7 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ILevelService, LevelService>();
         services.AddScoped<ISkillService, SkillService>();
-
+        services.AddScoped<ICategoryService, CategoryService>();
         // For single validator registration
         services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
 

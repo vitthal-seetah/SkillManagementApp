@@ -46,6 +46,9 @@ namespace SkillManager.Application.Mappers
                 SubCategoryName = skill.SubCategory?.Name ?? string.Empty,
                 CategoryTypeName = skill.Category?.CategoryType?.Name ?? string.Empty,
                 CategoryTypeId = skill.Category?.CategoryTypeId ?? 0,
+                // Add these two
+                CategoryId = skill.CategoryId,
+                SubCategoryId = skill.SubCategoryId,
             };
         }
     }

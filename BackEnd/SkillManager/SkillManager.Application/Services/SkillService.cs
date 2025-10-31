@@ -74,7 +74,6 @@ namespace SkillManager.Application.Services
                 throw new ApplicationException("Failed to create skill.");
             }
 
-            // Reload the skill to get related entities
             return created;
         }
 
@@ -86,46 +85,230 @@ namespace SkillManager.Application.Services
                 throw new NotFoundException($"Skill with ID {skillId} not found.");
             }
 
-            // --- Run FluentValidation ---
-            var validationResult = await _updateSkillValidator.ValidateAsync(updateDto);
+            // Create a copy of the updateDto with only the fields that are actually being updated
+            var updateDtoForValidation = new UpdateSkillDto();
+            var hasChanges = false;
+
+            // Only validate fields that are being updated
+            if (
+                updateDto.CategoryId.HasValue
+                && updateDto.CategoryId.Value != existingSkill.CategoryId
+            )
+            {
+                updateDtoForValidation.CategoryId = updateDto.CategoryId;
+                hasChanges = true;
+            }
+
+            if (
+                updateDto.SubCategoryId.HasValue
+                && updateDto.SubCategoryId.Value != existingSkill.SubCategoryId
+            )
+            {
+                updateDtoForValidation.SubCategoryId = updateDto.SubCategoryId;
+                hasChanges = true;
+            }
+
+            if (
+                !string.IsNullOrWhiteSpace(updateDto.Code)
+                && updateDto.Code.Trim() != existingSkill.Code
+            )
+            {
+                updateDtoForValidation.Code = updateDto.Code;
+                hasChanges = true;
+            }
+
+            if (
+                !string.IsNullOrWhiteSpace(updateDto.Label)
+                && updateDto.Label.Trim() != existingSkill.Label
+            )
+            {
+                updateDtoForValidation.Label = updateDto.Label;
+                hasChanges = true;
+            }
+
+            if (
+                !string.IsNullOrWhiteSpace(updateDto.CriticalityLevel)
+                && updateDto.CriticalityLevel != existingSkill.CriticalityLevel
+            )
+            {
+                updateDtoForValidation.CriticalityLevel = updateDto.CriticalityLevel;
+                hasChanges = true;
+            }
+
+            if (
+                updateDto.ProjectRequiresSkill.HasValue
+                && updateDto.ProjectRequiresSkill.Value != existingSkill.ProjectRequiresSkill
+            )
+            {
+                updateDtoForValidation.ProjectRequiresSkill = updateDto.ProjectRequiresSkill;
+                hasChanges = true;
+            }
+
+            if (
+                updateDto.RequiredLevel.HasValue
+                && updateDto.RequiredLevel.Value != existingSkill.RequiredLevel
+            )
+            {
+                updateDtoForValidation.RequiredLevel = updateDto.RequiredLevel;
+                hasChanges = true;
+            }
+
+            if (
+                updateDto.FirstLevelDescription != null
+                && updateDto.FirstLevelDescription != existingSkill.FirstLevelDescription
+            )
+            {
+                updateDtoForValidation.FirstLevelDescription = updateDto.FirstLevelDescription;
+                hasChanges = true;
+            }
+
+            if (
+                updateDto.SecondLevelDescription != null
+                && updateDto.SecondLevelDescription != existingSkill.SecondLevelDescription
+            )
+            {
+                updateDtoForValidation.SecondLevelDescription = updateDto.SecondLevelDescription;
+                hasChanges = true;
+            }
+
+            if (
+                updateDto.ThirdLevelDescription != null
+                && updateDto.ThirdLevelDescription != existingSkill.ThirdLevelDescription
+            )
+            {
+                updateDtoForValidation.ThirdLevelDescription = updateDto.ThirdLevelDescription;
+                hasChanges = true;
+            }
+
+            if (
+                updateDto.FourthLevelDescription != null
+                && updateDto.FourthLevelDescription != existingSkill.FourthLevelDescription
+            )
+            {
+                updateDtoForValidation.FourthLevelDescription = updateDto.FourthLevelDescription;
+                hasChanges = true;
+            }
+
+            // If no changes, return the existing skill
+            if (!hasChanges)
+            {
+                return existingSkill.ToSkillDto();
+            }
+
+            // --- Run FluentValidation only on changed fields ---
+            var validationResult = await _updateSkillValidator.ValidateAsync(
+                updateDtoForValidation
+            );
             if (!validationResult.IsValid)
             {
                 var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
                 throw new ValidationException(errors);
             }
 
-            // --- Apply updates only for provided properties ---
-            if (updateDto.CategoryId.HasValue)
-                existingSkill.CategoryId = updateDto.CategoryId.Value;
+            // --- Additional business logic for changed fields ---
 
-            if (updateDto.SubCategoryId.HasValue)
-                existingSkill.SubCategoryId = updateDto.SubCategoryId.Value;
-
-            if (!string.IsNullOrWhiteSpace(updateDto.Code))
+            // Check for duplicate code only if code is being changed
+            if (
+                !string.IsNullOrWhiteSpace(updateDto.Code)
+                && updateDto.Code.Trim() != existingSkill.Code
+            )
+            {
+                var existingSkillWithSameCode = await _skillRepository.GetByCodeAsync(
+                    updateDto.Code.Trim()
+                );
+                if (
+                    existingSkillWithSameCode != null
+                    && existingSkillWithSameCode.SkillId != skillId
+                )
+                {
+                    throw new ValidationException(
+                        $"Skill with code '{updateDto.Code}' already exists."
+                    );
+                }
                 existingSkill.Code = updateDto.Code.Trim();
+            }
 
-            if (!string.IsNullOrWhiteSpace(updateDto.Label))
+            // Check if category exists only if category is being changed
+            if (
+                updateDto.CategoryId.HasValue
+                && updateDto.CategoryId.Value != existingSkill.CategoryId
+            )
+            {
+                var category = await _categoryRepository.GetByIdAsync(updateDto.CategoryId.Value);
+                if (category == null)
+                {
+                    throw new ValidationException(
+                        $"Category with ID {updateDto.CategoryId} not found."
+                    );
+                }
+                existingSkill.CategoryId = updateDto.CategoryId.Value;
+            }
+
+            // Check if subcategory exists only if subcategory is being changed
+            if (
+                updateDto.SubCategoryId.HasValue
+                && updateDto.SubCategoryId.Value != existingSkill.SubCategoryId
+            )
+            {
+                var subCategory = await _categoryRepository.GetSubCategoryByIdAsync(
+                    updateDto.SubCategoryId.Value
+                );
+                if (subCategory == null)
+                {
+                    throw new ValidationException(
+                        $"SubCategory with ID {updateDto.SubCategoryId} not found."
+                    );
+                }
+                existingSkill.SubCategoryId = updateDto.SubCategoryId.Value;
+            }
+
+            // --- Apply updates only for changed fields ---
+            if (
+                !string.IsNullOrWhiteSpace(updateDto.Label)
+                && updateDto.Label.Trim() != existingSkill.Label
+            )
                 existingSkill.Label = updateDto.Label.Trim();
 
-            if (!string.IsNullOrWhiteSpace(updateDto.CriticalityLevel))
+            if (
+                !string.IsNullOrWhiteSpace(updateDto.CriticalityLevel)
+                && updateDto.CriticalityLevel != existingSkill.CriticalityLevel
+            )
                 existingSkill.CriticalityLevel = updateDto.CriticalityLevel;
 
-            if (updateDto.ProjectRequiresSkill.HasValue)
+            if (
+                updateDto.ProjectRequiresSkill.HasValue
+                && updateDto.ProjectRequiresSkill.Value != existingSkill.ProjectRequiresSkill
+            )
                 existingSkill.ProjectRequiresSkill = updateDto.ProjectRequiresSkill.Value;
 
-            if (updateDto.RequiredLevel.HasValue)
+            if (
+                updateDto.RequiredLevel.HasValue
+                && updateDto.RequiredLevel.Value != existingSkill.RequiredLevel
+            )
                 existingSkill.RequiredLevel = updateDto.RequiredLevel.Value;
 
-            if (updateDto.FirstLevelDescription != null)
+            if (
+                updateDto.FirstLevelDescription != null
+                && updateDto.FirstLevelDescription != existingSkill.FirstLevelDescription
+            )
                 existingSkill.FirstLevelDescription = updateDto.FirstLevelDescription;
 
-            if (updateDto.SecondLevelDescription != null)
+            if (
+                updateDto.SecondLevelDescription != null
+                && updateDto.SecondLevelDescription != existingSkill.SecondLevelDescription
+            )
                 existingSkill.SecondLevelDescription = updateDto.SecondLevelDescription;
 
-            if (updateDto.ThirdLevelDescription != null)
+            if (
+                updateDto.ThirdLevelDescription != null
+                && updateDto.ThirdLevelDescription != existingSkill.ThirdLevelDescription
+            )
                 existingSkill.ThirdLevelDescription = updateDto.ThirdLevelDescription;
 
-            if (updateDto.FourthLevelDescription != null)
+            if (
+                updateDto.FourthLevelDescription != null
+                && updateDto.FourthLevelDescription != existingSkill.FourthLevelDescription
+            )
                 existingSkill.FourthLevelDescription = updateDto.FourthLevelDescription;
 
             var updated = await _skillRepository.UpdateAsync(existingSkill);

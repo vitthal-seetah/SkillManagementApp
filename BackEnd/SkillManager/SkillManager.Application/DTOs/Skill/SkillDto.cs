@@ -28,4 +28,6 @@ public class SkillDto
     // Category Type information
     public string CategoryTypeName { get; set; } = string.Empty;
     public int CategoryTypeId { get; set; }
+    public int CategoryId { get; set; }
+    public int SubCategoryId { get; set; }
 }

@@ -75,16 +75,16 @@
     <table class="table table-bordered table-striped align-middle mb-0" style="min-width:1300px;">
         <thead class="table-dark">
             <tr>
-                <th style="min-width:120px;">Code</th>
+                <th style="min-width:200px;">Code</th>
                 <th style="min-width:200px;">Name</th>
                 <th style="min-width:140px;">Category</th>
                 <th style="min-width:140px;">Category Type</th>
-                <th style="min-width:140px;">Criticality</th>
-                <th style="min-width:120px;">Required Level</th>
-                <th style="min-width:200px;">Description</th>
+                <th style="min-width:70px;">Criticality</th>
+                <th style="min-width:70px;">Required Level</th>
+                <th style="min-width:300px;">Description</th>
                 @if (canEdit)
                 {
-                    <th style="min-width:140px; width:140px;">Actions</th>
+                    <th style="min-width:180px; width:180px;">Actions</th>
                 }
             </tr>
         </thead>
@@ -93,51 +93,65 @@
             {
                 var rowId = $"row-{skill.SkillId}";
                 <tr id="@rowId">
-                    <form method="post" asp-page-handler="Save">
-                        <input type="hidden" name="SkillId" value="@skill.SkillId" />
+                    <!-- Edit Form -->
+                    <form method="post" asp-page-handler="Save" class="skill-edit-form">
+                        <!-- FIX: Change SkillId to id to match the method parameter -->
+                        <input type="hidden" name="id" value="@skill.SkillId" />
 
-                        <td><input name="Code" class="form-control" value="@skill.Code" disabled /></td>
-                        <td><input name="Label" class="form-control" value="@skill.Label" disabled /></td>
+                        <!-- Hidden fields to track original values -->
+                        <input type="hidden" name="originalCode" value="@skill.Code" />
+                        <input type="hidden" name="originalCategoryId" value="@skill.CategoryId" />
 
-                        <td>
-                            <select name="CategoryName" class="form-select" disabled>
-                                @foreach (var category in Model.Categories)
-                                {
-                                    <option value="@category.Name" selected="@(category.Name == skill.CategoryName)">
-                                        @category.Name
-                                    </option>
-                                }
-                            </select>
+                    <td>
+                        <textarea name="Code" class="form-control code-field" rows="2"
+                              style="min-width:120px; max-width:150px; overflow-wrap: break-word; resize: none;"
+                              disabled>@skill.Code</textarea>
+                    </td>
+
+                    <td>
+                        <textarea name="Label" class="form-control" rows="2" style="min-width:200px; max-width:250px; overflow-wrap: break-word; resize: none;" disabled>@skill.Label</textarea>
+                    </td>
+
+                    <td>
+                        <select name="CategoryId" class="form-select category-field" disabled>
+                            <option value="">Select Category</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.CategoryId" selected="@(category.CategoryId == skill.CategoryId)" data-category-type="@category.CategoryTypeName">
+                                    @category.Name
+                                </option>
+                            }
+                        </select>
+                    </td>
+
+                    <!-- Category Type is now derived from Category selection but displayed as text -->
+                    <td>
+                        <div class="category-type-display">
+                            @skill.CategoryTypeName
+                        </div>
+                    </td>
+
+                    <td>
+                        <input name="CriticalityLevel" class="form-control" value="@skill.CriticalityLevel" disabled />
+                    </td>
+
+                    <td>
+                        <input name="RequiredLevel" type="number" class="form-control" value="@skill.RequiredLevel" min="1" max="4" disabled />
+                    </td>
+
+                    <td>
+                        <textarea name="FirstLevelDescription" class="form-control" rows="3" style="max-width:500px; min-width:300px; resize: vertical;" disabled>@skill.FirstLevelDescription</textarea>
+                    </td>
+
+                    @if (canEdit)
+                    {
+                        <td style="white-space:nowrap;">
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="enableEdit('@rowId')">Edit</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary d-none cancel-btn" onclick="cancelEdit('@rowId')">Cancel</button>
+                            <button type="submit" class="btn btn-sm btn-success d-none save-btn">Save</button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(@skill.SkillId, '@skill.Label')">Delete</button>
                         </td>
-
-                        <td>
-                            <select name="CategoryTypeName" class="form-select" disabled>
-                                @foreach (var type in Model.CategoryTypes)
-                                {
-                                    <option value="@type.Name" selected="@(type.Name == skill.CategoryTypeName)">
-                                        @type.Name
-                                    </option>
-                                }
-                            </select>
-                        </td>
-
-                        <td>
-                            <input name="CriticalityLevel" class="form-control" value="@skill.CriticalityLevel" disabled />
-                        </td>
-
-                        <td>
-                            <input name="RequiredLevel" type="number" class="form-control" value="@skill.RequiredLevel" disabled />
-                        </td>
-
-                        <td><textarea name="FirstLevelDescription" class="form-control" rows="1" disabled>@skill.FirstLevelDescription</textarea></td>
-
-                        @if (canEdit)
-                        {
-                            <td style="white-space:nowrap;">
-                                <button type="button" class="btn btn-sm btn-secondary" onclick="enableEdit('@rowId')">Edit</button>
-                                <button type="submit" class="btn btn-sm btn-success d-none save-btn">Save</button>
-                            </td>
-                        }
+                    }
                     </form>
                 </tr>
             }
@@ -166,20 +180,19 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Category</label>
-                            <select name="CategoryName" class="form-select" required>
+                            <select name="CategoryId" class="form-select" id="createCategorySelect" required>
+                                <option value="">Select Category</option>
                                 @foreach (var category in Model.Categories)
                                 {
-                                    <option value="@category.Name">@category.Name</option>
+                                    <option value="@category.CategoryId">@category.Name</option>
                                 }
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Category Type</label>
-                            <select name="CategoryTypeName" class="form-select" required>
-                                @foreach (var type in Model.CategoryTypes)
-                                {
-                                    <option value="@type.Name">@type.Name</option>
-                                }
+                            <label class="form-label fw-semibold">SubCategory (Optional)</label>
+                            <select name="SubCategoryId" class="form-select" id="createSubCategorySelect">
+                                <option value="">Select SubCategory</option>
+                                <!-- Subcategories will be populated dynamically -->
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -188,7 +201,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Required Level</label>
-                            <input name="RequiredLevel" type="number" class="form-control" />
+                            <input name="RequiredLevel" type="number" class="form-control" min="1" max="4" />
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Description</label>
@@ -205,20 +218,216 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteConfirmLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete skill: <strong id="deleteSkillName"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" asp-page-handler="Delete" id="deleteForm">
+                    <input type="hidden" name="id" id="deleteSkillId" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <style>
         .badge {
             font-size: 0.9rem;
             border-radius: 0.5rem;
         }
+
+        .skill-edit-form {
+            display: contents; /* This makes the form not break table layout */
+        }
+
+        .category-type-display {
+            padding: 0.375rem 0.75rem;
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+        }
     </style>
     <script>
+        // Store original values when editing starts
+        const originalValues = new Map();
+
         function enableEdit(rowId) {
             const row = document.getElementById(rowId);
             const inputs = row.querySelectorAll("input, select, textarea");
             const saveBtn = row.querySelector(".save-btn");
-            inputs.forEach(i => { if (i.type !== "hidden") i.disabled = false; });
-            saveBtn?.classList.remove("d-none");
+            const cancelBtn = row.querySelector(".cancel-btn");
+            const editBtn = row.querySelector(".btn-secondary");
+
+            // Store original values
+            const originalCode = row.querySelector('input[name="originalCode"]').value;
+            const originalCategoryId = row.querySelector('input[name="originalCategoryId"]').value;
+
+            originalValues.set(rowId, {
+                code: originalCode,
+                categoryId: originalCategoryId
+            });
+
+            // Enable all inputs for editing
+            inputs.forEach(input => {
+                if (input.type !== "hidden") {
+                    input.disabled = false;
+                }
+            });
+
+            // Show/hide buttons
+            editBtn.classList.add('d-none');
+            saveBtn.classList.remove('d-none');
+            cancelBtn.classList.remove('d-none');
+        }
+
+        function cancelEdit(rowId) {
+            const row = document.getElementById(rowId);
+            const inputs = row.querySelectorAll("input, select, textarea");
+            const saveBtn = row.querySelector(".save-btn");
+            const cancelBtn = row.querySelector(".cancel-btn");
+            const editBtn = row.querySelector(".btn-secondary");
+
+            // Restore original values
+            const original = originalValues.get(rowId);
+            if (original) {
+                const codeInput = row.querySelector('textarea[name="Code"]');
+                const categorySelect = row.querySelector('select[name="CategoryId"]');
+
+                if (codeInput) codeInput.value = original.code;
+                if (categorySelect) categorySelect.value = original.categoryId;
+
+                // Update category type display based on restored category
+                updateCategoryTypeDisplay(row, original.categoryId);
+            }
+
+            // Disable all inputs
+            inputs.forEach(input => {
+                if (input.type !== "hidden") {
+                    input.disabled = true;
+                }
+            });
+
+            // Show/hide buttons
+            editBtn.classList.remove('d-none');
+            saveBtn.classList.add('d-none');
+            cancelBtn.classList.add('d-none');
+
+            // Remove from stored values
+            originalValues.delete(rowId);
+        }
+
+        // Update category type display when category changes
+        function updateCategoryTypeDisplay(row, categoryId) {
+            const categorySelect = row.querySelector('.category-field');
+            const categoryTypeDisplay = row.querySelector('.category-type-display');
+
+            if (categorySelect && categoryTypeDisplay) {
+                const selectedOption = categorySelect.querySelector(`option[value="${categoryId}"]`);
+                if (selectedOption) {
+                    categoryTypeDisplay.textContent = selectedOption.getAttribute('data-category-type') || '';
+                }
+            }
+        }
+
+        // Load subcategories for a given category ID
+        async function loadSubCategories(categoryId, subCategorySelect) {
+            if (!categoryId) {
+                subCategorySelect.innerHTML = '<option value="">Select SubCategory</option>';
+                subCategorySelect.disabled = true;
+                return;
+            }
+
+            try {
+                subCategorySelect.disabled = true;
+                subCategorySelect.innerHTML = '<option value="">Loading subcategories...</option>';
+
+                // Since we don't have an API, we'll use the server-side approach
+                // In a real application, you would make an API call here
+                // For now, we'll simulate by making a request to the server
+                const response = await fetch(`?handler=SubCategories&categoryId=${categoryId}`);
+                if (response.ok) {
+                    const subCategories = await response.json();
+
+                    subCategorySelect.innerHTML = '<option value="">Select SubCategory</option>';
+                    subCategories.forEach(sc => {
+                        const option = document.createElement('option');
+                        option.value = sc.subCategoryId;
+                        option.textContent = sc.name;
+                        subCategorySelect.appendChild(option);
+                    });
+                    subCategorySelect.disabled = false;
+                } else {
+                    throw new Error('Failed to load subcategories');
+                }
+            } catch (error) {
+                console.error('Error loading subcategories:', error);
+                subCategorySelect.innerHTML = '<option value="">Error loading subcategories</option>';
+                subCategorySelect.disabled = true;
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners to all category selects for live updates
+            document.querySelectorAll('.category-field').forEach(select => {
+                select.addEventListener('change', function() {
+                    const row = this.closest('tr');
+                    const categoryId = this.value;
+                    updateCategoryTypeDisplay(row, categoryId);
+                });
+            });
+
+            // Initialize category type displays
+            document.querySelectorAll('tr[id^="row-"]').forEach(row => {
+                const categorySelect = row.querySelector('.category-field');
+                if (categorySelect) {
+                    const categoryId = categorySelect.value;
+                    updateCategoryTypeDisplay(row, categoryId);
+                }
+            });
+
+            // Dynamic subcategory loading for create modal
+            const createCategorySelect = document.querySelector('#createCategorySelect');
+            const createSubCategorySelect = document.querySelector('#createSubCategorySelect');
+
+            if (createCategorySelect && createSubCategorySelect) {
+                createCategorySelect.addEventListener('change', function() {
+                    const categoryId = this.value;
+
+                    if (categoryId) {
+                        // Pre-populate with available subcategories from server data
+                        createSubCategorySelect.innerHTML = '<option value="">Select SubCategory</option>';
+                        createSubCategorySelect.disabled = false;
+
+                        // In a real implementation, you would fetch from an API
+                        // For now, we'll keep it simple and let the server handle the SubCategoryId binding
+                    } else {
+                        createSubCategorySelect.innerHTML = '<option value="">Select SubCategory</option>';
+                        createSubCategorySelect.disabled = true;
+                    }
+                });
+            }
+        });
+
+        function confirmDelete(skillId, skillName) {
+            document.getElementById('deleteSkillId').value = skillId;
+            document.getElementById('deleteSkillName').textContent = skillName;
+            new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
         }
     </script>
 }

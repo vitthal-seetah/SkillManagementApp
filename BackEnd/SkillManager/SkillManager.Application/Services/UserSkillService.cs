@@ -140,7 +140,7 @@ namespace SkillManager.Application.Services
         public async Task<List<CategoryDto>> GetAllCategories()
         {
             var categories = await _categoryRepository.GetAllAsync();
-            return categories.Select(c => c.ToDto()).ToList();
+            return categories.Select(c => c.ToCategoryDto()).ToList();
         }
 
         public async Task<CategoryNavigationViewModel> GetCategoryNavigationAsync(

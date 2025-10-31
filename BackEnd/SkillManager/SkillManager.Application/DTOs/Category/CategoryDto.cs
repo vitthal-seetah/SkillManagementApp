@@ -15,5 +15,7 @@ namespace SkillManager.Application.DTOs.Category
 
         // Optional — if you need to show subcategories in UI
         public List<SubCategoryDto> SubCategories { get; set; } = new();
+        public int SkillCount { get; set; }
+        public int SubCategoryCount { get; set; }
     }
 }
