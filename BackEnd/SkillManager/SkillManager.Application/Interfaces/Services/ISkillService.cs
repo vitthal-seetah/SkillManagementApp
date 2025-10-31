@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SkillManager.Application.DTOs.Skill;
-using SkillManager.Application.Models;
+﻿using SkillManager.Application.DTOs.Skill;
 
 namespace SkillManager.Application.Interfaces.Repositories
 {
@@ -14,8 +8,8 @@ namespace SkillManager.Application.Interfaces.Repositories
         Task<SkillDto> GetSkillByIdAsync(int skillId);
         Task<SkillDto> GetSkillByCodeAsync(string code);
         Task<IEnumerable<SkillDto>> GetAllSkillsAsync();
-        Task<bool> CreateSkillAsync(CreateSkillDto createDto);
-        Task<SkillDto> UpdateSkillAsync(int skillId, UpdateSkillDto updateDto);
+        Task<bool> CreateSkillAsync(CreateSkillDto createDto); // Validator handles CreateSkillDto validation
+        Task<SkillDto> UpdateSkillAsync(int skillId, UpdateSkillDto updateDto); // Validator handles UpdateSkillDto validation
         Task<bool> DeleteSkillAsync(int skillId);
 
         // Category-based Operations
@@ -27,6 +21,7 @@ namespace SkillManager.Application.Interfaces.Repositories
         // Specialized Queries
         Task<IEnumerable<SkillDto>> GetCriticalSkillsAsync();
         Task<IEnumerable<SkillDto>> GetProjectRequiredSkillsAsync();
+        Task<IEnumerable<SkillDto>> GetSkillsByRequiredLevelAsync(int level); // Added to match service method
         Task<IEnumerable<SkillDto>> SearchSkillsAsync(string searchTerm);
     }
 }

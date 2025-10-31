@@ -1,0 +1,224 @@
+﻿@page
+@model SkillManager.Web.Pages.Skills.ManageModel
+@{
+    ViewData["Title"] = "Skill Management";
+    bool isAdmin = Model.UserRoles.Contains("Admin");
+    bool isManager = Model.UserRoles.Contains("Manager");
+    bool canEdit = isAdmin || isManager;
+}
+
+<h2 class="mb-3">Skill Management</h2>
+
+@if (isAdmin)
+{
+    <div class="mb-3 text-end">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createSkillModal">
+            <i class="bi bi-plus-circle"></i> Create New Skill
+        </button>
+    </div>
+}
+
+<!-- 🔍 FILTER + SORT CONTROLS -->
+<form method="get" class="row g-3 align-items-end mb-4">
+    <div class="col-auto">
+        <label for="SelectedCategoryType" class="form-label fw-semibold">Filter by Category Type</label>
+        <select name="SelectedCategoryType" id="SelectedCategoryType" class="form-select" onchange="this.form.submit()">
+            <option value="All" selected="@(Model.SelectedCategoryType == "All")">All Types</option>
+            @foreach (var categoryType in Model.CategoryTypes)
+            {
+                <option value="@categoryType.Name" selected="@(Model.SelectedCategoryType == categoryType.Name)">
+                    @categoryType.Name
+                </option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <label for="SortBy" class="form-label fw-semibold">Sort by</label>
+        <select name="SortBy" id="SortBy" class="form-select" onchange="this.form.submit()">
+            <option value="">Default</option>
+            <option value="CodeAsc" selected="@(Model.SortBy == "CodeAsc")">Code (A → Z)</option>
+            <option value="CodeDesc" selected="@(Model.SortBy == "CodeDesc")">Code (Z → A)</option>
+            <option value="NameAsc" selected="@(Model.SortBy == "NameAsc")">Name (A → Z)</option>
+            <option value="NameDesc" selected="@(Model.SortBy == "NameDesc")">Name (Z → A)</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Apply</button>
+        <a href="/Skills/Manage" class="btn btn-outline-secondary">Reset</a>
+    </div>
+</form>
+
+<!-- ✅ Alerts -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<!-- 📋 SKILLS TABLE -->
+<div class="table-responsive" style="overflow-x:auto; -webkit-overflow-scrolling: touch;">
+    <table class="table table-bordered table-striped align-middle mb-0" style="min-width:1300px;">
+        <thead class="table-dark">
+            <tr>
+                <th style="min-width:120px;">Code</th>
+                <th style="min-width:200px;">Name</th>
+                <th style="min-width:140px;">Category</th>
+                <th style="min-width:140px;">Category Type</th>
+                <th style="min-width:140px;">Criticality</th>
+                <th style="min-width:120px;">Required Level</th>
+                <th style="min-width:200px;">Description</th>
+                @if (canEdit)
+                {
+                    <th style="min-width:140px; width:140px;">Actions</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var skill in Model.Skills)
+            {
+                var rowId = $"row-{skill.SkillId}";
+                <tr id="@rowId">
+                    <form method="post" asp-page-handler="Save">
+                        <input type="hidden" name="SkillId" value="@skill.SkillId" />
+
+                        <td><input name="Code" class="form-control" value="@skill.Code" disabled /></td>
+                        <td><input name="Label" class="form-control" value="@skill.Label" disabled /></td>
+
+                        <td>
+                            <select name="CategoryName" class="form-select" disabled>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.Name" selected="@(category.Name == skill.CategoryName)">
+                                        @category.Name
+                                    </option>
+                                }
+                            </select>
+                        </td>
+
+                        <td>
+                            <select name="CategoryTypeName" class="form-select" disabled>
+                                @foreach (var type in Model.CategoryTypes)
+                                {
+                                    <option value="@type.Name" selected="@(type.Name == skill.CategoryTypeName)">
+                                        @type.Name
+                                    </option>
+                                }
+                            </select>
+                        </td>
+
+                        <td>
+                            <input name="CriticalityLevel" class="form-control" value="@skill.CriticalityLevel" disabled />
+                        </td>
+
+                        <td>
+                            <input name="RequiredLevel" type="number" class="form-control" value="@skill.RequiredLevel" disabled />
+                        </td>
+
+                        <td><textarea name="FirstLevelDescription" class="form-control" rows="1" disabled>@skill.FirstLevelDescription</textarea></td>
+
+                        @if (canEdit)
+                        {
+                            <td style="white-space:nowrap;">
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="enableEdit('@rowId')">Edit</button>
+                                <button type="submit" class="btn btn-sm btn-success d-none save-btn">Save</button>
+                            </td>
+                        }
+                    </form>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- ➕ CREATE SKILL MODAL -->
+<div class="modal fade" id="createSkillModal" tabindex="-1" aria-labelledby="createSkillLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="Create">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="createSkillLabel">Create New Skill</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Code</label>
+                            <input name="Code" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Name</label>
+                            <input name="Label" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Category</label>
+                            <select name="CategoryName" class="form-select" required>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.Name">@category.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Category Type</label>
+                            <select name="CategoryTypeName" class="form-select" required>
+                                @foreach (var type in Model.CategoryTypes)
+                                {
+                                    <option value="@type.Name">@type.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Criticality</label>
+                            <input name="CriticalityLevel" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Required Level</label>
+                            <input name="RequiredLevel" type="number" class="form-control" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Description</label>
+                            <textarea name="FirstLevelDescription" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .badge {
+            font-size: 0.9rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+    <script>
+        function enableEdit(rowId) {
+            const row = document.getElementById(rowId);
+            const inputs = row.querySelectorAll("input, select, textarea");
+            const saveBtn = row.querySelector(".save-btn");
+            inputs.forEach(i => { if (i.type !== "hidden") i.disabled = false; });
+            saveBtn?.classList.remove("d-none");
+        }
+    </script>
+}

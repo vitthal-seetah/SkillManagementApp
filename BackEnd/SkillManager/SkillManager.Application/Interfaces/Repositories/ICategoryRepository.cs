@@ -20,5 +20,9 @@ namespace SkillManager.Application.Interfaces.Repositories
         Task<IEnumerable<Category>> GetByCategoryTypeAsync(CategoryType categoryType);
 
         Task<bool> ExistsAsync(int categoryId);
+
+        // ✅ NEW: Category Type Methods
+        Task<IEnumerable<CategoryType>> GetAllCategoryTypesAsync();
+        Task<CategoryType?> GetCategoryTypeByIdAsync(int id);
     }
 }

@@ -75,6 +75,7 @@ public class UsersController : ControllerBase
 
         return Ok(user);
     }
+}
 
     // Admin: update ID-related fields (UTCode, RefId)
     [HttpPost("update-identifiers")]
@@ -85,30 +86,30 @@ public class UsersController : ControllerBase
         // if (!result)
         return NotFound("User not found");
 
-        return Ok("User identifiers updated successfully");
-    }
+//        return Ok("User identifiers updated successfully");
+//    }
 
-    // Manager: update personal info, status, delivery type
-    [HttpPost("update-details")]
-    [Authorize(Policy = "ManagerPolicy")]
-    public async Task<IActionResult> UpdateUserDetails(
-        int userId,
-        string firstName,
-        string lastName,
-        string? status = null,
-        string? deliveryType = null
-    )
-    {
-        /**  var result = await _userService.UpdateUserDetailsAsync(
-              userId,
-              firstName,
-              lastName,
-              status,
-              deliveryType
-          ); **/
-        // if (!result)
-        return NotFound("User not found");
+//    // Manager: update personal info, status, delivery type
+//    [HttpPost("update-details")]
+//    [Authorize(Policy = "ManagerPolicy")]
+//    public async Task<IActionResult> UpdateUserDetails(
+//        int userId,
+//        string firstName,
+//        string lastName,
+//        string? status = null,
+//        string? deliveryType = null
+//    )
+//    {
+//        var result = await _userService.UpdateUserDetailsAsync(
+//            userId,
+//            firstName,
+//            lastName,
+//            status,
+//            deliveryType
+//        );
+//        if (!result)
+//            return NotFound("User not found");
 
-        return Ok("User details updated successfully");
-    }
-}
+//        return Ok("User details updated successfully");
+//    }
+//}
