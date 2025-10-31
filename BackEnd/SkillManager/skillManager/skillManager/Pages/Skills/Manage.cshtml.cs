@@ -32,6 +32,13 @@ public class ManageModel : PageModel
     [BindProperty(SupportsGet = true)]
     public string? SortBy { get; set; }
 
+    // Pagination properties
+    [BindProperty(SupportsGet = true)]
+    public int PageNumber { get; set; } = 1;
+
+    public int PageSize { get; set; } = 10;
+    public int TotalPages { get; set; }
+    public int TotalCount { get; set; }
     public List<string> UserRoles { get; set; } = new();
 
     // ------------------------------------------------------------
@@ -76,7 +83,15 @@ public class ManageModel : PageModel
                 _ => allSkills,
             };
 
-            Skills = allSkills;
+            // Apply pagination
+            TotalCount = allSkills.Count;
+            TotalPages = (int)Math.Ceiling(TotalCount / (double)PageSize);
+
+            // Ensure PageNumber is within valid range
+            PageNumber = Math.Max(1, Math.Min(PageNumber, TotalPages == 0 ? 1 : TotalPages));
+
+            Skills = allSkills.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToList();
+
             UserRoles = new() { "Admin" };
 
             return Page();

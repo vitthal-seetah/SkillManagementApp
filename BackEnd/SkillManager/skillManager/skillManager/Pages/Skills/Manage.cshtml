@@ -8,8 +8,21 @@
 }
 
 <div class="container-fluid">
+    <!-- Header with Back Button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Skill Management</h2>
+        <a href="/skills" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="/Categories/ManageCategories" class="btn btn-info">
+                <i class="bi bi-folder me-2"></i>Manage Categories
+            </a>
+        </div>
         @if (isAdmin)
         {
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createSkillModal">
@@ -83,7 +96,7 @@
     <!-- 📋 SKILLS TABLE -->
     <div class="card">
         <div class="card-header bg-white">
-            <h5 class="card-title mb-0">Skills (@Model.Skills.Count)</h5>
+            <h5 class="card-title mb-0">Skills (@Model.TotalCount)</h5>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -209,6 +222,33 @@
             </div>
         </div>
     </div>
+
+    <!-- 📄 PAGINATION -->
+    @if (Model.TotalPages > 1)
+    {
+        <nav aria-label="Skill pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)"
+                       asp-route-SelectedCategoryType="@Model.SelectedCategoryType"
+                       asp-route-SortBy="@Model.SortBy">Previous</a>
+                </li>
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" asp-route-PageNumber="@i"
+                           asp-route-SelectedCategoryType="@Model.SelectedCategoryType"
+                           asp-route-SortBy="@Model.SortBy">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)"
+                       asp-route-SelectedCategoryType="@Model.SelectedCategoryType"
+                       asp-route-SortBy="@Model.SortBy">Next</a>
+                </li>
+            </ul>
+        </nav>
+    }
 </div>
 
 <!-- ➕ CREATE SKILL MODAL -->
@@ -357,6 +397,24 @@
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
         }
 
+        /* Pagination styling to match Users page */
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .page-item.active .page-link {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .page-link {
+            color: #0d6efd;
+        }
+
+            .page-link:hover {
+                color: #0a58ca;
+            }
+
         /* Responsive adjustments */
         @@media (max-width: 768px) {
             .container-fluid {
@@ -369,6 +427,24 @@
 
             .table-responsive {
                 font-size: 0.85rem;
+            }
+
+            .d-flex.justify-content-between {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+                .d-flex.justify-content-between > div {
+                    width: 100%;
+                    text-align: center;
+                }
+
+            .pagination {
+                flex-wrap: wrap;
+            }
+
+            .page-item {
+                margin-bottom: 0.5rem;
             }
         }
     </style>
