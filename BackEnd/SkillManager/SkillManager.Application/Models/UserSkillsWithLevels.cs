@@ -10,7 +10,8 @@ namespace SkillManager.Application.Models
     {
         public int SkillId { get; set; }
 
-        public string Code { get; set; }
+        public string Code { get; set; } = string.Empty;
+        public string Label { get; set; } = string.Empty;
         public string RequiredLevel { get; set; } = string.Empty;
         public int LevelId { get; set; }
         public string LevelName { get; set; } = string.Empty;

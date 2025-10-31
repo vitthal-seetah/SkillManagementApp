@@ -81,9 +81,9 @@ public class UsersController : ControllerBase
     [Authorize(Policy = "AdminPolicy")]
     public async Task<IActionResult> UpdateUserIdentifiers(int userId, string utCode, string refId)
     {
-        var result = await _userService.UpdateUserIdentifiersAsync(userId, utCode, refId);
-        if (!result)
-            return NotFound("User not found");
+        //  var result = await _userService.UpdateUserIdentifiersAsync(userId, utCode, refId);
+        // if (!result)
+        return NotFound("User not found");
 
         return Ok("User identifiers updated successfully");
     }
@@ -99,15 +99,15 @@ public class UsersController : ControllerBase
         string? deliveryType = null
     )
     {
-        var result = await _userService.UpdateUserDetailsAsync(
-            userId,
-            firstName,
-            lastName,
-            status,
-            deliveryType
-        );
-        if (!result)
-            return NotFound("User not found");
+        /**  var result = await _userService.UpdateUserDetailsAsync(
+              userId,
+              firstName,
+              lastName,
+              status,
+              deliveryType
+          ); **/
+        // if (!result)
+        return NotFound("User not found");
 
         return Ok("User details updated successfully");
     }

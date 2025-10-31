@@ -11,8 +11,8 @@ using SkillManager.Infrastructure.Identity.AppDbContext;
 namespace SkillManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251027085631_secondCreate")]
-    partial class secondCreate
+    [Migration("20251031091411_secondCreates")]
+    partial class secondCreates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -505,6 +505,186 @@ namespace SkillManager.Infrastructure.Migrations
                             SecondLevelDescription = "Connaissance de l'environnement/contexte réglementaire & prudentiel et a une expérience en lien avec cet environnement.",
                             SubCategoryId = 1,
                             ThirdLevelDescription = "Connaissance de manière très précise l'environnement/contexte réglementaire & prudentiel et a une expérience en lien avec cet environnement."
+                        },
+                        new
+                        {
+                            SkillId = 15,
+                            CategoryId = 3,
+                            Code = "ARCADE",
+                            CriticalityLevel = "P2",
+                            FirstLevelDescription = "Connait les informations clés sur l'application (lecture du starter kit, du user guide…)",
+                            FourthLevelDescription = "Développe / gère l'amélioration continue de l'application. Est capable de challenger le métier sur les évolutions demandées",
+                            Label = "ARCADE",
+                            ProjectRequiresSkill = true,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Traite en autonomie partielle : le support sur l'application les évolutions mineures",
+                            SubCategoryId = 10,
+                            ThirdLevelDescription = "Traite en autonomie complète : le support L1/L2/L3 sur l'application les évolutions majeures"
+                        },
+                        new
+                        {
+                            SkillId = 16,
+                            CategoryId = 3,
+                            Code = "AVI",
+                            CriticalityLevel = "P2",
+                            FirstLevelDescription = "Connait les informations clés sur l'application (lecture du starter kit, du user guide…)",
+                            FourthLevelDescription = "Développe / gère l'amélioration continue de l'application. Est capable de challenger le métier sur les évolutions demandées",
+                            Label = "AVI",
+                            ProjectRequiresSkill = true,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Traite en autonomie partielle : le support sur l'application les évolutions mineures",
+                            SubCategoryId = 10,
+                            ThirdLevelDescription = "Traite en autonomie complète : le support L1/L2/L3 sur l'application les évolutions majeures"
+                        },
+                        new
+                        {
+                            SkillId = 17,
+                            CategoryId = 3,
+                            Code = "BASE EFFECTIF",
+                            CriticalityLevel = "P2",
+                            FirstLevelDescription = "Connait les informations clés sur l'application (lecture du starter kit, du user guide…)",
+                            FourthLevelDescription = "Développe / gère l'amélioration continue de l'application. Est capable de challenger le métier sur les évolutions demandées",
+                            Label = "BASE EFFECTIF",
+                            ProjectRequiresSkill = true,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Traite en autonomie partielle : le support sur l'application les évolutions mineures",
+                            SubCategoryId = 11,
+                            ThirdLevelDescription = "Traite en autonomie complète : le support L1/L2/L3 sur l'application les évolutions majeures"
+                        },
+                        new
+                        {
+                            SkillId = 18,
+                            CategoryId = 6,
+                            Code = "DIV : Anglais",
+                            CriticalityLevel = "P3",
+                            FirstLevelDescription = "Sait rédiger un document en anglais.",
+                            FourthLevelDescription = "Sait animer un comité en anglais.",
+                            Label = "Maitrise de l'Anglais",
+                            ProjectRequiresSkill = false,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Comprend tout échange téléphonique en anglais.",
+                            SubCategoryId = 33,
+                            ThirdLevelDescription = "Prend la parole en anglais lors d'un comité."
+                        },
+                        new
+                        {
+                            SkillId = 19,
+                            CategoryId = 6,
+                            Code = "DIV : Communication écrite",
+                            CriticalityLevel = "P3",
+                            FirstLevelDescription = "Sait rechercher, analyser et traiter l'information / Sait retranscrire de l'information orale (prise de notes).",
+                            FourthLevelDescription = "Sait rédiger un argumentaire.",
+                            Label = "Communication à l'écrit",
+                            ProjectRequiresSkill = false,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Sait structurer et rédiger un document d'analyse.",
+                            SubCategoryId = 33,
+                            ThirdLevelDescription = "Sait rédiger un document de synthèse / Sait adapter le niveau de détails aux équipes et à la complexité du sujet."
+                        },
+                        new
+                        {
+                            SkillId = 20,
+                            CategoryId = 6,
+                            Code = "DIV : Communication orale",
+                            CriticalityLevel = "P3",
+                            FirstLevelDescription = "Sait se faire comprendre dans des situations quotidiennes de communication orales.",
+                            FourthLevelDescription = "Sait faire un exposé oral devant un auditoire / Sait communiquer spontanément avec le sponsor, le top management GIT.",
+                            Label = "Communication à l'oral",
+                            ProjectRequiresSkill = false,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Sait mener un entretien individuel.",
+                            SubCategoryId = 33,
+                            ThirdLevelDescription = "Sait prendre la parole au cours d'une réunion / Sait communiquer spontanément avec sa hiérarchie, les contributeurs projets (IT et métiers)."
+                        },
+                        new
+                        {
+                            SkillId = 21,
+                            CategoryId = 5,
+                            Code = "PJT : Méthode de gestion de projet",
+                            CriticalityLevel = "P2",
+                            FirstLevelDescription = "Connaissance théorique sans pratique",
+                            FourthLevelDescription = "Justifie de n expériences de conduite de projet avec la méthodologie",
+                            Label = "Connaissance d'une méthodologie de gestion de projet (CMMI…)",
+                            ProjectRequiresSkill = false,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Formation théorique à la méthodologie, y a contribué mais n'a pas encore conduit de projet avec cette méthodologie",
+                            SubCategoryId = 33,
+                            ThirdLevelDescription = "Justifie d'une expérience de conduite de projet avec la méthodologie"
+                        },
+                        new
+                        {
+                            SkillId = 22,
+                            CategoryId = 5,
+                            Code = "PJT : Méthodo AGILE",
+                            CriticalityLevel = "P2",
+                            FirstLevelDescription = "Notions",
+                            FourthLevelDescription = "Expertise",
+                            Label = "Maîtrise de la gestion de projet en AGILE",
+                            ProjectRequiresSkill = false,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Connaissances pratiques",
+                            SubCategoryId = 33,
+                            ThirdLevelDescription = "Maitrise"
+                        },
+                        new
+                        {
+                            SkillId = 23,
+                            CategoryId = 5,
+                            Code = "PJT : Méthodologie CACIB TAO",
+                            CriticalityLevel = "P2",
+                            FirstLevelDescription = "Supervise un projet à la fois / N'a pas encore obtenu de certification dans le cadre de la Project Academy.",
+                            FourthLevelDescription = "Supervise plusieurs projets à la fois / A été certifié PROGRAM DIRECTOR dans le cadre de la Project Academy.",
+                            Label = "Méthodologie de Gestion de Projets ARPEGIO / TAO",
+                            ProjectRequiresSkill = true,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Supervise un projet à la fois / A été certifié Chef de projet SILVER dans le cadre de la Project Academy.",
+                            SubCategoryId = 33,
+                            ThirdLevelDescription = "Supervise un ou plusieurs projet / A été certifié Chef de projet GOLD dans le cadre de la Project Academy."
+                        },
+                        new
+                        {
+                            SkillId = 24,
+                            CategoryId = 2,
+                            Code = "SI : Chiffrage",
+                            CriticalityLevel = "P2",
+                            FirstLevelDescription = "Connaissance des fondamentaux de chiffrage",
+                            FourthLevelDescription = "Découper des projets (taille dépendante du profil de la ressource: experte fonctionnelle ou CP) en chantiers et chiffrer ces derniers",
+                            Label = "Chiffrage",
+                            ProjectRequiresSkill = false,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Chiffrer des tâches unitaires (<2j/h)",
+                            SubCategoryId = 3,
+                            ThirdLevelDescription = "Découper des chantiers (<10j/h) en tâches unitaires et chiffrer ces dernières"
+                        },
+                        new
+                        {
+                            SkillId = 25,
+                            CategoryId = 2,
+                            Code = "SI : Analyse d'impact",
+                            CriticalityLevel = "P2",
+                            FirstLevelDescription = "Identifier les impacts de modification sur une tâche allouée",
+                            FourthLevelDescription = "Identifier les impacts de modification d'un ensemble de fonctionnalités de toute complexité",
+                            Label = "Etude d'impact",
+                            ProjectRequiresSkill = false,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Identifier les impacts de modification d'une fonctionnalité simple ou moyennement complexe",
+                            SubCategoryId = 3,
+                            ThirdLevelDescription = "Identifier les impacts de modification d'une fonctionnalité complexe ou d'un ensemble de fonctionnalités simples ou moyennement complexes"
+                        },
+                        new
+                        {
+                            SkillId = 26,
+                            CategoryId = 2,
+                            Code = "SI : Conception générale",
+                            CriticalityLevel = "P2",
+                            FirstLevelDescription = "Notions",
+                            FourthLevelDescription = "Expertise",
+                            Label = "Etude préalable / Conception générale (Architecture, …)",
+                            ProjectRequiresSkill = false,
+                            RequiredLevel = 2,
+                            SecondLevelDescription = "Connaissances pratiques",
+                            SubCategoryId = 3,
+                            ThirdLevelDescription = "Maitrise"
                         });
                 });
 
