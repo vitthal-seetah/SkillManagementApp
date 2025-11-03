@@ -7,7 +7,7 @@ using SkillManager.Application.Interfaces.Services;
 
 namespace SkillManager.Web.Pages.Users;
 
-[Authorize(Policy = "EmployeePolicy")]
+[Authorize(Policy = "ManagerPolicy")]
 public class IndexModel : PageModel
 {
     private readonly IUserService _userService;
@@ -93,7 +93,7 @@ public class IndexModel : PageModel
     }
 
     // --- Save / Update Handler (AJAX-friendly) ---
-    [Authorize(Policy = "AdminPolicy")]
+
     public async Task<IActionResult> OnPostSaveAsync()
     {
         // --- Validate fields manually (or rely on UpdateUserDto validation attributes) ---
@@ -147,7 +147,6 @@ public class IndexModel : PageModel
     }
 
     // --- Create Handler ---
-    [Authorize(Policy = "AdminPolicy")]
     public async Task<IActionResult> OnPostCreateAsync()
     {
         var (success, message, _) = await _userService.CreateUserAsync(CreateUserModel);
