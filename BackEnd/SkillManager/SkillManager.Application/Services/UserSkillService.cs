@@ -92,6 +92,7 @@ namespace SkillManager.Application.Services
                 UserId = userId,
                 SkillId = dto.SkillId,
                 LevelId = dto.LevelId,
+                UpdatedTime = dto.UpdatedTime,
             };
 
             await _userSkillRepository.AddAsync(userSkill);
@@ -105,6 +106,7 @@ namespace SkillManager.Application.Services
                 throw new InvalidOperationException("Skill not found for this user.");
 
             userSkill.LevelId = dto.LevelId;
+            userSkill.UpdatedTime = dto.UpdatedTime;
 
             await _userSkillRepository.UpdateAsync(userSkill);
             await _userSkillRepository.SaveChangesAsync();
@@ -205,6 +207,39 @@ namespace SkillManager.Application.Services
             return result;
         }
 
+        public async Task<DateTime?> GetLastUpdatedTimeAsync(int userId)
+        {
+            var userSkills = await _userSkillRepository.GetUserSkillsAsync(userId);
+
+            if (!userSkills.Any())
+                return null;
+
+            return userSkills.Max(us => us.UpdatedTime);
+        }
+
+        public async Task<DateTime?> GetLastUpdatedTimeForSkillAsync(int userId, int skillId)
+        {
+            var userSkill = await _userSkillRepository.GetByCompositeKeyAsync(userId, skillId);
+            return userSkill?.UpdatedTime;
+        }
+
+        public async Task<Dictionary<int, DateTime>> GetLastUpdatedTimesByCategoryAsync(
+            int userId,
+            int categoryId
+        )
+        {
+            var category = await _categoryRepository.GetByIdAsync(categoryId);
+            if (category == null)
+                return new Dictionary<int, DateTime>();
+
+            var skills = await _userSkillRepository.GetSkillsByCategory(
+                category,
+                await _userRepository.GetByIdAsync(userId)
+            );
+            return skills?.ToDictionary(s => s.SkillId, s => s.UpdatedTime)
+                ?? new Dictionary<int, DateTime>();
+        }
+
         private static UserSkillDto MapToDto(UserSkill us)
         {
             return new UserSkillDto
@@ -217,6 +252,7 @@ namespace SkillManager.Application.Services
                 CategoryType = us.Skill?.Category?.CategoryType?.Name.ToString() ?? "",
                 LevelId = us.LevelId,
                 LevelName = us.Level?.Name ?? "",
+                UpdatedTime = us.UpdatedTime,
             };
         }
     }

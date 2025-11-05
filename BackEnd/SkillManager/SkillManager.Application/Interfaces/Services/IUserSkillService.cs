@@ -29,4 +29,7 @@ public interface IUserSkillService
     Task<List<CategoryGapDto>> GetSkillGapsByCategoryAsync(int userId);
     Task<List<CategoryTypeWithCategories>> GetCategoryTypesWithCategoriesAsync();
     Task DeleteUserSkillAsync(int userId);
+    Task<DateTime?> GetLastUpdatedTimeAsync(int userId);
+    Task<DateTime?> GetLastUpdatedTimeForSkillAsync(int userId, int skillId);
+    Task<Dictionary<int, DateTime>> GetLastUpdatedTimesByCategoryAsync(int userId, int categoryId);
 }
