@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SkillManager.Application.DTOs.Category;
+﻿using SkillManager.Application.DTOs.Category;
 using SkillManager.Application.DTOs.SubCategory;
-using SkillManager.Application.Models;
-
-namespace SkillManager.Application.Interfaces.Services;
 
 public interface ICategoryService
 {
@@ -22,7 +14,14 @@ public interface ICategoryService
 
     // Category Type methods
     Task<CategoryTypeDto> GetCategoryTypeByIdAsync(int categoryTypeId);
+    Task<CategoryTypeDto> GetCategoryTypeByNameAsync(string name);
     Task<IEnumerable<CategoryTypeDto>> GetAllCategoryTypesAsync();
+    Task<CategoryTypeDto> CreateCategoryTypeAsync(CreateCategoryTypeDto createDto);
+    Task<CategoryTypeDto> UpdateCategoryTypeAsync(
+        int categoryTypeId,
+        UpdateCategoryTypeDto updateDto
+    );
+    Task<bool> DeleteCategoryTypeAsync(int categoryTypeId);
 
     // SubCategory methods
     Task<SubCategoryDto> GetSubCategoryByIdAsync(int subCategoryId);
@@ -35,5 +34,7 @@ public interface ICategoryService
     Task<bool> CategoryExistsAsync(int categoryId);
     Task<bool> CategoryExistsAsync(string categoryName);
     Task<bool> CategoryTypeExistsAsync(int categoryTypeId);
+    Task<bool> CategoryTypeExistsAsync(string categoryTypeName);
     Task<bool> SubCategoryExistsAsync(int subCategoryId);
+    Task<bool> SubCategoryExistsAsync(string subCategoryName, int categoryId);
 }

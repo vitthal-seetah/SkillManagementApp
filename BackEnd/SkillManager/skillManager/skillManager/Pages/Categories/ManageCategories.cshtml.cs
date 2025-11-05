@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SkillManager.Application.DTOs.Category;
 using SkillManager.Application.DTOs.SubCategory;
-using SkillManager.Application.Interfaces.Services;
 
 namespace SkillManager.Web.Pages.Skills;
 
@@ -33,6 +32,9 @@ public class ManageCategoryModel : PageModel
     public CreateCategoryTypeDto CreateCategoryTypeDto { get; set; } = new();
 
     [BindProperty]
+    public UpdateCategoryTypeDto UpdateCategoryTypeDto { get; set; } = new();
+
+    [BindProperty]
     public CreateSubCategoryDto CreateSubCategoryDto { get; set; } = new();
 
     [BindProperty]
@@ -40,16 +42,19 @@ public class ManageCategoryModel : PageModel
 
     public int? EditCategoryId { get; set; }
     public int? EditSubCategoryId { get; set; }
+    public int? EditCategoryTypeId { get; set; }
 
     public async Task<IActionResult> OnGetAsync(
         int? editCategoryId = null,
-        int? editSubCategoryId = null
+        int? editSubCategoryId = null,
+        int? editCategoryTypeId = null
     )
     {
         try
         {
             EditCategoryId = editCategoryId;
             EditSubCategoryId = editSubCategoryId;
+            EditCategoryTypeId = editCategoryTypeId;
 
             // Load all data
             await LoadDataAsync();
@@ -76,6 +81,15 @@ public class ManageCategoryModel : PageModel
                     Name = subCategory.Name,
                     CategoryId = subCategory.CategoryId,
                 };
+            }
+
+            // If editing a category type, load its data
+            if (editCategoryTypeId.HasValue)
+            {
+                var categoryType = await _categoryService.GetCategoryTypeByIdAsync(
+                    editCategoryTypeId.Value
+                );
+                UpdateCategoryTypeDto = new UpdateCategoryTypeDto { Name = categoryType.Name };
             }
 
             return Page();
@@ -139,14 +153,43 @@ public class ManageCategoryModel : PageModel
     {
         try
         {
-            // Note: You'll need to add this method to your ICategoryService and implement it
-            // For now, we'll just show a message
-            TempData["Error"] =
-                "Category Type creation not implemented yet. Please add the method to ICategoryService.";
+            await _categoryService.CreateCategoryTypeAsync(CreateCategoryTypeDto);
+            TempData["Success"] =
+                $"Category Type '{CreateCategoryTypeDto.Name}' created successfully.";
         }
         catch (Exception ex)
         {
             TempData["Error"] = $"Error creating category type: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostUpdateCategoryTypeAsync(int id)
+    {
+        try
+        {
+            await _categoryService.UpdateCategoryTypeAsync(id, UpdateCategoryTypeDto);
+            TempData["Success"] = "Category Type updated successfully.";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error updating category type: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteCategoryTypeAsync(int id)
+    {
+        try
+        {
+            await _categoryService.DeleteCategoryTypeAsync(id);
+            TempData["Success"] = "Category Type deleted successfully.";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error deleting category type: {ex.Message}";
         }
 
         return RedirectToPage();
@@ -227,10 +270,4 @@ public class ManageCategoryModel : PageModel
         CategoryTypes = (await _categoryService.GetAllCategoryTypesAsync()).ToList();
         // For subcategories, we'll load them on demand via AJAX to avoid loading all at once
     }
-}
-
-// DTO for creating category types (add this to your DTOs folder)
-public class CreateCategoryTypeDto
-{
-    public string Name { get; set; } = string.Empty;
 }

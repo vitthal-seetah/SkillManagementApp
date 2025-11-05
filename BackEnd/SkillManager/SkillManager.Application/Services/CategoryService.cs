@@ -16,13 +16,17 @@ namespace SkillManager.Application.Services
         private readonly IValidator<UpdateCategoryDto> _updateCategoryValidator;
         private readonly IValidator<CreateSubCategoryDto> _createSubCategoryValidator;
         private readonly IValidator<UpdateSubCategoryDto> _updateSubCategoryValidator;
+        private readonly IValidator<CreateCategoryTypeDto> _createCategoryTypeValidator;
+        private readonly IValidator<UpdateCategoryTypeDto> _updateCategoryTypeValidator;
 
         public CategoryService(
             ICategoryRepository categoryRepository,
             IValidator<CreateCategoryDto> createCategoryValidator = null,
             IValidator<UpdateCategoryDto> updateCategoryValidator = null,
             IValidator<CreateSubCategoryDto> createSubCategoryValidator = null,
-            IValidator<UpdateSubCategoryDto> updateSubCategoryValidator = null
+            IValidator<UpdateSubCategoryDto> updateSubCategoryValidator = null,
+            IValidator<CreateCategoryTypeDto> createCategoryTypeValidator = null,
+            IValidator<UpdateCategoryTypeDto> updateCategoryTypeValidator = null
         )
         {
             _categoryRepository = categoryRepository;
@@ -30,6 +34,8 @@ namespace SkillManager.Application.Services
             _updateCategoryValidator = updateCategoryValidator;
             _createSubCategoryValidator = createSubCategoryValidator;
             _updateSubCategoryValidator = updateSubCategoryValidator;
+            _createCategoryTypeValidator = createCategoryTypeValidator;
+            _updateCategoryTypeValidator = updateCategoryTypeValidator;
         }
 
         // Category Methods
@@ -212,10 +218,124 @@ namespace SkillManager.Application.Services
             return categoryType.ToCategoryTypeDto();
         }
 
+        public async Task<CategoryTypeDto> GetCategoryTypeByNameAsync(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ValidationException("Category type name cannot be empty.");
+
+            var categoryType = await _categoryRepository.GetCategoryTypeByNameAsync(name);
+            if (categoryType == null)
+                throw new NotFoundException($"Category type with name '{name}' not found.");
+
+            return categoryType.ToCategoryTypeDto();
+        }
+
         public async Task<IEnumerable<CategoryTypeDto>> GetAllCategoryTypesAsync()
         {
             var categoryTypes = await _categoryRepository.GetAllCategoryTypesAsync();
             return categoryTypes.Select(ct => ct.ToCategoryTypeDto());
+        }
+
+        public async Task<CategoryTypeDto> CreateCategoryTypeAsync(CreateCategoryTypeDto createDto)
+        {
+            // Validate input
+            if (_createCategoryTypeValidator != null)
+            {
+                var validationResult = await _createCategoryTypeValidator.ValidateAsync(createDto);
+                if (!validationResult.IsValid)
+                {
+                    var errors = string.Join(
+                        "; ",
+                        validationResult.Errors.Select(e => e.ErrorMessage)
+                    );
+                    throw new ValidationException(errors);
+                }
+            }
+
+            // Check if category type already exists
+            var existingCategoryType = await _categoryRepository.GetCategoryTypeByNameAsync(createDto.Name);
+            if (existingCategoryType != null)
+                throw new ValidationException(
+                    $"Category type with name '{createDto.Name}' already exists."
+                );
+
+            var categoryType = createDto.ToCategoryType();
+
+            var created = await _categoryRepository.AddCategoryTypeAsync(categoryType);
+            if (!created)
+                throw new ApplicationException("Failed to create category type.");
+
+            // Return the created category type
+            var newCategoryType = await _categoryRepository.GetCategoryTypeByNameAsync(createDto.Name);
+            return newCategoryType?.ToCategoryTypeDto()
+                ?? throw new ApplicationException("Failed to retrieve created category type.");
+        }
+
+        public async Task<CategoryTypeDto> UpdateCategoryTypeAsync(
+            int categoryTypeId,
+            UpdateCategoryTypeDto updateDto
+        )
+        {
+            if (categoryTypeId <= 0)
+                throw new ValidationException("Invalid category type ID.");
+
+            var existingCategoryType = await _categoryRepository.GetCategoryTypeByIdAsync(categoryTypeId);
+            if (existingCategoryType == null)
+                throw new NotFoundException($"Category type with ID {categoryTypeId} not found.");
+
+            // Validate input
+            if (_updateCategoryTypeValidator != null)
+            {
+                var validationResult = await _updateCategoryTypeValidator.ValidateAsync(updateDto);
+                if (!validationResult.IsValid)
+                {
+                    var errors = string.Join(
+                        "; ",
+                        validationResult.Errors.Select(e => e.ErrorMessage)
+                    );
+                    throw new ValidationException(errors);
+                }
+            }
+
+            // Apply updates
+            if (!string.IsNullOrWhiteSpace(updateDto.Name))
+            {
+                // Check if new name already exists (excluding current category type)
+                var categoryTypeWithSameName = await _categoryRepository.GetCategoryTypeByNameAsync(
+                    updateDto.Name.Trim()
+                );
+                if (categoryTypeWithSameName != null && categoryTypeWithSameName.CategoryTypeId != categoryTypeId)
+                    throw new ValidationException(
+                        $"Category type with name '{updateDto.Name}' already exists."
+                    );
+
+                existingCategoryType.Name = updateDto.Name.Trim();
+            }
+
+            var updated = await _categoryRepository.UpdateCategoryTypeAsync(existingCategoryType);
+            if (!updated)
+                throw new ApplicationException("Failed to update category type.");
+
+            var updatedCategoryType = await _categoryRepository.GetCategoryTypeByIdAsync(categoryTypeId);
+            return updatedCategoryType?.ToCategoryTypeDto()
+                ?? throw new ApplicationException("Failed to retrieve updated category type.");
+        }
+
+        public async Task<bool> DeleteCategoryTypeAsync(int categoryTypeId)
+        {
+            if (categoryTypeId <= 0)
+                throw new ValidationException("Invalid category type ID.");
+
+            var categoryType = await _categoryRepository.GetCategoryTypeByIdAsync(categoryTypeId);
+            if (categoryType == null)
+                throw new NotFoundException($"Category type with ID {categoryTypeId} not found.");
+
+            // Check if category type has categories
+            var categories = await _categoryRepository.GetByCategoryTypeAsync(categoryType);
+            if (categories != null && categories.Any())
+                throw new ValidationException("Cannot delete category type that has associated categories.");
+
+            return await _categoryRepository.DeleteCategoryTypeAsync(categoryTypeId);
         }
 
         // SubCategory Methods
@@ -418,6 +538,12 @@ namespace SkillManager.Application.Services
         public async Task<bool> CategoryTypeExistsAsync(int categoryTypeId)
         {
             var categoryType = await _categoryRepository.GetCategoryTypeByIdAsync(categoryTypeId);
+            return categoryType != null;
+        }
+
+        public async Task<bool> CategoryTypeExistsAsync(string categoryTypeName)
+        {
+            var categoryType = await _categoryRepository.GetCategoryTypeByNameAsync(categoryTypeName);
             return categoryType != null;
         }
 
