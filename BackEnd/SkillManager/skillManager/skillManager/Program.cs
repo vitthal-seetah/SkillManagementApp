@@ -16,6 +16,12 @@ builder.Services.AddInfrastructure(builder.Configuration);
 // Add Razor Pages
 // --------------------
 builder.Services.AddRazorPages();
+builder.WebHost.UseIISIntegration();
+
+// --------------------
+// Register Claims Transformer
+// --------------------
+builder.Services.AddTransient<IClaimsTransformation, RoleClaimsTransformer>();
 
 // --------------------
 // Windows Authentication
@@ -27,13 +33,7 @@ builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNe
 // --------------------
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(
-        "EmployeePolicy",
-        policy =>
-            policy
-                .AddAuthenticationSchemes(NegotiateDefaults.AuthenticationScheme)
-                .RequireAuthenticatedUser()
-    );
+    options.AddPolicy("EmployeePolicy", policy => policy.RequireAuthenticatedUser());
 
     options.AddPolicy(
         "ManagerPolicy",
@@ -66,7 +66,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 // --------------------
-// CORS (optional for intranet scenarios)
+// CORS
 // --------------------
 builder.Services.AddCors(options =>
 {
@@ -79,7 +79,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // --------------------
-// Middleware
+// Middleware (REMOVE CUSTOM MIDDLEWARE)
 // --------------------
 if (!app.Environment.IsDevelopment())
 {
@@ -93,21 +93,7 @@ app.UseRouting();
 app.UseCors("all");
 
 app.UseAuthentication();
-
-// Claims transformation (optional, if you have RoleClaimsTransformer)
-app.Use(
-    async (context, next) =>
-    {
-        if (context.User.Identity?.IsAuthenticated == true)
-        {
-            var transformer = context.RequestServices.GetRequiredService<IClaimsTransformation>();
-            context.User = await transformer.TransformAsync(context.User);
-        }
-        await next();
-    }
-);
-
-app.UseAuthorization();
+app.UseAuthorization(); // This will automatically call your claims transformer
 
 // --------------------
 // Map Razor Pages

@@ -92,31 +92,32 @@
             </ul>
         </div>
     }
-
-    <!-- 📋 SKILLS TABLE -->
     <div class="card">
         <div class="card-header bg-white">
             <h5 class="card-title mb-0">Skills (@Model.TotalCount)</h5>
         </div>
         <div class="card-body p-0">
+            <!-- you can keep table-responsive, wrapping will still work -->
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-3" style="min-width: 150px;">Code</th>
-                            <th style="min-width: 200px;">Name</th>
-                            <th style="min-width: 150px;">Category</th>
-                            <th style="min-width: 120px;">Category Type</th>
-                            <th style="min-width: 100px;">Criticality</th>
-                            <th style="min-width: 120px;">Required Level</th>
-                            <th style="min-width: 300px;">Description</th>
+                            <th class="ps-3" style="width: 120px;">Code</th>
+                            <th style="width: 200px;">Name</th>
+                            <th style="width: 150px;">Category</th>
+                            <th style="width: 120px;">Category Type</th>
+                            <th style="width: 100px;">Criticality</th>
+                            <th style="width: 120px;">Required Level</th>
+                            <th style="width: 300px;">Description</th>
                             @if (canEdit)
                             {
-                                <th style="min-width: 140px;" class="text-center">Actions</th>
+                                <th style="width: 140px;" class="text-center">Actions</th>
                             }
                         </tr>
                     </thead>
                     <tbody>
+                   
+
                         @foreach (var skill in Model.Skills)
                         {
                             var rowId = $"row-{skill.SkillId}";
@@ -136,7 +137,7 @@
 
                                 <!-- Label Column -->
                                 <td>
-                                    <div class="readonly-content text-truncate" title="@skill.Label">@skill.Label</div>
+                                    <div class="readonly-content " title="@skill.Label">@skill.Label</div>
                                     <textarea name="Label" class="form-control edit-field d-none"
                                           rows="2" placeholder="Enter skill name">@skill.Label</textarea>
                                 </td>
@@ -355,6 +356,11 @@
             padding: 0.375rem 0;
         }
 
+        .table td, .table th {
+            white-space: normal !important;
+            word-wrap: break-word;
+        }
+
         .description-text {
             max-height: 100px;
             overflow-y: auto;
@@ -368,6 +374,12 @@
 
         .category-type-display {
             font-size: 0.8rem;
+        }
+        /* Force wrapping inside table cells */
+        .table td, .table th {
+            white-space: normal !important;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .table th {
@@ -447,6 +459,21 @@
                 margin-bottom: 0.5rem;
             }
         }
+
+        .table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+            /* ✅ Make all cells wrap instead of truncating */
+            .table th,
+            .table td {
+                white-space: normal !important; /* allow line breaks */
+                word-break: break-word; /* break long words */
+                overflow-wrap: anywhere; /* break long words if needed */
+                text-overflow: unset !important; /* remove the ... */
+                overflow: visible !important; /* allow multi-line content */
+            }
     </style>
     <script>
         // Store original values when editing starts
