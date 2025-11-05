@@ -15,7 +15,7 @@ public class RoleClaimsTransformer : IClaimsTransformation
     )
     {
         _context = context;
-        _logger = logger;
+        _logger = logger; //M
     }
 
     public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
