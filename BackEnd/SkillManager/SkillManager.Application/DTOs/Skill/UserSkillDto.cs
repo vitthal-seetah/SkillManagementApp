@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SkillManager.Infrastructure.DTOs.Skill;
 
@@ -16,4 +12,5 @@ public class UserSkillDto
     public string CategoryType { get; set; }
     public int LevelId { get; set; }
     public string LevelName { get; set; }
+    public DateTime UpdatedTime { get; set; }
 }

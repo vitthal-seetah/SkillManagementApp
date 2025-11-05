@@ -63,11 +63,14 @@ public class ManageCategoryModel : PageModel
             if (editCategoryId.HasValue)
             {
                 var category = await _categoryService.GetCategoryByIdAsync(editCategoryId.Value);
-                UpdateCategoryDto = new UpdateCategoryDto
+                if (category != null)
                 {
-                    Name = category.Name,
-                    CategoryTypeId = category.CategoryTypeId,
-                };
+                    UpdateCategoryDto = new UpdateCategoryDto
+                    {
+                        Name = category.Name,
+                        CategoryTypeId = category.CategoryTypeId,
+                    };
+                }
             }
 
             // If editing a subcategory, load its data
@@ -76,11 +79,14 @@ public class ManageCategoryModel : PageModel
                 var subCategory = await _categoryService.GetSubCategoryByIdAsync(
                     editSubCategoryId.Value
                 );
-                UpdateSubCategoryDto = new UpdateSubCategoryDto
+                if (subCategory != null)
                 {
-                    Name = subCategory.Name,
-                    CategoryId = subCategory.CategoryId,
-                };
+                    UpdateSubCategoryDto = new UpdateSubCategoryDto
+                    {
+                        Name = subCategory.Name,
+                        CategoryId = subCategory.CategoryId,
+                    };
+                }
             }
 
             // If editing a category type, load its data
@@ -89,7 +95,10 @@ public class ManageCategoryModel : PageModel
                 var categoryType = await _categoryService.GetCategoryTypeByIdAsync(
                     editCategoryTypeId.Value
                 );
-                UpdateCategoryTypeDto = new UpdateCategoryTypeDto { Name = categoryType.Name };
+                if (categoryType != null)
+                {
+                    UpdateCategoryTypeDto = new UpdateCategoryTypeDto { Name = categoryType.Name };
+                }
             }
 
             return Page();
