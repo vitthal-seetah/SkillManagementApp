@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillManager.Domain", "Skil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillManager.web", "skillManager\skillManager\SkillManager.web.csproj", "{DB505E8C-AEBE-5B70-0596-8819474D10F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillManager.Api", "SkillManager.Api\SkillManager.Api.csproj", "{B6CEBB49-6F73-8AE9-8FA9-7EA5E7F745AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{DB505E8C-AEBE-5B70-0596-8819474D10F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB505E8C-AEBE-5B70-0596-8819474D10F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB505E8C-AEBE-5B70-0596-8819474D10F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6CEBB49-6F73-8AE9-8FA9-7EA5E7F745AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6CEBB49-6F73-8AE9-8FA9-7EA5E7F745AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6CEBB49-6F73-8AE9-8FA9-7EA5E7F745AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6CEBB49-6F73-8AE9-8FA9-7EA5E7F745AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

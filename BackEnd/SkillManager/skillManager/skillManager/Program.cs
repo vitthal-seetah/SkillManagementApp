@@ -16,12 +16,13 @@ builder.Services.AddInfrastructure(builder.Configuration);
 // Add Razor Pages
 // --------------------
 builder.Services.AddRazorPages();
-builder.WebHost.UseIISIntegration();
+
+//builder.WebHost.UseIISIntegration();
 
 // --------------------
 // Register Claims Transformer
 // --------------------
-builder.Services.AddTransient<IClaimsTransformation, RoleClaimsTransformer>();
+//builder.Services.AddTransient<IClaimsTransformation, RoleClaimsTransformer>();
 
 // --------------------
 // Windows Authentication

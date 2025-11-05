@@ -18,7 +18,7 @@ public class UsersController : ControllerBase
 
     // Anyone with access can list users
     [HttpGet]
-    [Authorize(Policy = "EmployeePolicy")]
+    [Authorize]
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await _userService.GetAllAsync();
@@ -77,15 +77,14 @@ public class UsersController : ControllerBase
     }
 }
 
-    // Admin: update ID-related fields (UTCode, RefId)
-    [HttpPost("update-identifiers")]
-    [Authorize(Policy = "AdminPolicy")]
-    public async Task<IActionResult> UpdateUserIdentifiers(int userId, string utCode, string refId)
-    {
-        //  var result = await _userService.UpdateUserIdentifiersAsync(userId, utCode, refId);
-        // if (!result)
-        return NotFound("User not found");
-
+// Admin: update ID-related fields (UTCode, RefId)
+//[HttpPost("update-identifiers")]
+//[Authorize(Policy = "AdminPolicy")]
+//  public async Task<IActionResult> UpdateUserIdentifiers(int userId, string utCode, string refId)
+//  {
+//  var result = await _userService.UpdateUserIdentifiersAsync(userId, utCode, refId);
+// if (!result)
+///  return NotFound("User not found"); } }
 //        return Ok("User identifiers updated successfully");
 //    }
 

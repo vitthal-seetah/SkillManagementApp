@@ -15,11 +15,17 @@ namespace SkillManager.Web.Pages.Users
     {
         private readonly IUserSkillService _userSkillService;
         private readonly IUserService _userService;
+        private readonly ICategoryService _categoryService;
 
-        public UserSkillsModel(IUserSkillService userSkillService, IUserService userService)
+        public UserSkillsModel(
+            IUserSkillService userSkillService,
+            IUserService userService,
+            ICategoryService categoryService
+        )
         {
             _userSkillService = userSkillService;
             _userService = userService;
+            _categoryService = categoryService;
         }
 
         public List<UserSkillsViewModel> UserSkills { get; set; } = new();
@@ -60,7 +66,7 @@ namespace SkillManager.Web.Pages.Users
 
             // Get available users and categories for filters
             AvailableUsers = (await _userService.GetAllAsync()).ToList();
-            AvailableCategories = (await _userSkillService.GetAllCategories()).ToList();
+            AvailableCategories = (await _categoryService.GetAllCategoriesAsync()).ToList();
 
             // Get all user skills
             var allUserSkills = await _userSkillService.GetUserSkillsLevels();

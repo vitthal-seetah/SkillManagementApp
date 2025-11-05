@@ -144,16 +144,15 @@
                         <div class="row">
                             @foreach (var userSkill in Model.ViewModel.UserSkills)
                             {
-                                <div class="col-xl-6 col-lg-12 mb-4">
+                                <div class="col-xl-6 col-lg-12 mb-4 " style="max-width:30%">
                                     <div class="card skill-card h-100 shadow-sm" style="overflow: visible;">
                                         <!-- Add overflow: visible -->
-                                        <div class="card-body" style="position: relative; overflow: visible;">
+                                        <div class="card-body d-flex" style="">
                                             <!-- Add these styles -->
                                             <!-- Keep flex but change to column direction -->
                                             <div class="d-flex flex-column mb-2">
                                                 <h6 class="card-title mb-0 text-primary">@userSkill.Code</h6>
-                                                <p class="card-title mb-0 text-primary small">@userSkill.Label</p>
-                                            </div>
+                                                <p class="card-title my-1 text-primary small" style="min-height:60px">@userSkill.Label</p>
 
                                             <!-- Required Level below Code -->
                                             <div class="mb-3">
@@ -164,12 +163,12 @@
                                                     </span>
                                                 </p>
                                             </div>
-
+                                            
                                             <!-- Dropdown and Update button below My Level -->
-                                            <form method="post" asp-page-handler="UpdateSkillLevel">
+                                                <form method="post" asp-page-handler="UpdateSkillLevel" id="form-@userSkill.SkillId"  style="width:250px">
                                                 <input type="hidden" name="skillId" value="@userSkill.SkillId" />
                                                 <input type="hidden" name="categoryId" value="@Model.ViewModel.SelectedCategoryId" />
-                                                <div class="row align-items-center">
+                                                <div class="row ">
                                                     <div class="col-8">
                                                         <div class="dropdown">
                                                             <button class="btn dropdown-toggle level-dropdown @GetLevelColorClass(userSkill.LevelName) w-100 text-start"
@@ -183,6 +182,7 @@
                                                             <ul class="dropdown-menu level-dropdown-menu" aria-labelledby="levelDropdown-@userSkill.SkillId">
                                                                 @foreach (var level in Model.AvailableLevels)
                                                                 {
+                                                                  
                                                                     <li>
                                                                         <a class="dropdown-item level-option @GetLevelColorClass(level.Name)"
                                                                            href="#"
@@ -190,18 +190,15 @@
                                                                            data-level-name="@level.Name">
                                                                             <span>@level.Name</span>
                                                                         </a>
-                                                                    </li>
+                                                                        </li>
                                                                 }
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                    <div class="col-4 text-end">
-                                                        <button type="submit" class="btn btn-primary btn-sm">
-                                                            <i class="bi bi-check-lg"></i> Update
-                                                        </button>
-                                                    </div>
+                                                 
                                                 </div>
                                             </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -449,6 +446,20 @@
 
 @section Scripts {
     <script>
+                document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.level-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const levelId = this.getAttribute('data-level-id');
+                    const form = this.closest('form');
+                    const levelInput = form.querySelector('.level-input');
+
+                    levelInput.value = levelId;
+                    form.submit();
+                });
+            });
+        });
         document.addEventListener('DOMContentLoaded', function() {
             // Auto-collapse other category types when one is opened
             var categoryTypeHeaders = document.querySelectorAll('.category-type-header');
