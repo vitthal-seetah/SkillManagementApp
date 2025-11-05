@@ -46,4 +46,9 @@ public static class CategoryMappers
             CategoryTypeId = createDto.CategoryTypeId,
         };
     }
+
+    public static CategoryType ToCategoryType(this CreateCategoryTypeDto createDto)
+    {
+        return new CategoryType { Name = createDto.Name.Trim() };
+    }
 }

@@ -102,29 +102,9 @@ namespace SkillManager.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<Category>> GetByCategoryTypeAsync(CategoryType categoryType)
-        {
-            return await _context
-                .Categories.Include(c => c.SubCategories)
-                .ThenInclude(sc => sc.Skills)
-                .Where(c => c.CategoryType == categoryType)
-                .OrderBy(c => c.Name)
-                .ToListAsync();
-        }
-
         public async Task<bool> ExistsAsync(int categoryId)
         {
             return await _context.Categories.AnyAsync(c => c.CategoryId == categoryId);
-        }
-
-        public async Task<IEnumerable<CategoryType>> GetAllCategoryTypesAsync()
-        {
-            return await _context.CategoryTypes.OrderBy(ct => ct.Name).ToListAsync();
-        }
-
-        public async Task<CategoryType?> GetCategoryTypeByIdAsync(int id)
-        {
-            return await _context.CategoryTypes.FirstOrDefaultAsync(ct => ct.CategoryTypeId == id);
         }
 
         public async Task<Category?> GetByNameAsync(string name)
@@ -203,6 +183,84 @@ namespace SkillManager.Infrastructure.Repositories
             return await _context.SubCategories.AnyAsync(sc =>
                 sc.Name == subCategoryName && sc.CategoryId == categoryId
             );
+        }
+
+        public async Task<IEnumerable<Category>> GetByCategoryTypeAsync(CategoryType categoryType)
+        {
+            return await _context
+                .Categories.Include(c => c.SubCategories)
+                .ThenInclude(sc => sc.Skills)
+                .Where(c => c.CategoryType == categoryType)
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<CategoryType>> GetAllCategoryTypesAsync()
+        {
+            return await _context
+                .CategoryTypes.Include(ct => ct.Categories) // Include categories for count
+                .OrderBy(ct => ct.Name)
+                .ToListAsync();
+        }
+
+        public async Task<CategoryType?> GetCategoryTypeByIdAsync(int id)
+        {
+            return await _context
+                .CategoryTypes.Include(ct => ct.Categories) // Include categories for count
+                .FirstOrDefaultAsync(ct => ct.CategoryTypeId == id);
+        }
+
+        public async Task<CategoryType?> GetCategoryTypeByNameAsync(string name)
+        {
+            return await _context
+                .CategoryTypes.Include(ct => ct.Categories) // Include categories for count
+                .FirstOrDefaultAsync(ct => ct.Name == name);
+        }
+
+        public async Task<bool> AddCategoryTypeAsync(CategoryType categoryType)
+        {
+            try
+            {
+                await _context.CategoryTypes.AddAsync(categoryType);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateCategoryTypeAsync(CategoryType categoryType)
+        {
+            try
+            {
+                _context.CategoryTypes.Update(categoryType);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteCategoryTypeAsync(int categoryTypeId)
+        {
+            try
+            {
+                var categoryType = await _context.CategoryTypes.FindAsync(categoryTypeId);
+                if (categoryType == null)
+                    return false;
+
+                _context.CategoryTypes.Remove(categoryType);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

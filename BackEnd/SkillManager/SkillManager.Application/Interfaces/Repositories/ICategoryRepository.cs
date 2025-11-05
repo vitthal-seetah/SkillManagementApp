@@ -25,5 +25,11 @@ namespace SkillManager.Application.Interfaces.Repositories
         Task<bool> UpdateSubCategoryAsync(SubCategory subCategory);
         Task<bool> DeleteSubCategoryAsync(int subCategoryId);
         Task<bool> SubCategoryExistsAsync(string subCategoryName, int categoryId);
+        Task<bool> DeleteCategoryTypeAsync(int categoryTypeId);
+        Task<bool> UpdateCategoryTypeAsync(CategoryType categoryType);
+
+        Task<bool> AddCategoryTypeAsync(CategoryType categoryType);
+
+        Task<CategoryType?> GetCategoryTypeByNameAsync(string name);
     }
 }
