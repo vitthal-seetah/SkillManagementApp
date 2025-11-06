@@ -15,5 +15,7 @@ namespace SkillManager.Application.Models
         public string RequiredLevel { get; set; } = string.Empty;
         public int LevelId { get; set; }
         public string LevelName { get; set; } = string.Empty;
+
+        public DateTime UpdatedTime { get; set; }
     }
 }

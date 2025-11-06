@@ -19,5 +19,6 @@ namespace SkillManager.Application.Models
         public string LevelName { get; set; } = string.Empty;
         public int LevelPoints { get; set; }
         public int LevelId { get; set; }
+        public DateTime UpdatedTime { get; set; }
     }
 }

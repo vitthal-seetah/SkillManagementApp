@@ -18,6 +18,7 @@ public static class UserSkillMapper
             RequiredLevel = userSkill.Skill?.RequiredLevel.ToString() ?? "0", // From Skill
             LevelId = userSkill.LevelId,
             LevelName = userSkill.Level?.Name ?? "Not Set", // From Level navigation property
+            UpdatedTime = userSkill.UpdatedTime,
         };
     }
 }

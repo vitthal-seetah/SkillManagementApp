@@ -72,6 +72,9 @@
                 <option value="SkillLabelDesc" selected="@(Model.SortBy == "SkillLabelDesc")">Skill Name (Z → A)</option>
                 <option value="SkillCodeAsc" selected="@(Model.SortBy == "SkillCodeAsc")">Skill Code (A → Z)</option>
                 <option value="SkillCodeDesc" selected="@(Model.SortBy == "SkillCodeDesc")">Skill Code (Z → A)</option>
+                <option value="UpdatedTimeDesc" selected="@(Model.SortBy == "UpdatedTimeDesc")">Last Updated ( Desc))</option>
+                <option value="UpdatedTimeAsc" selected="@(Model.SortBy == "UpdatedTimeAsc")">Last Updated (Asc))</option>
+
                 <option value="CategoryNameAsc" selected="@(Model.SortBy == "CategoryNameAsc")">Category (A → Z)</option>
                 <option value="CategoryNameDesc" selected="@(Model.SortBy == "CategoryNameDesc")">Category (Z → A)</option>
                 <option value="LevelNameAsc" selected="@(Model.SortBy == "LevelNameAsc")">Level Name (A → Z)</option>
@@ -189,6 +192,12 @@
                                 </a>
                             </th>
                             <th>
+                                <a href="@GetSortUrl("UpdatedTime")" class="text-decoration-none text-dark">
+                                    Last Updated
+                                    @Html.Raw(GetSortIcon("UpdatedTime"))
+                                </a>
+                            </th>
+                            <th>
                                 <a href="@GetSortUrl("LevelName")" class="text-decoration-none text-dark">
                                     Level
                                     @Html.Raw(GetSortIcon("LevelName"))
@@ -224,6 +233,8 @@
                                     <div class="fw-semibold">@userSkill.SkillLabel</div>
                                     <small class="text-muted">@userSkill.SkillCode</small>
                                 </td>
+                                <td>
+                                    <div> @userSkill.UpdatedTime</div>
                                 <td>
                                     <span class="badge @GetLevelBadgeClass(userSkill.LevelName) px-3 py-2">
                                         @userSkill.LevelName
@@ -456,6 +467,7 @@
             SelectedCategory = Model.SelectedCategory,
             SelectedSkill = Model.SelectedSkill,
             SelectedLevel = Model.SelectedLevel,
+            UpdatedTime = Model.UpdatedTime,
             SortBy = newSort,
             PageNumber = 1
         });

@@ -20,6 +20,7 @@ public static class UserSkillsViewModelMapper
             LevelName = userSkill.Level?.Name ?? string.Empty,
             LevelPoints = userSkill.Level?.Points ?? 0,
             LevelId = userSkill.LevelId,
+            UpdatedTime = userSkill.UpdatedTime,
         };
     }
 }

@@ -37,6 +37,9 @@ namespace SkillManager.Web.Pages.Users
         public string? SelectedUser { get; set; }
 
         [BindProperty(SupportsGet = true)]
+        public DateTime? UpdatedTime { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string? SelectedCategory { get; set; }
 
         [BindProperty(SupportsGet = true)]
@@ -128,6 +131,9 @@ namespace SkillManager.Web.Pages.Users
                 "CategoryNameDesc" => allUserSkills
                     .OrderByDescending(us => us.CategoryName)
                     .ToList(),
+                "UpdatedTimeAsc" => allUserSkills.OrderBy(us => us.UpdatedTime).ToList(),
+                "UpdatedTimeDesc" => allUserSkills.OrderByDescending(us => us.UpdatedTime).ToList(),
+
                 "LevelNameAsc" => allUserSkills.OrderBy(us => us.LevelName).ToList(),
                 "LevelNameDesc" => allUserSkills.OrderByDescending(us => us.LevelName).ToList(),
                 "LevelPointsAsc" => allUserSkills.OrderBy(us => us.LevelPoints).ToList(),

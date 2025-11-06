@@ -163,7 +163,15 @@
                                                     </span>
                                                 </p>
                                             </div>
-                                            
+                                                <div class="mb-3">
+                                                    <p class="text-muted small mb-1">
+                                                        Last Updated:
+                                                        <span >
+                                                            @FormatTimestamp(userSkill.UpdatedTime)
+
+                                                        </span>
+                                                    </p>
+                                                </div>
                                             <!-- Dropdown and Update button below My Level -->
                                                 <form method="post" asp-page-handler="UpdateSkillLevel" id="form-@userSkill.SkillId"  style="width:250px">
                                                 <input type="hidden" name="skillId" value="@userSkill.SkillId" />
@@ -513,7 +521,17 @@
 }
 
 @functions {
-
+    private string FormatTimestamp(DateTime timestamp)
+    {
+        if (timestamp.Date == DateTime.Today)
+        {
+            return $"Today at {timestamp.ToString("h:mm tt").ToLower()}";
+        }
+        else
+        {
+            return timestamp.ToString("dd/MM/yyyy");
+        }
+    }
     private string GetLevelNameFromNumber(string levelNumber)
     {
         if (int.TryParse(levelNumber, out int number))

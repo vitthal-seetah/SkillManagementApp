@@ -100,7 +100,12 @@ namespace SkillManager.Web.Pages.Skills
                 {
                     var success = await _userSkillService.UpdateSkillAsync(
                         userId,
-                        new UpdateUserSkillsDto { SkillId = skillId, LevelId = levelId }
+                        new UpdateUserSkillsDto
+                        {
+                            SkillId = skillId,
+                            LevelId = levelId,
+                            UpdatedTime = DateTime.Now,
+                        }
                     );
                     if (success)
                     {
