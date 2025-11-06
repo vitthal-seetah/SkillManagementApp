@@ -95,21 +95,51 @@
     <div class="card">
         <div class="card-header bg-black">
             <h5 class="card-title mb-0 text-white">
-                <i class="bi bi-gear-fill me-2"></i>All Skills (@Model.TotalCount)
+                <i class="fas fa-tasks me-2"></i>All Skills
+                <span class="badge bg-light text-dark ms-2">@Model.TotalCount entries</span>
             </h5>
         </div>
         <div class="card-body p-0">
-            <!-- you can keep table-responsive, wrapping will still work -->
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-3" style="width: 120px;">Code</th>
-                            <th style="width: 200px;">Name</th>
-                            <th style="width: 150px;">Category</th>
-                            <th style="width: 120px;">Category Type</th>
-                            <th style="width: 100px;">Criticality</th>
-                            <th style="width: 120px;">Required Level</th>
+                            <th class="ps-3" style="width: 120px;">
+                                <a href="@GetSortUrl("Code")" class="text-decoration-none text-dark">
+                                    Code
+                                    @Html.Raw(GetSortIcon("Code"))
+                                </a>
+                            </th>
+                            <th style="width: 200px;">
+                                <a href="@GetSortUrl("Name")" class="text-decoration-none text-dark">
+                                    Name
+                                    @Html.Raw(GetSortIcon("Name"))
+                                </a>
+                            </th>
+                            <th style="width: 150px;">
+                                <a href="@GetSortUrl("Category")" class="text-decoration-none text-dark">
+                                    Category
+                                    @Html.Raw(GetSortIcon("Category"))
+                                </a>
+                            </th>
+                            <th style="width: 120px;">
+                                <a href="@GetSortUrl("CategoryType")" class="text-decoration-none text-dark">
+                                    Category Type
+                                    @Html.Raw(GetSortIcon("CategoryType"))
+                                </a>
+                            </th>
+                            <th style="width: 100px;">
+                                <a href="@GetSortUrl("Criticality")" class="text-decoration-none text-dark">
+                                    Criticality
+                                    @Html.Raw(GetSortIcon("Criticality"))
+                                </a>
+                            </th>
+                            <th style="width: 120px;">
+                                <a href="@GetSortUrl("RequiredLevel")" class="text-decoration-none text-dark">
+                                    Required Level
+                                    @Html.Raw(GetSortIcon("RequiredLevel"))
+                                </a>
+                            </th>
                             <th style="width: 300px;">Description</th>
                             @if (canEdit)
                             {
@@ -118,8 +148,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                   
-
+                        <!-- Your existing table body content remains the same -->
                         @foreach (var skill in Model.Skills)
                         {
                             var rowId = $"row-{skill.SkillId}";
@@ -200,10 +229,10 @@
                                         </div>
                                         <div class="btn-group btn-group-sm edit-actions d-none">
                                             <button type="submit" class="btn btn-success">
-                                                <i class="bi bi-check"></i>
+                                                <i class="fas fa-check"></i>
                                             </button>
                                             <button type="button" class="btn btn-outline-secondary" onclick="cancelEdit('@rowId')">
-                                                <i class="bi bi-x"></i>
+                                                <i class="fas fa-times"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -215,7 +244,7 @@
                         {
                             <tr>
                                 <td colspan="@(canEdit ? 8 : 7)" class="text-center py-4 text-muted">
-                                    <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                                    <i class="fas fa-inbox display-4 d-block mb-2"></i>
                                     No skills found
                                 </td>
                             </tr>
@@ -638,5 +667,49 @@
             document.getElementById('deleteSkillName').textContent = skillName;
             new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
         }
+
     </script>
+    }
+
+@functions {
+
+    private string GetSortUrl(string sortField)
+    {
+        var currentSort = Model.SortBy;
+        var newSort = "";
+
+        if (currentSort == $"{sortField}Asc")
+        {
+            newSort = $"{sortField}Desc";
+        }
+        else
+        {
+            newSort = $"{sortField}Asc";
+        }
+
+        return Url.Page("", new
+        {
+            SelectedCategoryType = Model.SelectedCategoryType,
+            SortBy = newSort,
+            PageNumber = 1
+        });
+    }
+
+    private string GetSortIcon(string sortField)
+    {
+        var currentSort = Model.SortBy;
+
+        if (currentSort == $"{sortField}Asc")
+        {
+            return "<i class='bi bi-arrow-up'></i>";
+        }
+        else if (currentSort == $"{sortField}Desc")
+        {
+            return "<i class='bi bi-arrow-down'></i>";
+        }
+
+        return "<i class='bi bi-arrow-down-up text-muted'></i>";
+    }
+   
+
 }

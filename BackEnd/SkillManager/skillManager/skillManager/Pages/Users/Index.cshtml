@@ -105,7 +105,8 @@
 <div class="card">
     <div class="card-header bg-black">
         <h5 class="card-title mb-0 text-white">
-            <i class="fas fa-users me-2"></i>Users (@Model.TotalUsersCount)
+            <i class="fas fa-users me-2"></i>Users
+            <span class="badge bg-light text-dark ms-2">@Model.TotalUsersCount entries</span>
         </h5>
     </div>
     <div class="card-body p-0">
@@ -114,21 +115,76 @@
             <table class="table table-hover align-middle mb-0" style="min-width:1300px;">
                 <thead class="table-light">
                     <tr>
-                        <th style="min-width:140px;">First Name</th>
-                        <th style="min-width:140px;">Last Name</th>
+                        <th style="min-width:140px;">
+                            <a asp-page="Index"
+                               asp-route-SortBy="@(Model.SortBy == "FirstNameAsc" ? "FirstNameDesc" : "FirstNameAsc")"
+                               asp-route-SelectedRole="@Model.SelectedRole"
+                               asp-route-SelectedStatus="@Model.SelectedStatus"
+                               asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               class="text-decoration-none text-dark fw-semibold">
+                                First Name @Html.Raw(GetSortIcon("FirstName"))
+                            </a>
+                        </th>
+
+                        <th style="min-width:140px;">
+                            <a asp-page="Index"
+                               asp-route-SortBy="@(Model.SortBy == "LastNameAsc" ? "LastNameDesc" : "LastNameAsc")"
+                               asp-route-SelectedRole="@Model.SelectedRole"
+                               asp-route-SelectedStatus="@Model.SelectedStatus"
+                               asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               class="text-decoration-none text-dark fw-semibold">
+                                Last Name @Html.Raw(GetSortIcon("LastName"))
+                            </a>
+                        </th>
+
                         <th style="min-width:70px;">Domain</th>
-                        <th style="min-width:150px;">EID</th>
+
+                        <th style="min-width:150px;">
+                            <a asp-page="Index"
+                               asp-route-SortBy="@(Model.SortBy == "EidAsc" ? "EidDesc" : "EidAsc")"
+                               asp-route-SelectedRole="@Model.SelectedRole"
+                               asp-route-SelectedStatus="@Model.SelectedStatus"
+                               asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               class="text-decoration-none text-dark fw-semibold">
+                                EID @Html.Raw(GetSortIcon("Eid"))
+                            </a>
+                        </th>
+
                         <th style="min-width:140px;">Status</th>
+
                         <th style="min-width:130px;">Delivery Type</th>
-                        <th style="min-width:120px;">UT Code</th>
+
+                        <th style="min-width:120px;">
+                            <a asp-page="Index"
+                               asp-route-SortBy="@(Model.SortBy == "UtCodeAsc" ? "UtCodeDesc" : "UtCodeAsc")"
+                               asp-route-SelectedRole="@Model.SelectedRole"
+                               asp-route-SelectedStatus="@Model.SelectedStatus"
+                               asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               class="text-decoration-none text-dark fw-semibold">
+                                UT Code @Html.Raw(GetSortIcon("UtCode"))
+                            </a>
+                        </th>
+
                         <th style="min-width:120px;">Ref ID</th>
-                        <th style="min-width:140px;">Role</th>
+
+                        <th style="min-width:140px;">
+                            <a asp-page="Index"
+                               asp-route-SortBy="@(Model.SortBy == "RoleAsc" ? "RoleDesc" : "RoleAsc")"
+                               asp-route-SelectedRole="@Model.SelectedRole"
+                               asp-route-SelectedStatus="@Model.SelectedStatus"
+                               asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               class="text-decoration-none text-dark fw-semibold">
+                                Role @Html.Raw(GetSortIcon("Role"))
+                            </a>
+                        </th>
+
                         @if (canEdit)
                         {
                             <th style="min-width:140px; width:140px;">Actions</th>
                         }
                     </tr>
                 </thead>
+
                 <tbody>
                     @foreach (var user in Model.Users)
                     {
@@ -492,4 +548,25 @@
             _ => "bg-secondary text-white"
         };
     }
+
+
+    private string GetSortIcon(string sortField)
+    {
+        var currentSort = Model.SortBy;
+
+        if (currentSort == $"{sortField}Asc")
+        {
+            return "<i class='bi bi-arrow-up'></i>";
+        }
+        else if (currentSort == $"{sortField}Desc")
+        {
+            return "<i class='bi bi-arrow-down'></i>";
+        }
+
+        return "<i class='bi bi-arrow-down-up text-muted'></i>";
+    }
+
+
+
+
 }
