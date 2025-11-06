@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using SkillManager.Application.DTOs.User;
 using SkillManager.Application.Interfaces.Repositories;
+using SkillManager.Domain.Entities;
+using SkillManager.Domain.Entities.Enums;
 
 namespace SkillManager.Application.Validators;
 
@@ -49,10 +51,6 @@ public class CreateUserValidator : AbstractValidator<CreateUserDto>
             )
             .WithMessage("RefId must be unique.");
 
-        RuleFor(u => u.Status).IsInEnum().WithMessage("Invalid user status.");
-
-        RuleFor(u => u.DeliveryType).IsInEnum().WithMessage("Invalid delivery type.");
-
         RuleFor(u => u.RoleName)
             .NotEmpty()
             .WithMessage("Role is required.")
@@ -64,5 +62,17 @@ public class CreateUserValidator : AbstractValidator<CreateUserDto>
                 }
             )
             .WithMessage("Specified role does not exist.");
+
+        RuleFor(u => u.Status)
+            .Must(status =>
+                string.IsNullOrEmpty(status) || Enum.TryParse<UserStatus>(status, true, out _)
+            )
+            .WithMessage("Invalid user status.");
+
+        RuleFor(u => u.DeliveryType)
+            .Must(delivery =>
+                string.IsNullOrEmpty(delivery) || Enum.TryParse<DeliveryType>(delivery, true, out _)
+            )
+            .WithMessage("Invalid delivery type.");
     }
 }
