@@ -55,6 +55,20 @@ namespace SkillManager.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Projects",
+                columns: table => new
+                {
+                    ProjectId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectDescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Projects", x => x.ProjectId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserRoles",
                 columns: table => new
                 {
@@ -84,33 +98,6 @@ namespace SkillManager.Infrastructure.Migrations
                         column: x => x.CategoryTypeId,
                         principalTable: "CategoryTypes",
                         principalColumn: "CategoryTypeId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    UtCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    RefId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Eid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DeliveryType = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
-                    table.ForeignKey(
-                        name: "FK_Users_UserRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "UserRoles",
-                        principalColumn: "RoleId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -218,6 +205,80 @@ namespace SkillManager.Infrastructure.Migrations
                         principalTable: "Skills",
                         principalColumn: "SkillId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProjectTeams",
+                columns: table => new
+                {
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    TeamId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectTeams", x => new { x.ProjectId, x.TeamId });
+                    table.ForeignKey(
+                        name: "FK_ProjectTeams_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Teams",
+                columns: table => new
+                {
+                    TeamId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TeamName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    TeamDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    TeamLeadId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Teams", x => x.TeamId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UtCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    RefId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: true),
+                    TeamId = table.Column<int>(type: "int", nullable: true),
+                    Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Eid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DeliveryType = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_Users_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Users_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
+                        principalColumn: "TeamId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Users_UserRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "UserRoles",
+                        principalColumn: "RoleId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -329,11 +390,11 @@ namespace SkillManager.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "UserId", "DeliveryType", "Domain", "Eid", "FirstName", "LastName", "RefId", "RoleId", "Status", "UtCode" },
+                columns: new[] { "UserId", "DeliveryType", "Domain", "Eid", "FirstName", "LastName", "ProjectId", "RefId", "RoleId", "Status", "TeamId", "UtCode" },
                 values: new object[,]
                 {
-                    { 1, "Onshore", "DIR", "girish.s.jagroop", "Girish", "Jagroop", "Rf002", 1, "Active", "UT003" },
-                    { 2, "Onshore", "DIR", "vitthal.seetah", "Vitthal", "Seetah", "Rf001", 1, "Active", "UT002" }
+                    { 1, "Onshore", "DIR", "girish.s.jagroop", "Girish", "Jagroop", null, "Rf002", 1, "Active", null, "UT003" },
+                    { 2, "Onshore", "DIR", "vitthal.seetah", "Vitthal", "Seetah", null, "Rf001", 1, "Active", null, "UT002" }
                 });
 
             migrationBuilder.InsertData(
@@ -417,42 +478,42 @@ namespace SkillManager.Infrastructure.Migrations
                 columns: new[] { "SkillId", "UserId", "LevelId", "UpdatedTime" },
                 values: new object[,]
                 {
-                    { 1, 1, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1958) },
-                    { 2, 1, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1959) },
-                    { 3, 1, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1959) },
-                    { 15, 1, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1954) },
-                    { 16, 1, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1960) },
-                    { 17, 1, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1955) },
-                    { 18, 1, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1955) },
-                    { 19, 1, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1961) },
-                    { 20, 1, 4, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1995) },
-                    { 21, 1, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1956) },
-                    { 22, 1, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1961) },
-                    { 23, 1, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1956) },
-                    { 24, 1, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1994) },
-                    { 25, 1, 4, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1996) },
-                    { 26, 1, 1, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1954) },
-                    { 27, 1, 4, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1996) },
-                    { 28, 1, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1957) },
-                    { 29, 1, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1958) },
-                    { 1, 2, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1948) },
-                    { 2, 2, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1948) },
-                    { 3, 2, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1949) },
-                    { 15, 2, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1943) },
-                    { 16, 2, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1949) },
-                    { 17, 2, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1944) },
-                    { 18, 2, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1944) },
-                    { 19, 2, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1950) },
-                    { 20, 2, 4, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1952) },
-                    { 21, 2, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1945) },
-                    { 22, 2, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1951) },
-                    { 23, 2, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1946) },
-                    { 24, 2, 3, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1951) },
-                    { 25, 2, 4, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1952) },
-                    { 26, 2, 1, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1940) },
-                    { 27, 2, 4, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1953) },
-                    { 28, 2, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1946) },
-                    { 29, 2, 2, new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1947) }
+                    { 1, 1, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1637) },
+                    { 2, 1, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1638) },
+                    { 3, 1, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1639) },
+                    { 15, 1, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1631) },
+                    { 16, 1, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1640) },
+                    { 17, 1, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1632) },
+                    { 18, 1, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1633) },
+                    { 19, 1, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1641) },
+                    { 20, 1, 4, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1644) },
+                    { 21, 1, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1634) },
+                    { 22, 1, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1642) },
+                    { 23, 1, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1635) },
+                    { 24, 1, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1643) },
+                    { 25, 1, 4, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1645) },
+                    { 26, 1, 1, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1630) },
+                    { 27, 1, 4, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1646) },
+                    { 28, 1, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1636) },
+                    { 29, 1, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1637) },
+                    { 1, 2, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1621) },
+                    { 2, 2, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1622) },
+                    { 3, 2, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1623) },
+                    { 15, 2, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1614) },
+                    { 16, 2, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1624) },
+                    { 17, 2, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1615) },
+                    { 18, 2, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1616) },
+                    { 19, 2, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1625) },
+                    { 20, 2, 4, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1628) },
+                    { 21, 2, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1617) },
+                    { 22, 2, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1626) },
+                    { 23, 2, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1618) },
+                    { 24, 2, 3, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1627) },
+                    { 25, 2, 4, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1629) },
+                    { 26, 2, 1, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1610) },
+                    { 27, 2, 4, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1629) },
+                    { 28, 2, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1619) },
+                    { 29, 2, 2, new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1620) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -486,6 +547,11 @@ namespace SkillManager.Infrastructure.Migrations
                 column: "Name");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProjectTeams_TeamId",
+                table: "ProjectTeams",
+                column: "TeamId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Skills_CategoryId",
                 table: "Skills",
                 column: "CategoryId");
@@ -501,6 +567,11 @@ namespace SkillManager.Infrastructure.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Teams_TeamLeadId",
+                table: "Teams",
+                column: "TeamLeadId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_Name",
                 table: "UserRoles",
                 column: "Name",
@@ -513,6 +584,11 @@ namespace SkillManager.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_ProjectId",
+                table: "Users",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_RefId",
                 table: "Users",
                 column: "RefId",
@@ -522,6 +598,11 @@ namespace SkillManager.Infrastructure.Migrations
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_TeamId",
+                table: "Users",
+                column: "TeamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_UtCode",
@@ -558,13 +639,40 @@ namespace SkillManager.Infrastructure.Migrations
                 name: "IX_UserSMEs_UserId",
                 table: "UserSMEs",
                 column: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ProjectTeams_Teams_TeamId",
+                table: "ProjectTeams",
+                column: "TeamId",
+                principalTable: "Teams",
+                principalColumn: "TeamId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Teams_Users_TeamLeadId",
+                table: "Teams",
+                column: "TeamLeadId",
+                principalTable: "Users",
+                principalColumn: "UserId",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Users_Projects_ProjectId",
+                table: "Users");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Users_Teams_TeamId",
+                table: "Users");
+
             migrationBuilder.DropTable(
                 name: "ApplicationSkills");
+
+            migrationBuilder.DropTable(
+                name: "ProjectTeams");
 
             migrationBuilder.DropTable(
                 name: "UserSkills");
@@ -582,22 +690,28 @@ namespace SkillManager.Infrastructure.Migrations
                 name: "Skills");
 
             migrationBuilder.DropTable(
-                name: "Users");
-
-            migrationBuilder.DropTable(
                 name: "ApplicationSuites");
 
             migrationBuilder.DropTable(
                 name: "SubCategories");
 
             migrationBuilder.DropTable(
-                name: "UserRoles");
-
-            migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "CategoryTypes");
+
+            migrationBuilder.DropTable(
+                name: "Projects");
+
+            migrationBuilder.DropTable(
+                name: "Teams");
+
+            migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "UserRoles");
         }
     }
 }

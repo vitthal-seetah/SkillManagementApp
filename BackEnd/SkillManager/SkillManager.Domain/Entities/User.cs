@@ -31,8 +31,15 @@ namespace SkillManager.Domain.Entities
         public int RoleId { get; set; }
         public virtual UserRole Role { get; set; }
 
+        public int? ProjectId { get; set; }
+
+        public virtual Project? Project { get; set; }
+
+        public int? TeamId { get; set; }
+        public virtual Team? Team { get; set; }
+
         [Required]
-        public string Domain { get; set; }
+        public string Domain { get; set; } = string.Empty;
 
         [Required]
         public string Eid { get; set; }
@@ -40,7 +47,6 @@ namespace SkillManager.Domain.Entities
 
         public DeliveryType DeliveryType { get; set; }
 
-        // Navigation properties
         public virtual ICollection<UserSkill> UserSkills { get; set; } = new List<UserSkill>();
         public virtual ICollection<UserSME> UserSMEs { get; set; } = new List<UserSME>();
     }

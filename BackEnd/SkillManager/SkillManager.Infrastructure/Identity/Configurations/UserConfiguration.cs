@@ -22,7 +22,21 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.RefId).HasMaxLength(100);
         builder.Property(u => u.Domain).HasMaxLength(100);
         builder.Property(u => u.Eid).HasMaxLength(50);
+        // Relationship: User belongs to one Team (One-to-Many)
+        builder
+            .HasOne(u => u.Team)
+            .WithMany(t => t.Members)
+            .HasForeignKey(u => u.TeamId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
+        // Relationship: User belongs to one Project
+        builder
+            .HasOne(u => u.Project)
+            .WithMany(p => p.Users)
+            .HasForeignKey(u => u.ProjectId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
         builder
             .HasOne(u => u.Role)
             .WithMany(r => r.Users)

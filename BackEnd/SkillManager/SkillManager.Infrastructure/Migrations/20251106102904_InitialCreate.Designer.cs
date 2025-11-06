@@ -12,7 +12,7 @@ using SkillManager.Infrastructure.Identity.AppDbContext;
 namespace SkillManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251106070758_InitialCreate")]
+    [Migration("20251106102904_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -231,6 +231,42 @@ namespace SkillManager.Infrastructure.Migrations
                             Name = "Expert",
                             Points = 4
                         });
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.Project", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"));
+
+                    b.Property<string>("ProjectDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProjectId");
+
+                    b.ToTable("Projects", (string)null);
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.ProjectTeam", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProjectId", "TeamId");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("ProjectTeams", (string)null);
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.Skill", b =>
@@ -957,6 +993,34 @@ namespace SkillManager.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SkillManager.Domain.Entities.Team", b =>
+                {
+                    b.Property<int>("TeamId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TeamId"));
+
+                    b.Property<string>("TeamDescription")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("TeamLeadId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TeamName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("TeamId");
+
+                    b.HasIndex("TeamLeadId");
+
+                    b.ToTable("Teams", (string)null);
+                });
+
             modelBuilder.Entity("SkillManager.Domain.Entities.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -989,6 +1053,9 @@ namespace SkillManager.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
                     b.Property<string>("RefId")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -1001,6 +1068,9 @@ namespace SkillManager.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UtCode")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -1011,10 +1081,14 @@ namespace SkillManager.Infrastructure.Migrations
                     b.HasIndex("Eid")
                         .IsUnique();
 
+                    b.HasIndex("ProjectId");
+
                     b.HasIndex("RefId")
                         .IsUnique();
 
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("TeamId");
 
                     b.HasIndex("UtCode")
                         .IsUnique();
@@ -1145,252 +1219,252 @@ namespace SkillManager.Infrastructure.Migrations
                             UserId = 2,
                             SkillId = 26,
                             LevelId = 1,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1940)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1610)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 15,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1943)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1614)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 17,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1944)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1615)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 18,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1944)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1616)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 21,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1945)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1617)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 23,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1946)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1618)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 28,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1946)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1619)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 29,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1947)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1620)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 1,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1948)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1621)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 2,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1948)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1622)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 3,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1949)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1623)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 16,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1949)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1624)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 19,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1950)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1625)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 22,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1951)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1626)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 24,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1951)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1627)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 20,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1952)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1628)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 25,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1952)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1629)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 27,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1953)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1629)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 26,
                             LevelId = 1,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1954)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1630)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 15,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1954)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1631)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 17,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1955)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1632)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 18,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1955)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1633)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 21,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1956)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1634)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 23,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1956)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1635)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 28,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1957)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1636)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 29,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1958)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1637)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 1,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1958)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1637)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 2,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1959)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1638)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 3,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1959)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1639)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 16,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1960)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1640)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 19,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1961)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1641)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 22,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1961)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1642)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 24,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1994)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1643)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 20,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1995)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1644)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 25,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1996)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1645)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 27,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1996)
+                            UpdatedTime = new DateTime(2025, 11, 6, 10, 29, 3, 620, DateTimeKind.Utc).AddTicks(1646)
                         });
                 });
 
@@ -1443,6 +1517,25 @@ namespace SkillManager.Infrastructure.Migrations
                     b.Navigation("CategoryType");
                 });
 
+            modelBuilder.Entity("SkillManager.Domain.Entities.ProjectTeam", b =>
+                {
+                    b.HasOne("SkillManager.Domain.Entities.Project", "Project")
+                        .WithMany("ProjectTeams")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SkillManager.Domain.Entities.Team", "Team")
+                        .WithMany("ProjectTeams")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Team");
+                });
+
             modelBuilder.Entity("SkillManager.Domain.Entities.Skill", b =>
                 {
                     b.HasOne("SkillManager.Domain.Entities.Category", "Category")
@@ -1473,15 +1566,39 @@ namespace SkillManager.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("SkillManager.Domain.Entities.Team", b =>
+                {
+                    b.HasOne("SkillManager.Domain.Entities.User", "TeamLead")
+                        .WithMany()
+                        .HasForeignKey("TeamLeadId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("TeamLead");
+                });
+
             modelBuilder.Entity("SkillManager.Domain.Entities.User", b =>
                 {
+                    b.HasOne("SkillManager.Domain.Entities.Project", "Project")
+                        .WithMany("Users")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("SkillManager.Domain.Entities.UserRole", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("SkillManager.Domain.Entities.Team", "Team")
+                        .WithMany("Members")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Project");
+
                     b.Navigation("Role");
+
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.UserSME", b =>
@@ -1567,6 +1684,13 @@ namespace SkillManager.Infrastructure.Migrations
                     b.Navigation("UserSkills");
                 });
 
+            modelBuilder.Entity("SkillManager.Domain.Entities.Project", b =>
+                {
+                    b.Navigation("ProjectTeams");
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("SkillManager.Domain.Entities.Skill", b =>
                 {
                     b.Navigation("ApplicationSkills");
@@ -1579,6 +1703,13 @@ namespace SkillManager.Infrastructure.Migrations
             modelBuilder.Entity("SkillManager.Domain.Entities.SubCategory", b =>
                 {
                     b.Navigation("Skills");
+                });
+
+            modelBuilder.Entity("SkillManager.Domain.Entities.Team", b =>
+                {
+                    b.Navigation("Members");
+
+                    b.Navigation("ProjectTeams");
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.User", b =>
