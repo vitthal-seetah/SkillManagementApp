@@ -12,15 +12,15 @@ using SkillManager.Infrastructure.Identity.AppDbContext;
 namespace SkillManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251105114420_3rdMigration")]
-    partial class _3rdMigration
+    [Migration("20251106051500_initial-create")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.17")
+                .HasAnnotation("ProductVersion", "8.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -1138,6 +1138,260 @@ namespace SkillManager.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserSkills", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 26,
+                            LevelId = 1,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6331)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 15,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6336)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 17,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6337)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 18,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6338)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 21,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6340)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 23,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6341)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 28,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6342)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 29,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6343)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 1,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6344)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 2,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6345)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 3,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6346)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 16,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6348)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 19,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6349)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 22,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6350)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 24,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6351)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 20,
+                            LevelId = 4,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6352)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 25,
+                            LevelId = 4,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6353)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            SkillId = 27,
+                            LevelId = 4,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6355)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 26,
+                            LevelId = 1,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6356)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 15,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6356)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 17,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6357)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 18,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6358)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 21,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6359)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 23,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6360)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 28,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6361)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 29,
+                            LevelId = 2,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6362)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 1,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6363)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 2,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6364)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 3,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6365)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 16,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6366)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 19,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6367)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 22,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6368)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 24,
+                            LevelId = 3,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6369)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 20,
+                            LevelId = 4,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6370)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 25,
+                            LevelId = 4,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6371)
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            SkillId = 27,
+                            LevelId = 4,
+                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6372)
+                        });
                 });
 
             modelBuilder.Entity("SkillManager.Domain.Entities.Application", b =>
