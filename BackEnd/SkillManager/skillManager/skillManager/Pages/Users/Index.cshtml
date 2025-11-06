@@ -7,7 +7,13 @@
     bool canEdit = isAdmin || isManager;
 }
 
-<h2 class="mb-3">User Management</h2>
+<!-- Header with Back Button -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">User Management</h2>
+    <a href="Index" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left me-1"></i>Back
+    </a>
+</div>
 
 @if (isAdmin)
 {
@@ -96,158 +102,169 @@
 }
 
 <!-- 👥 USER TABLE -->
-<div class="table-responsive" style="overflow-x:auto; -webkit-overflow-scrolling: touch;">
-    <table class="table table-hover align-middle mb-0" style="min-width:1300px;">
-        <thead class="table-light">
-            <tr>
-                <th style="min-width:140px;">First Name</th>
-                <th style="min-width:140px;">Last Name</th>
-                <th style="min-width:70px;">Domain</th>
-                <th style="min-width:150px;">EID</th>
-                <th style="min-width:140px;">Status</th>
-                <th style="min-width:130px;">Delivery Type</th>
-                <th style="min-width:120px;">UT Code</th>
-                <th style="min-width:120px;">Ref ID</th>
-                <th style="min-width:140px;">Role</th>
-                @if (canEdit)
-                {
-                    <th style="min-width:140px; width:140px;">Actions</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in Model.Users)
-            {
-                var rowId = $"row-{user.UserId}";
-                string role = user.RoleName ?? "Employee";
-
-                <tr id="@rowId">
-                    <form method="post" asp-page-handler="Save" class="user-form">
-                        <input type="hidden" name="userId" value="@user.UserId" />
-
-                    <td><input name="firstName" class="form-control" value="@user.FirstName" disabled /><div class="invalid-feedback"></div></td>
-
-                    <td><input name="lastName" class="form-control" value="@user.LastName" disabled /><div class="invalid-feedback"></div></td>
-
-                    <td>
-                        @if (isAdmin | isManager)
+<div class="card">
+    <div class="card-header bg-black">
+        <h5 class="card-title mb-0 text-white">
+            <i class="fas fa-users me-2"></i>Users (@Model.TotalUsersCount)
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <!-- 👥 USER TABLE -->
+        <div class="table-responsive" style="overflow-x:auto; -webkit-overflow-scrolling: touch;">
+            <table class="table table-hover align-middle mb-0" style="min-width:1300px;">
+                <thead class="table-light">
+                    <tr>
+                        <th style="min-width:140px;">First Name</th>
+                        <th style="min-width:140px;">Last Name</th>
+                        <th style="min-width:70px;">Domain</th>
+                        <th style="min-width:150px;">EID</th>
+                        <th style="min-width:140px;">Status</th>
+                        <th style="min-width:130px;">Delivery Type</th>
+                        <th style="min-width:120px;">UT Code</th>
+                        <th style="min-width:120px;">Ref ID</th>
+                        <th style="min-width:140px;">Role</th>
+                        @if (canEdit)
                         {
-                            <input name="domain" class="form-control" value="@user.Domain" disabled />
-
-                            <div class="invalid-feedback"></div>
+                            <th style="min-width:140px; width:140px;">Actions</th>
                         }
-                        else
-                        {
-                            <input type="hidden" name="domain" value="@user.Domain" />
-                            <input class="form-control" value="@user.Domain" disabled />
-                            <div class="invalid-feedback"></div>
-                        }
-                    </td>
-
-                    <td>
-                        @if (isAdmin | isManager)
-                        {
-                            <input name="eid" class="form-control" value="@user.Eid" disabled />
-                            <div class="invalid-feedback"></div>
-                        }
-                        else
-                        {
-                            <input type="hidden" name="eid" value="@user.Eid" />
-                            <input class="form-control" value="@user.Eid" disabled />
-                            <div class="invalid-feedback"></div>
-
-                        }
-                    </td>
-
-                    <td>
-                        <select name="status" class="form-select" disabled>
-                            @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
-                            {
-                                <option value="@value" selected="@(user.Status == (SkillManager.Domain.Entities.UserStatus)value)">
-                                    @value
-                                </option>
-                            }
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </td>
-
-                    <td>
-                        <select name="deliveryType" class="form-select" disabled>
-
-                            @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
-                            {
-                                <option value="@value" selected="@(user.DeliveryType == (SkillManager.Domain.Entities.Enums.DeliveryType)value)">
-                                    @value
-                                </option>
-                            }
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </td>
-
-                    <td>
-                        @if (isAdmin)
-                        {
-                            <input name="utCode" class="form-control" value="@user.UtCode" disabled />
-                            <div class="invalid-feedback"></div>
-                        }
-                        else
-                        {
-                            <input type="hidden" name="utCode" value="@user.UtCode" />
-                            <span class="form-control-plaintext">@user.UtCode</span>
-                        }
-                    </td>
-
-                    <td>
-                        @if (isAdmin)
-                        {
-                            <input name="refId" class="form-control" value="@user.RefId" disabled />
-                            <div class="invalid-feedback"></div>
-                        }
-                        else
-                        {
-                            <input type="hidden" name="refId" value="@user.RefId" />
-                            <span class="form-control-plaintext">@user.RefId</span>
-                        }
-                    </td>
-
-                    <td>
-                        @if (isAdmin)
-                        {
-                            <select name="roleName" class="form-select" disabled>
-                                <div class="invalid-feedback"></div>
-                                <option value="Employee" selected="@(role == "Employee")">Employee</option>
-                                <option value="TechLead" selected="@(role == "TechLead")">TechLead</option>
-                                <option value="Manager" selected="@(role == "Manager")">Manager</option>
-                                <option value="Admin" selected="@(role == "Admin")">Admin</option>
-                            </select>
-                        }
-                        else
-                        {
-                            <span class="badge @GetRoleBadgeClass(role) px-3 py-2">@role</span>
-                        }
-                    </td>
-
-                    @if (canEdit)
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
                     {
-                        <td style="white-space:nowrap;">
-                            <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-outline-primary edit-btn" onclick="enableEdit('@rowId')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button type="submit" class="btn btn-outline-success save-btn d-none">
-                                    <i class="bi bi-check"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary cancel-btn d-none" onclick="cancelEdit('@rowId')">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            </div>
-                        </td>
+                        var rowId = $"row-{user.UserId}";
+                        string role = user.RoleName ?? "Employee";
+
+                        <tr id="@rowId">
+                            <form method="post" asp-page-handler="Save" class="user-form">
+                                <input type="hidden" name="userId" value="@user.UserId" />
+
+                            <td><input name="firstName" class="form-control" value="@user.FirstName" disabled /><div class="invalid-feedback"></div></td>
+
+                            <td><input name="lastName" class="form-control" value="@user.LastName" disabled /><div class="invalid-feedback"></div></td>
+
+                            <td>
+                                @if (isAdmin | isManager)
+                                {
+                                    <input name="domain" class="form-control" value="@user.Domain" disabled />
+
+                                    <div class="invalid-feedback"></div>
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="domain" value="@user.Domain" />
+                                    <input class="form-control" value="@user.Domain" disabled />
+                                    <div class="invalid-feedback"></div>
+                                }
+                            </td>
+
+                            <td>
+                                @if (isAdmin | isManager)
+                                {
+                                    <input name="eid" class="form-control" value="@user.Eid" disabled />
+                                    <div class="invalid-feedback"></div>
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="eid" value="@user.Eid" />
+                                    <input class="form-control" value="@user.Eid" disabled />
+                                    <div class="invalid-feedback"></div>
+
+                                }
+                            </td>
+
+                            <td>
+                                <select name="status" class="form-select" disabled>
+                                    @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
+                                    {
+                                        <option value="@value" selected="@(user.Status == (SkillManager.Domain.Entities.UserStatus)value)">
+                                            @value
+                                        </option>
+                                    }
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </td>
+
+                            <td>
+                                <select name="deliveryType" class="form-select" disabled>
+
+                                    @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
+                                    {
+                                        <option value="@value" selected="@(user.DeliveryType == (SkillManager.Domain.Entities.Enums.DeliveryType)value)">
+                                            @value
+                                        </option>
+                                    }
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </td>
+
+                            <td>
+                                @if (isAdmin)
+                                {
+                                    <input name="utCode" class="form-control" value="@user.UtCode" disabled />
+                                    <div class="invalid-feedback"></div>
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="utCode" value="@user.UtCode" />
+                                    <span class="form-control-plaintext">@user.UtCode</span>
+                                }
+                            </td>
+
+                            <td>
+                                @if (isAdmin)
+                                {
+                                    <input name="refId" class="form-control" value="@user.RefId" disabled />
+                                    <div class="invalid-feedback"></div>
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="refId" value="@user.RefId" />
+                                    <span class="form-control-plaintext">@user.RefId</span>
+                                }
+                            </td>
+
+                            <td>
+                                @if (isAdmin)
+                                {
+                                    <select name="roleName" class="form-select" disabled>
+                                        <div class="invalid-feedback"></div>
+                                        <option value="Employee" selected="@(role == "Employee")">Employee</option>
+                                        <option value="TechLead" selected="@(role == "TechLead")">TechLead</option>
+                                        <option value="Manager" selected="@(role == "Manager")">Manager</option>
+                                        <option value="Admin" selected="@(role == "Admin")">Admin</option>
+                                    </select>
+                                }
+                                else
+                                {
+                                    <span class="badge @GetRoleBadgeClass(role) px-3 py-2">@role</span>
+                                }
+                            </td>
+
+                            @if (canEdit)
+                            {
+                                <td style="white-space:nowrap;">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-primary edit-btn" onclick="enableEdit('@rowId')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-outline-success save-btn d-none">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary cancel-btn d-none" onclick="cancelEdit('@rowId')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            }
+                            </form>
+                        </tr>
                     }
-                    </form>
-                </tr>
-            }
-        </tbody>
-    </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
     <!-- 🧍 CREATE USER MODAL -->
     <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserLabel" aria-hidden="true">

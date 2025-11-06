@@ -259,48 +259,79 @@
                                 var requiredSkills = Model.SkillGaps.Where(s => s.ProjectRequiresSkill).ToList();
                                 var optionalSkills = Model.SkillGaps.Where(s => !s.ProjectRequiresSkill).ToList();
                             }
-
                             <div class="mb-4">
-                                <h6>Project Required Skills (@requiredSkills.Count)</h6>
-                                <div class="progress" style="height: 12px;">
-                                    @{
-                                        var requiredOnTrack = requiredSkills.Count(s => s.GapSize <= 0);
-                                        var requiredNeedsImprovement = requiredSkills.Count(s => s.GapSize == 1);
-                                        var requiredCritical = requiredSkills.Count(s => s.GapSize >= 2);
-                                        var requiredTotal = requiredSkills.Count;
-                                    }
-                                    <div class="progress-bar bg-success" style="width: @((requiredOnTrack * 100) / requiredTotal)%"
-                                         title="@requiredOnTrack On Track"></div>
-                                    <div class="progress-bar bg-warning" style="width: @((requiredNeedsImprovement * 100) / requiredTotal)%"
-                                         title="@requiredNeedsImprovement Needs Improvement"></div>
-                                    <div class="progress-bar bg-danger" style="width: @((requiredCritical * 100) / requiredTotal)%"
-                                         title="@requiredCritical Critical"></div>
-                                </div>
-                                <small class="text-muted">
-                                    @requiredOnTrack On Track • @requiredNeedsImprovement Needs Improvement • @requiredCritical Critical
-                                </small>
+                                <h6>Project Required Skills (@(requiredSkills?.Count ?? 0))</h6>
+
+                                @if (requiredSkills != null && requiredSkills.Any())
+                                {
+                                    <div class="progress" style="height: 12px;">
+                                        @{
+                                            var requiredOnTrack = requiredSkills.Count(s => s.GapSize <= 0);
+                                            var requiredNeedsImprovement = requiredSkills.Count(s => s.GapSize == 1);
+                                            var requiredCritical = requiredSkills.Count(s => s.GapSize >= 2);
+                                            var requiredTotal = requiredSkills.Count;
+                                        }
+
+                                        <div class="progress-bar bg-success"
+                                             style="width:@((requiredOnTrack * 100.0) / requiredTotal)%"
+                                             title="@requiredOnTrack On Track"></div>
+
+                                        <div class="progress-bar bg-warning"
+                                             style="width:@((requiredNeedsImprovement * 100.0) / requiredTotal)%"
+                                             title="@requiredNeedsImprovement Needs Improvement"></div>
+
+                                        <div class="progress-bar bg-danger"
+                                             style="width:@((requiredCritical * 100.0) / requiredTotal)%"
+                                             title="@requiredCritical Critical"></div>
+                                    </div>
+
+                                    <small class="text-muted">
+                                        @requiredOnTrack On Track • @requiredNeedsImprovement Needs Improvement • @requiredCritical Critical
+                                    </small>
+                                }
+                                else
+                                {
+                                    <div class="text-muted fst-italic">No required skills available.</div>
+                                }
                             </div>
+
 
                             <div>
-                                <h6>Optional Skills (@optionalSkills.Count)</h6>
-                                <div class="progress" style="height: 12px;">
-                                    @{
-                                        var optionalOnTrack = optionalSkills.Count(s => s.GapSize <= 0);
-                                        var optionalNeedsImprovement = optionalSkills.Count(s => s.GapSize == 1);
-                                        var optionalCritical = optionalSkills.Count(s => s.GapSize >= 2);
-                                        var optionalTotal = optionalSkills.Count;
-                                    }
-                                    <div class="progress-bar bg-success" style="width: @((optionalOnTrack * 100) / optionalTotal)%"
-                                         title="@optionalOnTrack On Track"></div>
-                                    <div class="progress-bar bg-warning" style="width: @((optionalNeedsImprovement * 100) / optionalTotal)%"
-                                         title="@optionalNeedsImprovement Needs Improvement"></div>
-                                    <div class="progress-bar bg-danger" style="width: @((optionalCritical * 100) / optionalTotal)%"
-                                         title="@optionalCritical Critical"></div>
-                                </div>
-                                <small class="text-muted">
-                                    @optionalOnTrack On Track • @optionalNeedsImprovement Needs Improvement • @optionalCritical Critical
-                                </small>
+                                <h6>Optional Skills (@(optionalSkills?.Count ?? 0))</h6>
+
+                                @if (optionalSkills != null && optionalSkills.Any())
+                                {
+                                    <div class="progress" style="height: 12px;">
+                                        @{
+                                            var optionalOnTrack = optionalSkills.Count(s => s.GapSize <= 0);
+                                            var optionalNeedsImprovement = optionalSkills.Count(s => s.GapSize == 1);
+                                            var optionalCritical = optionalSkills.Count(s => s.GapSize >= 2);
+                                            var optionalTotal = optionalSkills.Count;
+                                        }
+
+                                        <div class="progress-bar bg-success"
+                                             style="width:@((optionalOnTrack * 100.0) / optionalTotal)%"
+                                             title="@optionalOnTrack On Track"></div>
+
+                                        <div class="progress-bar bg-warning"
+                                             style="width:@((optionalNeedsImprovement * 100.0) / optionalTotal)%"
+                                             title="@optionalNeedsImprovement Needs Improvement"></div>
+
+                                        <div class="progress-bar bg-danger"
+                                             style="width:@((optionalCritical * 100.0) / optionalTotal)%"
+                                             title="@optionalCritical Critical"></div>
+                                    </div>
+
+                                    <small class="text-muted">
+                                        @optionalOnTrack On Track • @optionalNeedsImprovement Needs Improvement • @optionalCritical Critical
+                                    </small>
+                                }
+                                else
+                                {
+                                    <div class="text-muted fst-italic">No optional skills available.</div>
+                                }
                             </div>
+
                         </div>
                     </div>
                 </div>

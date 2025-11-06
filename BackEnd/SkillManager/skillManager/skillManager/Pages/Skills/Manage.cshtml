@@ -93,8 +93,10 @@
         </div>
     }
     <div class="card">
-        <div class="card-header bg-white">
-            <h5 class="card-title mb-0">Skills (@Model.TotalCount)</h5>
+        <div class="card-header bg-black">
+            <h5 class="card-title mb-0 text-white">
+                <i class="bi bi-gear-fill me-2"></i>All Skills (@Model.TotalCount)
+            </h5>
         </div>
         <div class="card-body p-0">
             <!-- you can keep table-responsive, wrapping will still work -->
@@ -190,10 +192,10 @@
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm readonly-actions">
                                             <button type="button" class="btn btn-outline-primary" onclick="enableEdit('@rowId')">
-                                                <i class="bi bi-pencil"></i>
+                                                <i class="fas fa-edit"></i>
                                             </button>
                                             <button type="button" class="btn btn-outline-danger" onclick="confirmDelete(@skill.SkillId, '@skill.Label.Replace("'", "\\'")')">
-                                                <i class="bi bi-trash"></i>
+                                                <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
                                         <div class="btn-group btn-group-sm edit-actions d-none">

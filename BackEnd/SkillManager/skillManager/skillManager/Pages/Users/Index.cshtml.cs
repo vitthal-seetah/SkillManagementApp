@@ -47,6 +47,7 @@ public class IndexModel : PageModel
 
     [BindProperty]
     public UpdateUserDto UpdateUserModel { get; set; } = new();
+    public int TotalUsersCount { get; set; }
 
     public async Task OnGetAsync()
     {
@@ -85,8 +86,8 @@ public class IndexModel : PageModel
         };
 
         // --- Pagination ---
-        var totalUsers = allUsers.Count();
-        TotalPages = (int)Math.Ceiling(totalUsers / (double)PageSize);
+        TotalUsersCount = allUsers.Count();
+        TotalPages = (int)Math.Ceiling(TotalUsersCount / (double)PageSize);
         PageNumber = Math.Clamp(PageNumber, 1, Math.Max(1, TotalPages));
 
         Users = allUsers.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToList();

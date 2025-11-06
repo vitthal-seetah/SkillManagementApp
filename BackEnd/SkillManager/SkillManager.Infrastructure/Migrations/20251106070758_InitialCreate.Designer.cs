@@ -12,8 +12,8 @@ using SkillManager.Infrastructure.Identity.AppDbContext;
 namespace SkillManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251106051500_initial-create")]
-    partial class initialcreate
+    [Migration("20251106070758_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1145,252 +1145,252 @@ namespace SkillManager.Infrastructure.Migrations
                             UserId = 2,
                             SkillId = 26,
                             LevelId = 1,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6331)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1940)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 15,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6336)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1943)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 17,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6337)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1944)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 18,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6338)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1944)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 21,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6340)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1945)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 23,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6341)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1946)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 28,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6342)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1946)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 29,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6343)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1947)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 1,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6344)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1948)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 2,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6345)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1948)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 3,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6346)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1949)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 16,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6348)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1949)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 19,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6349)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1950)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 22,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6350)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1951)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 24,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6351)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1951)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 20,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6352)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1952)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 25,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6353)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1952)
                         },
                         new
                         {
                             UserId = 2,
                             SkillId = 27,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6355)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1953)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 26,
                             LevelId = 1,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6356)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1954)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 15,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6356)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1954)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 17,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6357)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1955)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 18,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6358)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1955)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 21,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6359)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1956)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 23,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6360)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1956)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 28,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6361)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1957)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 29,
                             LevelId = 2,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6362)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1958)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 1,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6363)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1958)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 2,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6364)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1959)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 3,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6365)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1959)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 16,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6366)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1960)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 19,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6367)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1961)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 22,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6368)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1961)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 24,
                             LevelId = 3,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6369)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1994)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 20,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6370)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1995)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 25,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6371)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1996)
                         },
                         new
                         {
                             UserId = 1,
                             SkillId = 27,
                             LevelId = 4,
-                            UpdatedTime = new DateTime(2025, 11, 6, 5, 14, 59, 696, DateTimeKind.Utc).AddTicks(6372)
+                            UpdatedTime = new DateTime(2025, 11, 6, 7, 7, 58, 165, DateTimeKind.Utc).AddTicks(1996)
                         });
                 });
 
