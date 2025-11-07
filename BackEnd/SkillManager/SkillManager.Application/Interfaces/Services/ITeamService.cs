@@ -14,6 +14,7 @@ namespace SkillManager.Application.Interfaces.Services
         // Basic CRUD operations
         Task<Team?> GetTeamByIdAsync(int teamId);
         Task<IEnumerable<Team>> GetAllTeamsAsync();
+        Task<IEnumerable<Team>> GetAllTeamsWithProjectsAsync();
         Task<Team> CreateTeamAsync(CreateTeamDto teamDto);
         Task<Team> UpdateTeamAsync(TeamDto teamDto);
         Task<bool> DeleteTeamAsync(int teamId);
