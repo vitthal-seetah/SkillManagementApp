@@ -13,4 +13,5 @@ public interface IUserRepository
     Task<User?> GetByRefIdAsync(string refId);
     Task SaveChangesAsync();
     Task<User?> GetByDomainAndEidAsync(string domain, string eid);
+    Task<IEnumerable<User?>> GetByProjectIdAsync(int? projectId);
 }

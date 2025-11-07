@@ -11,9 +11,6 @@ public interface IUserService
     // Get single user by ID
     Task<UserDto?> GetUserByIdAsync(int userId, User currentUser);
 
-    Task<UserDto?> GetUserByDomainAndEidAsync(string domain, string eid);
-    Task<User?> GetUserEntityByDomainAndEidAsync(string domain, string eid);
-
     // Create a new user
     Task<(bool Success, string Message, UserDto? CreatedUser)> CreateUserAsync(
         CreateUserDto dto,
@@ -25,5 +22,9 @@ public interface IUserService
     );
 
     // Update user role separately
-    Task<bool> UpdateUserRoleAsync(int userId, string roleName);
+    Task<bool> UpdateUserRoleAsync(int userId, string roleName, User currentUser);
+    Task<IEnumerable<UserDto>> GetUsersByProjectIdAsync(int projectId, User currentUser);
+
+    Task<User?> GetUserEntityByDomainAndEidAsync(string domain, string eid);
+    Task<UserDto?> GetUserByDomainAndEidAsync(string domain, string eid, User currentUser);
 }

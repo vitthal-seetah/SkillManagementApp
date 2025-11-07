@@ -14,6 +14,7 @@ namespace SkillManager.Web.Pages.Users
     {
         private readonly IUserService _userService;
         private readonly IProjectService _projectService;
+        private User? _currentUserEntity;
 
         public IndexModel(IUserService userService, IProjectService projectService)
         {
@@ -55,8 +56,11 @@ namespace SkillManager.Web.Pages.Users
         [BindProperty]
         public UpdateUserDto UpdateUserModel { get; set; } = new();
 
-        public async Task OnGetAsync()
+        private async Task<User?> GetCurrentUserAsync()
         {
+            if (_currentUserEntity != null)
+                return _currentUserEntity;
+
             // --- Extract current user's identity ---
             FullName = User.Identity?.Name ?? "Unavailable";
 
@@ -74,7 +78,23 @@ namespace SkillManager.Web.Pages.Users
 
             Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
-            var allUsers = await _userService.GetAllAsync();
+            // Use the method that respects project restrictions
+            _currentUserEntity = await _userService.GetUserByDomainAndEidAsync(Domain, Eid, null);
+            return _currentUserEntity;
+        }
+
+        public async Task OnGetAsync()
+        {
+            var currentUser = await GetCurrentUserAsync();
+            if (currentUser == null)
+            {
+                Users = new List<UserDto>();
+                TempData["Error"] = "User not found or access denied.";
+                return;
+            }
+
+            // --- Fetch all users based on current user's project ---
+            var allUsers = await _userService.GetAllAsync(currentUser);
 
             // --- Filters ---
             if (!string.IsNullOrWhiteSpace(SelectedRole) && SelectedRole != "All")
@@ -87,6 +107,11 @@ namespace SkillManager.Web.Pages.Users
 
             if (!string.IsNullOrWhiteSpace(SelectedDelivery) && SelectedDelivery != "All")
                 allUsers = allUsers.Where(u => u.DeliveryType.ToString() == SelectedDelivery);
+
+            // Only show projects that the current user has access to
+            AvailableProjects = (await _projectService.GetAllProjectsAsync())
+                .Where(p => p.ProjectId == currentUser.ProjectId) // Only current user's project
+                .ToList();
 
             // --- Sorting ---
             allUsers = SortBy switch
@@ -112,27 +137,28 @@ namespace SkillManager.Web.Pages.Users
             Users = allUsers.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToList();
         }
 
-        // --- Save (AJAX-friendly) ---
+        // --- Create User ---
         public async Task<IActionResult> OnPostCreateAsync()
         {
-            // Use GetUserEntityByDomainAndEidAsync instead of GetUserByDomainAndEidAsync
-            var currentUser = await _userService.GetUserEntityByDomainAndEidAsync(Domain, Eid);
+            var currentUser = await GetCurrentUserAsync();
             if (currentUser == null)
-                return Forbid();
+            {
+                TempData["Error"] = "Access denied: User not found.";
+                return RedirectToPage();
+            }
+
+            // Ensure new users are created in the current user's project
+            CreateUserModel.ProjectId = currentUser.ProjectId;
 
             var (success, message, _) = await _userService.CreateUserAsync(
                 CreateUserModel,
-                currentUser // This is now a User entity, not UserDto
+                currentUser
             );
 
             if (success)
                 TempData["Success"] = message;
             else
-            {
-                ModelState.AddModelError(string.Empty, message);
-                await OnGetAsync();
-                return Page();
-            }
+                TempData["Error"] = message;
 
             return RedirectToPage(
                 new
@@ -146,12 +172,20 @@ namespace SkillManager.Web.Pages.Users
             );
         }
 
+        // --- Save User ---
         public async Task<IActionResult> OnPostSaveAsync()
         {
-            // Use GetUserEntityByDomainAndEidAsync instead of GetUserByDomainAndEidAsync
-            var currentUser = await _userService.GetUserEntityByDomainAndEidAsync(Domain, Eid);
+            var currentUser = await GetCurrentUserAsync();
             if (currentUser == null)
-                return Forbid();
+            {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    return new JsonResult(
+                        new { success = false, message = "Access denied: User not found." }
+                    );
+
+                TempData["Error"] = "Access denied: User not found.";
+                return RedirectToPage();
+            }
 
             var errors = new Dictionary<string, string>();
             if (string.IsNullOrWhiteSpace(UpdateUserModel.FirstName))
@@ -166,9 +200,12 @@ namespace SkillManager.Web.Pages.Users
             if (errors.Any() && Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 return new JsonResult(new { success = false, errors });
 
+            // Ensure updates stay within the current user's project
+            UpdateUserModel.ProjectId = currentUser.ProjectId;
+
             var (success, message, _) = await _userService.UpdateUserAsync(
                 UpdateUserModel,
-                currentUser // This is now a User entity, not UserDto
+                currentUser
             );
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -177,11 +214,7 @@ namespace SkillManager.Web.Pages.Users
             if (success)
                 TempData["Success"] = message;
             else
-            {
-                ModelState.AddModelError(string.Empty, message);
-                await OnGetAsync();
-                return Page();
-            }
+                TempData["Error"] = message;
 
             return RedirectToPage(
                 new

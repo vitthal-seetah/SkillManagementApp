@@ -150,5 +150,17 @@ namespace SkillManager.Infrastructure.Repositories
 
             return await query.FirstOrDefaultAsync(u => u.Eid == eid);
         }
+
+        public async Task<IEnumerable<User?>> GetByProjectIdAsync(int? projectId)
+        {
+            if (projectId == null || projectId == 0)
+                return null;
+            return await _context
+                .Users.Include(u => u.Role)
+                .Include(u => u.Project)
+                .Include(u => u.Team)
+                .Where(u => u.ProjectId == projectId)
+                .ToListAsync();
+        }
     }
 }

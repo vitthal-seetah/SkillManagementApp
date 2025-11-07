@@ -26,21 +26,18 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
-    // Get all users (mapped to DTO)
+    // Get all users (mapped to DTO) - UPDATED
     // -----------------------------
     public async Task<IEnumerable<UserDto>> GetAllAsync(User currentUser)
     {
-        var users = await _userRepository.GetAllAsync();
-
-        // Admins and Managers can only see users in their project
-        if (currentUser.Role?.Name is "Admin" or "Manager")
-            users = users.Where(u => u.ProjectId == currentUser.ProjectId).ToList();
+        // All users can only see users in their own project
+        var users = await _userRepository.GetByProjectIdAsync(currentUser.ProjectId);
 
         return users.Select(MapToDto);
     }
 
     // -----------------------------
-    // Get single user by ID
+    // Get single user by ID - UPDATED
     // -----------------------------
     public async Task<UserDto?> GetUserByIdAsync(int userId, User currentUser)
     {
@@ -48,11 +45,8 @@ public sealed class UserService : IUserService
         if (user == null)
             return null;
 
-        // Admins and Managers can only access users in their project
-        if (
-            (currentUser.Role.Name == "Admin" || currentUser.Role.Name == "Manager")
-            && user.ProjectId != currentUser.ProjectId
-        )
+        // All users can only access users in their project
+        if (user.ProjectId != currentUser.ProjectId)
         {
             return null;
         }
@@ -61,7 +55,7 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
-    // Create new user
+    // Create new user - UPDATED
     // -----------------------------
     public async Task<(bool Success, string Message, UserDto? CreatedUser)> CreateUserAsync(
         CreateUserDto dto,
@@ -81,6 +75,12 @@ public sealed class UserService : IUserService
         if (userRole == null)
             return (false, $"Role '{dto.RoleName}' not found.", null);
 
+        // Validate that the target project matches current user's project
+        if (dto.ProjectId != currentUser.ProjectId)
+        {
+            return (false, "You can only create users within your own project.", null);
+        }
+
         var user = new User
         {
             FirstName = dto.FirstName,
@@ -96,10 +96,7 @@ public sealed class UserService : IUserService
                 ? delivery
                 : DeliveryType.Onshore,
             RoleId = userRole.RoleId,
-            ProjectId =
-                (currentUser.Role?.Name is "Admin" or "Manager")
-                    ? currentUser.ProjectId
-                    : dto.ProjectId,
+            ProjectId = dto.ProjectId, // Use the provided project ID (already validated)
         };
 
         await _userRepository.AddAsync(user);
@@ -109,10 +106,7 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
-    // Update existing user
-    // -----------------------------
-    // -----------------------------
-    // Update existing user
+    // Update existing user - UPDATED
     // -----------------------------
     public async Task<(bool Success, string Message, UserDto? UpdatedUser)> UpdateUserAsync(
         UpdateUserDto dto,
@@ -127,16 +121,14 @@ public sealed class UserService : IUserService
         if (user == null)
             return (false, "User not found.", null);
 
-        // Restrict Managers/Admins to their own project
-        if (currentUser.Role?.Name is "Admin" or "Manager")
-        {
-            // If current user has a project ID, check if the target user is in the same project
-            if (currentUser.ProjectId.HasValue && user.ProjectId != currentUser.ProjectId)
-                return (false, "You cannot edit users outside your project.", null);
+        // All users can only edit users in their own project
+        if (user.ProjectId != currentUser.ProjectId)
+            return (false, "You cannot edit users outside your project.", null);
 
-            // If current user doesn't have a project ID but target user does, also deny access
-            if (!currentUser.ProjectId.HasValue && user.ProjectId.HasValue)
-                return (false, "You cannot edit users assigned to projects.", null);
+        // Prevent updating project to a different project
+        if (dto.ProjectId.HasValue && dto.ProjectId.Value != currentUser.ProjectId)
+        {
+            return (false, "You can only assign users to your own project.", null);
         }
 
         // Prevent UTCode duplicates
@@ -155,14 +147,14 @@ public sealed class UserService : IUserService
         user.Domain = dto.Domain ?? user.Domain;
         user.Eid = dto.Eid ?? user.Eid;
 
-        // Update ProjectId (only for Admins and Managers)
-        if (currentUser.Role?.Name is "Admin" or "Manager" && dto.ProjectId.HasValue)
+        // Update ProjectId (must remain within current user's project)
+        if (dto.ProjectId.HasValue)
         {
-            user.ProjectId = dto.ProjectId;
+            user.ProjectId = dto.ProjectId.Value;
         }
 
-        // Update TeamId (only for Admins and Managers)
-        if (currentUser.Role?.Name is "Admin" or "Manager" && dto.TeamId.HasValue)
+        // Update TeamId
+        if (dto.TeamId.HasValue)
         {
             user.TeamId = dto.TeamId;
         }
@@ -193,9 +185,9 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
-    // Update user role separately
+    // Update user role separately - UPDATED
     // -----------------------------
-    public async Task<bool> UpdateUserRoleAsync(int userId, string roleName)
+    public async Task<bool> UpdateUserRoleAsync(int userId, string roleName, User currentUser)
     {
         if (string.IsNullOrWhiteSpace(roleName))
             return false;
@@ -206,6 +198,10 @@ public sealed class UserService : IUserService
 
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
+            return false;
+
+        // All users can only update roles for users in their project
+        if (user.ProjectId != currentUser.ProjectId)
             return false;
 
         if (user.RoleId == role.RoleId)
@@ -219,7 +215,7 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
-    // Get User entity by domain + EID (for internal use)
+    // Get User entity by domain + EID (for internal use) - UPDATED
     // -----------------------------
     public async Task<User?> GetUserEntityByDomainAndEidAsync(string domain, string eid)
     {
@@ -227,19 +223,45 @@ public sealed class UserService : IUserService
             return null;
 
         var user = await _userRepository.GetByDomainAndEidAsync(domain, eid);
+
         return user;
     }
 
     // -----------------------------
-    // Get UserDto by domain + EID (for UI / Pages)
+    // Get UserDto by domain + EID (for UI / Pages) - UPDATED
     // -----------------------------
-    public async Task<UserDto?> GetUserByDomainAndEidAsync(string domain, string eid)
+    public async Task<UserDto?> GetUserByDomainAndEidAsync(
+        string domain,
+        string eid,
+        User currentUser
+    )
     {
         if (string.IsNullOrWhiteSpace(domain) || string.IsNullOrWhiteSpace(eid))
             return null;
 
         var user = await _userRepository.GetByDomainAndEidAsync(domain, eid);
-        return user == null ? null : MapToDto(user);
+
+        // Only return if user is in the same project
+        if (user?.ProjectId != currentUser.ProjectId)
+            return null;
+
+        return MapToDto(user);
+    }
+
+    // -----------------------------
+    // New method: Get users by project ID
+    // -----------------------------
+    public async Task<IEnumerable<UserDto>> GetUsersByProjectIdAsync(
+        int projectId,
+        User currentUser
+    )
+    {
+        // Users can only access their own project
+        if (projectId != currentUser.ProjectId)
+            return Enumerable.Empty<UserDto>();
+
+        var users = await _userRepository.GetByProjectIdAsync(projectId);
+        return users.Select(MapToDto);
     }
 
     private static UserDto MapToDto(User u)
