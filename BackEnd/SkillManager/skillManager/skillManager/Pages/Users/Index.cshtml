@@ -11,7 +11,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">User Management</h2>
     <a href="Index" class="btn btn-outline-primary">
-        <i class="bi bi-arrow-left me-1"></i>Back
+        <i class="fas fa-arrow-left me-1"></i>Back
     </a>
 </div>
 
@@ -19,7 +19,7 @@
 {
     <div class="mb-3 text-end">
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createUserModal">
-            <i class="bi bi-person-plus"></i> Create New User
+            <i class="fas fa-user-plus"></i> Create New User
         </button>
     </div>
 }
@@ -126,9 +126,8 @@
         </h5>
     </div>
     <div class="card-body p-0">
-        <!-- 👥 USER TABLE -->
         <div class="table-responsive" style="overflow-x:auto; -webkit-overflow-scrolling: touch;">
-            <table class="table table-hover align-middle mb-0" style="min-width:1300px;">
+            <table class="table table-hover align-middle mb-0" style="min-width:1500px;">
                 <thead class="table-light">
                     <tr>
                         <th style="min-width:140px;">
@@ -184,7 +183,6 @@
                                 UT Code @Html.Raw(GetSortIcon("UtCode"))
                             </a>
                         </th>
-                        <th style="min-width:120px;">Team</th>
 
                         <th style="min-width:120px;">Ref ID</th>
 
@@ -197,6 +195,22 @@
                                asp-route-SelectedTeam="@Model.SelectedTeam"
                                class="text-decoration-none text-dark fw-semibold">
                                 Role @Html.Raw(GetSortIcon("Role"))
+                            </a>
+                        </th>
+
+                        <!-- Project Column -->
+                        <th style="min-width:150px;">Project</th>
+
+                        <!-- Team Column -->
+                        <th style="min-width:150px;">
+                            <a asp-page="Index"
+                               asp-route-SortBy="@(Model.SortBy == "TeamAsc" ? "TeamDesc" : "TeamAsc")"
+                               asp-route-SelectedRole="@Model.SelectedRole"
+                               asp-route-SelectedStatus="@Model.SelectedStatus"
+                               asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               asp-route-SelectedTeam="@Model.SelectedTeam"
+                               class="text-decoration-none text-dark fw-semibold">
+                                Team @Html.Raw(GetSortIcon("Team"))
                             </a>
                         </th>
 
@@ -285,26 +299,7 @@
                                     <span class="form-control-plaintext">@user.UtCode</span>
                                 }
                             </td>
-                            <td>
-                                @if (isAdmin)
-                                {
-                                    <select name="teamId" class="form-select" disabled>
-                                        <option value="">No Team</option>
-                                        @foreach (var team in Model.AvailableTeams)
-                                        {
-                                            <option value="@team.TeamId" selected="@(user.TeamName == team.TeamName)">
-                                                @team.TeamName
-                                            </option>
-                                        }
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                }
-                                else
-                                {
-                                    <input type="hidden" name="teamId" value="@(user.TeamName?.ToString() ?? "")" />
-                                    <span class="form-control-plaintext">@user.TeamName</span>
-                                }
-                            </td>
+
                             <td>
                                 @if (isAdmin)
                                 {
@@ -317,7 +312,6 @@
                                     <span class="form-control-plaintext">@user.RefId</span>
                                 }
                             </td>
-
 
                             <td>
                                 @if (isAdmin)
@@ -333,6 +327,48 @@
                                 else
                                 {
                                     <span class="badge @GetRoleBadgeClass(role) px-3 py-2">@role</span>
+                                }
+                            </td>
+
+                            <!-- Project Column -->
+                            <td>
+                                @if (isAdmin || isManager)
+                                {
+                                    <select name="projectId" class="form-select" disabled>
+                                        <option value="">Select Project</option>
+                                        @foreach (var project in Model.AvailableProjects)
+                                        {
+                                            <option value="@project.ProjectId" selected="@(user.ProjectId == project.ProjectId)">
+                                                @project.ProjectName
+                                            </option>
+                                        }
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                }
+                                else
+                                {
+                                    <span class="form-control-plaintext">@user.ProjectName</span>
+                                }
+                            </td>
+
+                            <!-- Team Column -->
+                            <td>
+                                @if (isAdmin || isManager)
+                                {
+                                    <select name="teamId" class="form-select" disabled>
+                                        <option value="">No Team</option>
+                                        @foreach (var team in Model.AvailableTeams)
+                                        {
+                                            <option value="@team.TeamId" selected="@(user.TeamId == team.TeamId)">
+                                                @team.TeamName
+                                            </option>
+                                        }
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                }
+                                else
+                                {
+                                    <span class="form-control-plaintext">@user.TeamName</span>
                                 }
                             </td>
 
@@ -361,218 +397,251 @@
     </div>
 </div>
 
-    <!-- 🧍 CREATE USER MODAL -->
-    <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form method="post" asp-page-handler="Create">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title" id="createUserLabel">Create New User</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- 🧍 CREATE USER MODAL -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="Create">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="createUserLabel">Create New User</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">First Name *</label>
+                                <input name="firstName" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Last Name *</label>
+                                <input name="lastName" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Domain *</label>
+                                <input name="domain" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">EID *</label>
+                                <input name="eid" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">UT Code *</label>
+                                <input name="utCode" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Status</label>
+                                <select name="status" class="form-select">
+                                    @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
+                                    {
+                                        <option value="@value">@value</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Delivery Type</label>
+                                <select name="deliveryType" class="form-select">
+                                    @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
+                                    {
+                                        <option value="@value">@value</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Ref ID</label>
+                                <input name="refId" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Role *</label>
+                                <select name="roleName" class="form-select" required>
+                                    <option value="Employee">Employee</option>
+                                    <option value="TechLead">TechLead</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Project</label>
+                                <select name="projectId" class="form-select">
+                                    <option value="">Select Project</option>
+                                    @foreach (var project in Model.AvailableProjects)
+                                    {
+                                        <option value="@project.ProjectId">@project.ProjectName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Team</label>
+                                <select name="teamId" class="form-select">
+                                    <option value="">Select Team</option>
+                                    @foreach (var team in Model.AvailableTeams)
+                                    {
+                                        <option value="@team.TeamId">@team.TeamName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">First Name</label>
-                            <input name="firstName" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Last Name</label>
-                            <input name="lastName" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Domain</label>
-                            <input name="domain" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">EID</label>
-                            <input name="eid" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Status</label>
-                            <select name="status" class="form-select">
-                                @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.UserStatus)))
-                                {
-                                    <option value="@value">@value</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Delivery Type</label>
-                            <select name="deliveryType" class="form-select">
-                                @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
-                                {
-                                    <option value="@value">@value</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">UT Code</label>
-                            <input name="utCode" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Ref ID</label>
-                            <input name="refId" class="form-control" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Role</label>
-                            <select name="roleName" class="form-select">
-                                <option value="Employee">Employee</option>
-                                <option value="TechLead">TechLead</option>
-                                <option value="Manager">Manager</option>
-                                <option value="Admin">Admin</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Create</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create User</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <!-- 📄 PAGINATION -->
+<!-- 📄 PAGINATION -->
 @if (Model.TotalPages > 1)
 {
-        <nav aria-label="User pagination" class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
-                    <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)"
+    <nav aria-label="User pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)"
+                   asp-route-SelectedRole="@Model.SelectedRole"
+                   asp-route-SelectedStatus="@Model.SelectedStatus"
+                   asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                   asp-route-SelectedTeam="@Model.SelectedTeam"
+                   asp-route-SortBy="@Model.SortBy">Previous</a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-route-PageNumber="@i"
                        asp-route-SelectedRole="@Model.SelectedRole"
                        asp-route-SelectedStatus="@Model.SelectedStatus"
                        asp-route-SelectedDelivery="@Model.SelectedDelivery"
-                       asp-route-SortBy="@Model.SortBy">Previous</a>
+                       asp-route-SelectedTeam="@Model.SelectedTeam"
+                       asp-route-SortBy="@Model.SortBy">@i</a>
                 </li>
-                @for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                        <a class="page-link" asp-route-PageNumber="@i"
-                           asp-route-SelectedRole="@Model.SelectedRole"
-                           asp-route-SelectedStatus="@Model.SelectedStatus"
-                           asp-route-SelectedDelivery="@Model.SelectedDelivery"
-                           asp-route-SortBy="@Model.SortBy">@i</a>
-                    </li>
-                }
-                <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
-                    <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)"
-                       asp-route-SelectedRole="@Model.SelectedRole"
-                       asp-route-SelectedStatus="@Model.SelectedStatus"
-                       asp-route-SelectedDelivery="@Model.SelectedDelivery"
-                       asp-route-SortBy="@Model.SortBy">Next</a>
-                </li>
-            </ul>
-        </nav>
+            }
+            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)"
+                   asp-route-SelectedRole="@Model.SelectedRole"
+                   asp-route-SelectedStatus="@Model.SelectedStatus"
+                   asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                   asp-route-SelectedTeam="@Model.SelectedTeam"
+                   asp-route-SortBy="@Model.SortBy">Next</a>
+            </li>
+        </ul>
+    </nav>
 }
 
 @section Scripts {
-        <style>
-            .bg-purple {
-                background-color: rebeccapurple !important;
-                color: white !important;
-            }
+    <style>
+        .bg-purple {
+            background-color: rebeccapurple !important;
+            color: white !important;
+        }
 
-            .badge {
-                font-size: 0.9rem;
-                border-radius: 0.5rem;
-            }
+        .badge {
+            font-size: 0.9rem;
+            border-radius: 0.5rem;
+        }
 
-            form.row.g-3 select {
-                min-width: 150px;
-            }
+        form.row.g-3 select {
+            min-width: 150px;
+        }
 
-            .btn-group {
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-        </style>
-        <script>
-            let originalValues = {};
+        .btn-group {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-            function enableEdit(rowId) {
-                const row = document.getElementById(rowId);
-                const inputs = row.querySelectorAll("input, select");
-                const editBtn = row.querySelector(".edit-btn");
-                const saveBtn = row.querySelector(".save-btn");
-                const cancelBtn = row.querySelector(".cancel-btn");
+        /* Ensure table fits new columns */
+        .table-responsive {
+            min-width: 1500px;
+        }
+    </style>
+    <script>
+        let originalValues = {};
 
-                // Store original values
-                originalValues[rowId] = {};
-                inputs.forEach(input => {
-                    if (input.type !== 'hidden') {
-                        originalValues[rowId][input.name] = input.value;
-                    }
-                });
+        function enableEdit(rowId) {
+            const row = document.getElementById(rowId);
+            const inputs = row.querySelectorAll("input, select");
+            const editBtn = row.querySelector(".edit-btn");
+            const saveBtn = row.querySelector(".save-btn");
+            const cancelBtn = row.querySelector(".cancel-btn");
 
-                // Enable inputs
-                inputs.forEach(i => {
-                    if (i.type !== "hidden" && !i.classList.contains('form-control-plaintext')) {
-                        i.disabled = false;
-                    }
-                });
-
-                // Toggle buttons
-                editBtn.classList.add("d-none");
-                saveBtn.classList.remove("d-none");
-                cancelBtn.classList.remove("d-none");
-            }
-
-            function cancelEdit(rowId) {
-                const row = document.getElementById(rowId);
-                const inputs = row.querySelectorAll("input, select");
-                const editBtn = row.querySelector(".edit-btn");
-                const saveBtn = row.querySelector(".save-btn");
-                const cancelBtn = row.querySelector(".cancel-btn");
-
-                // Restore original values
-                if (originalValues[rowId]) {
-                    inputs.forEach(input => {
-                        if (originalValues[rowId][input.name] !== undefined &&
-                            input.type !== 'hidden' &&
-                            !input.classList.contains('form-control-plaintext')) {
-                            input.value = originalValues[rowId][input.name];
-                        }
-                    });
+            // Store original values
+            originalValues[rowId] = {};
+            inputs.forEach(input => {
+                if (input.type !== 'hidden') {
+                    originalValues[rowId][input.name] = input.value;
                 }
+            });
 
-                // Disable inputs
-                inputs.forEach(i => {
-                    if (i.type !== "hidden" && !i.classList.contains('form-control-plaintext')) {
-                        i.disabled = true;
-                    }
-                });
+            // Enable inputs
+            inputs.forEach(i => {
+                if (i.type !== "hidden" && !i.classList.contains('form-control-plaintext')) {
+                    i.disabled = false;
+                }
+            });
 
-                // Toggle buttons
-                editBtn.classList.remove("d-none");
-                saveBtn.classList.add("d-none");
-                cancelBtn.classList.add("d-none");
+            // Toggle buttons
+            editBtn.classList.add("d-none");
+            saveBtn.classList.remove("d-none");
+            cancelBtn.classList.remove("d-none");
+        }
 
-                // Clear validation
-                const invalidFeedback = row.querySelectorAll('.invalid-feedback');
-                invalidFeedback.forEach(feedback => {
-                    feedback.textContent = '';
-                });
+        function cancelEdit(rowId) {
+            const row = document.getElementById(rowId);
+            const inputs = row.querySelectorAll("input, select");
+            const editBtn = row.querySelector(".edit-btn");
+            const saveBtn = row.querySelector(".save-btn");
+            const cancelBtn = row.querySelector(".cancel-btn");
+
+            // Restore original values
+            if (originalValues[rowId]) {
                 inputs.forEach(input => {
-                    input.classList.remove('is-invalid');
+                    if (originalValues[rowId][input.name] !== undefined &&
+                        input.type !== 'hidden' &&
+                        !input.classList.contains('form-control-plaintext')) {
+                        input.value = originalValues[rowId][input.name];
+                    }
                 });
             }
 
-            // Handle form submission
-            document.addEventListener('DOMContentLoaded', function() {
-                const forms = document.querySelectorAll('.user-form');
-                forms.forEach(form => {
-                    form.addEventListener('submit', function(e) {
-                        const rowId = this.closest('tr').id;
-                        const saveBtn = this.querySelector('.save-btn');
+            // Disable inputs
+            inputs.forEach(i => {
+                if (i.type !== "hidden" && !i.classList.contains('form-control-plaintext')) {
+                    i.disabled = true;
+                }
+            });
 
-                        // If save button is visible, we're in edit mode
-                        if (!saveBtn.classList.contains('d-none')) {
-                            // You can add validation here if needed
-                            console.log('Saving user data for row:', rowId);
-                        }
-                    });
+            // Toggle buttons
+            editBtn.classList.remove("d-none");
+            saveBtn.classList.add("d-none");
+            cancelBtn.classList.add("d-none");
+
+            // Clear validation
+            const invalidFeedback = row.querySelectorAll('.invalid-feedback');
+            invalidFeedback.forEach(feedback => {
+                feedback.textContent = '';
+            });
+            inputs.forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+        }
+
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('.user-form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const rowId = this.closest('tr').id;
+                    const saveBtn = this.querySelector('.save-btn');
+
+                    // If save button is visible, we're in edit mode
+                    if (!saveBtn.classList.contains('d-none')) {
+                        console.log('Saving user data for row:', rowId);
+                    }
                 });
             });
-        </script>
+        });
+    </script>
 }
 
 @functions {
@@ -587,7 +656,6 @@
             _ => "bg-secondary text-white"
         };
     }
-
 
     private string GetSortIcon(string sortField)
     {
@@ -604,8 +672,4 @@
 
         return "<i class='bi bi-arrow-down-up text-muted'></i>";
     }
-
-
-
-
 }

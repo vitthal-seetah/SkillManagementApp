@@ -2,27 +2,37 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SkillManager.Application.DTOs.Project;
 using SkillManager.Application.DTOs.User;
 using SkillManager.Application.Interfaces.Services;
 using SkillManager.Domain.Entities;
 
 namespace SkillManager.Web.Pages.Users;
 
-[Authorize(Policy = "ManagerPolicy")]
+[Authorize(Policy = "EmployeePolicy")]
 public class IndexModel : PageModel
 {
     private readonly IUserService _userService;
     private readonly ITeamService _teamService;
+    private readonly IProjectService _projectService;
+    private User? _currentUserEntity;
 
-    public IndexModel(IUserService userService, ITeamService teamService)
+    public IndexModel(
+        IUserService userService,
+        ITeamService teamService,
+        IProjectService projectService
+    )
     {
         _userService = userService;
         _teamService = teamService;
+        _projectService = projectService;
     }
 
     public IEnumerable<UserDto> Users { get; set; } = new List<UserDto>();
     public string Username { get; set; } = "";
     public string FullName { get; set; } = "";
+    public string Domain { get; set; } = "";
+    public string Eid { get; set; } = "";
     public List<string> Roles { get; set; } = new();
 
     // --- Filtering & Sorting ---
@@ -36,6 +46,9 @@ public class IndexModel : PageModel
     public string? SelectedDelivery { get; set; }
 
     [BindProperty(SupportsGet = true)]
+    public string? SelectedTeam { get; set; }
+
+    [BindProperty(SupportsGet = true)]
     public string? SortBy { get; set; }
 
     // --- Pagination ---
@@ -44,10 +57,8 @@ public class IndexModel : PageModel
     public int PageSize { get; set; } = 10;
     public int TotalPages { get; set; }
 
-    [BindProperty(SupportsGet = true)]
-    public string? SelectedTeam { get; set; }
-
     public List<Team> AvailableTeams { get; set; } = new();
+    public List<ProjectDto> AvailableProjects { get; set; } = new();
 
     // --- Bind Create / Update DTOs ---
     [BindProperty]
@@ -57,14 +68,58 @@ public class IndexModel : PageModel
     public UpdateUserDto UpdateUserModel { get; set; } = new();
     public int TotalUsersCount { get; set; }
 
-    public async Task OnGetAsync()
+    private async Task<User?> GetCurrentUserAsync()
     {
+        if (_currentUserEntity != null)
+            return _currentUserEntity;
+
+        // Extract current user's identity
         FullName = User.Identity?.Name ?? "Unavailable";
-        Username = FullName.Contains('\\') ? FullName.Split('\\').Last() : FullName;
+
+        if (FullName.Contains('\\'))
+        {
+            var parts = FullName.Split('\\', 2);
+            Domain = parts[0];
+            Eid = parts[1];
+        }
+        else
+        {
+            Domain = "";
+            Eid = FullName;
+        }
+
+        Username = Eid;
         Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
-        var allUsers = await _userService.GetAllAsync();
-        AvailableTeams = (await _teamService.GetAllTeamsAsync()).ToList();
+        // Get current user entity with project information
+        _currentUserEntity = await _userService.GetUserEntityByDomainAndEidAsync(Domain, Eid, null);
+        return _currentUserEntity;
+    }
+
+    public async Task OnGetAsync()
+    {
+        var currentUser = await GetCurrentUserAsync();
+        if (currentUser == null)
+        {
+            Users = new List<UserDto>();
+            TempData["Error"] = "User not found or access denied.";
+            return;
+        }
+
+        // Get users only from current user's project
+        var allUsers = await _userService.GetAllAsync(currentUser);
+
+        // Get all teams and filter by current user's project using ProjectTeam relationship
+        var allTeams = await _teamService.GetAllTeamsAsync();
+        AvailableTeams = allTeams
+            .Where(t => t.ProjectTeams?.Any(pt => pt.ProjectId == currentUser.ProjectId) == true)
+            .ToList();
+
+        // Get available projects (only current user's project for non-admins)
+        AvailableProjects = (await _projectService.GetAllProjectsAsync())
+            .Where(p => p.ProjectId == currentUser.ProjectId)
+            .ToList();
+
         // --- Filters ---
         if (!string.IsNullOrWhiteSpace(SelectedRole) && SelectedRole != "All")
             allUsers = allUsers.Where(u =>
@@ -84,6 +139,7 @@ public class IndexModel : PageModel
                 allUsers = allUsers.Where(u => u.TeamId == teamId);
             }
         }
+
         // --- Sorting ---
         allUsers = SortBy switch
         {
@@ -98,8 +154,8 @@ public class IndexModel : PageModel
             "RoleAsc" => allUsers.OrderBy(u => u.RoleName),
             "RoleDesc" => allUsers.OrderByDescending(u => u.RoleName),
             // Add Team sorting
-            "TeamAsc" => allUsers.OrderBy(u => u.TeamName ?? "").ToList(), // Handle null teams
-            "TeamDesc" => allUsers.OrderByDescending(u => u.TeamName ?? "").ToList(),
+            "TeamAsc" => allUsers.OrderBy(u => u.TeamName ?? ""),
+            "TeamDesc" => allUsers.OrderByDescending(u => u.TeamName ?? ""),
             _ => allUsers,
         };
 
@@ -112,10 +168,21 @@ public class IndexModel : PageModel
     }
 
     // --- Save / Update Handler (AJAX-friendly) ---
-
     public async Task<IActionResult> OnPostSaveAsync()
     {
-        // --- Validate fields manually (or rely on UpdateUserDto validation attributes) ---
+        var currentUser = await GetCurrentUserAsync();
+        if (currentUser == null)
+        {
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return new JsonResult(
+                    new { success = false, message = "Access denied: User not found." }
+                );
+
+            TempData["Error"] = "Access denied: User not found.";
+            return RedirectToPage();
+        }
+
+        // --- Validate fields manually ---
         var errors = new Dictionary<string, string>();
 
         if (string.IsNullOrWhiteSpace(UpdateUserModel.FirstName))
@@ -133,7 +200,35 @@ public class IndexModel : PageModel
             return new JsonResult(new { success = false, errors });
         }
 
-        var (success, message, _) = await _userService.UpdateUserAsync(UpdateUserModel);
+        // Ensure updates stay within current user's project
+        UpdateUserModel.ProjectId = currentUser.ProjectId;
+
+        // Validate team belongs to current user's project via ProjectTeam relationship
+        if (UpdateUserModel.TeamId.HasValue)
+        {
+            var allTeams = await _teamService.GetAllTeamsAsync();
+            var team = allTeams.FirstOrDefault(t => t.TeamId == UpdateUserModel.TeamId.Value);
+
+            // Check if team is associated with current user's project through ProjectTeam
+            if (
+                team == null
+                || team.ProjectTeams?.Any(pt => pt.ProjectId == currentUser.ProjectId) != true
+            )
+            {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    return new JsonResult(
+                        new { success = false, message = "Invalid team selection." }
+                    );
+
+                TempData["Error"] = "Invalid team selection.";
+                return RedirectToPage();
+            }
+        }
+
+        var (success, message, _) = await _userService.UpdateUserAsync(
+            UpdateUserModel,
+            currentUser
+        );
 
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
         {
@@ -159,6 +254,7 @@ public class IndexModel : PageModel
                 SelectedRole,
                 SelectedStatus,
                 SelectedDelivery,
+                SelectedTeam,
                 SortBy,
                 PageNumber,
             }
@@ -193,7 +289,37 @@ public class IndexModel : PageModel
     // --- Create Handler ---
     public async Task<IActionResult> OnPostCreateAsync()
     {
-        var (success, message, _) = await _userService.CreateUserAsync(CreateUserModel);
+        var currentUser = await GetCurrentUserAsync();
+        if (currentUser == null)
+        {
+            TempData["Error"] = "Access denied: User not found.";
+            return RedirectToPage();
+        }
+
+        // Ensure new users are created in current user's project
+        CreateUserModel.ProjectId = currentUser.ProjectId;
+
+        // Validate team belongs to current user's project via ProjectTeam relationship
+        if (CreateUserModel.TeamId.HasValue)
+        {
+            var allTeams = await _teamService.GetAllTeamsAsync();
+            var team = allTeams.FirstOrDefault(t => t.TeamId == CreateUserModel.TeamId.Value);
+
+            // Check if team is associated with current user's project through ProjectTeam
+            if (
+                team == null
+                || team.ProjectTeams?.Any(pt => pt.ProjectId == currentUser.ProjectId) != true
+            )
+            {
+                TempData["Error"] = "Invalid team selection.";
+                return RedirectToPage();
+            }
+        }
+
+        var (success, message, _) = await _userService.CreateUserAsync(
+            CreateUserModel,
+            currentUser
+        );
 
         if (success)
             TempData["Success"] = message;
@@ -210,6 +336,7 @@ public class IndexModel : PageModel
                 SelectedRole,
                 SelectedStatus,
                 SelectedDelivery,
+                SelectedTeam,
                 SortBy,
                 PageNumber,
             }

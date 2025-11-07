@@ -15,13 +15,14 @@ namespace SkillManager.Infrastructure.Repositories
         }
 
         // ------------------------------------------------------
-        // Get all users (with roles included)
+        // Get all users (with roles, projects, teams included)
         // ------------------------------------------------------
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context
                 .Users.AsNoTracking()
                 .Include(u => u.Role)
+                .Include(u => u.Project)
                 .Include(u => u.Team)
                 .ToListAsync();
         }
@@ -33,6 +34,8 @@ namespace SkillManager.Infrastructure.Repositories
         {
             return await _context
                 .Users.Include(u => u.Role)
+                .Include(u => u.Project)
+                .Include(u => u.Team)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
@@ -44,6 +47,7 @@ namespace SkillManager.Infrastructure.Repositories
             var existingUser = await _context.Users.FirstOrDefaultAsync(u =>
                 u.UserId == user.UserId
             );
+
             if (existingUser == null)
                 return;
 
@@ -54,6 +58,8 @@ namespace SkillManager.Infrastructure.Repositories
             existingUser.RoleId = user.RoleId;
             existingUser.Status = user.Status;
             existingUser.DeliveryType = user.DeliveryType;
+            existingUser.ProjectId = user.ProjectId;
+            existingUser.TeamId = user.TeamId;
 
             if (!string.IsNullOrWhiteSpace(user.Domain))
                 existingUser.Domain = user.Domain;
@@ -88,11 +94,13 @@ namespace SkillManager.Infrastructure.Repositories
             return await _context
                 .Users.AsNoTracking()
                 .Include(u => u.Role)
+                .Include(u => u.Project)
+                .Include(u => u.Team)
                 .FirstOrDefaultAsync(u => u.UtCode == utCode);
         }
 
         // ------------------------------------------------------
-        // ✅ NEW: Get User by RefId (for preventing duplicates)
+        // Get User by RefId
         // ------------------------------------------------------
         public async Task<User?> GetByRefIdAsync(string refId)
         {
@@ -102,6 +110,8 @@ namespace SkillManager.Infrastructure.Repositories
             return await _context
                 .Users.AsNoTracking()
                 .Include(u => u.Role)
+                .Include(u => u.Project)
+                .Include(u => u.Team)
                 .FirstOrDefaultAsync(u => u.RefId == refId);
         }
 
@@ -122,14 +132,35 @@ namespace SkillManager.Infrastructure.Repositories
         }
 
         // ------------------------------------------------------
-        // Optional: Get user by Domain + Eid (for Windows Auth)
+        //Get user by Domain + Eid
         // ------------------------------------------------------
-        public async Task<User?> GetByDomainAndEidAsync(string domain, string eid)
+        public async Task<User?> GetByDomainAndEidAsync(string? domain, string eid)
         {
+            if (string.IsNullOrWhiteSpace(eid))
+                return null;
+
+            var query = _context
+                .Users.Include(u => u.Role)
+                .Include(u => u.Project)
+                .Include(u => u.Team)
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(domain))
+                query = query.Where(u => u.Domain == domain);
+
+            return await query.FirstOrDefaultAsync(u => u.Eid == eid);
+        }
+
+        public async Task<IEnumerable<User?>> GetByProjectIdAsync(int? projectId)
+        {
+            if (projectId == null || projectId == 0)
+                return null;
             return await _context
-                .Users.AsNoTracking()
-                .Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Domain == domain && u.Eid == eid);
+                .Users.Include(u => u.Role)
+                .Include(u => u.Project)
+                .Include(u => u.Team)
+                .Where(u => u.ProjectId == projectId)
+                .ToListAsync();
         }
     }
 }

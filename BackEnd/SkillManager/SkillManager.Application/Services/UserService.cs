@@ -26,61 +26,77 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
-    // Get all users (mapped to DTO)
+    // Get all users (mapped to DTO) - UPDATED
     // -----------------------------
-    public async Task<IEnumerable<UserDto>> GetAllAsync()
+    public async Task<IEnumerable<UserDto>> GetAllAsync(User currentUser)
     {
-        var users = await _userRepository.GetAllAsync();
+        // All users can only see users in their own project
+        var users = await _userRepository.GetByProjectIdAsync(currentUser.ProjectId);
+
         return users.Select(MapToDto);
     }
 
     // -----------------------------
-    // Get single user by ID
+    // Get single user by ID - UPDATED
     // -----------------------------
-    public async Task<UserDto?> GetUserByIdAsync(int userId)
+    public async Task<UserDto?> GetUserByIdAsync(int userId, User currentUser)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-        return user == null ? null : MapToDto(user);
+        if (user == null)
+            return null;
+
+        // All users can only access users in their project
+        if (user.ProjectId != currentUser.ProjectId)
+        {
+            return null;
+        }
+
+        return MapToDto(user);
     }
 
     // -----------------------------
-    // Create new user (with validation + duplicate check)
+    // Create new user - UPDATED
     // -----------------------------
     public async Task<(bool Success, string Message, UserDto? CreatedUser)> CreateUserAsync(
-        CreateUserDto dto
+        CreateUserDto dto,
+        User currentUser
     )
     {
-        // ✅ Step 1: Validate request
         var validation = await _createValidator.ValidateAsync(dto);
         if (!validation.IsValid)
             return (false, validation.Errors.First().ErrorMessage, null);
 
-        // ✅ Step 2: Prevent duplicate UTCode
+        // Duplicate UT code check
         var existing = await _userRepository.GetByUtCodeAsync(dto.UtCode);
         if (existing != null)
             return (false, "A user with the same UT Code already exists.", null);
 
-        // ✅ Step 3: Get Role
         var userRole = await _userRepository.GetRoleByNameAsync(dto.RoleName);
         if (userRole == null)
             return (false, $"Role '{dto.RoleName}' not found.", null);
 
-        // ✅ Step 4: Create User Entity
+        // Validate that the target project matches current user's project
+        if (dto.ProjectId != currentUser.ProjectId)
+        {
+            return (false, "You can only create users within your own project.", null);
+        }
+
         var user = new User
         {
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Domain = dto.Domain,
             Eid = dto.Eid,
-            Status = Enum.TryParse<UserStatus>(dto.Status, true, out var status)
-                ? status
-                : UserStatus.Active, // default if parsing fails
-            DeliveryType = Enum.TryParse<DeliveryType>(dto.DeliveryType, true, out var delivery)
-                ? delivery
-                : DeliveryType.Onshore, // default if parsing fails
             UtCode = dto.UtCode,
             RefId = dto.RefId,
+            Status = Enum.TryParse<UserStatus>(dto.Status, true, out var status)
+                ? status
+                : UserStatus.Active,
+            DeliveryType = Enum.TryParse<DeliveryType>(dto.DeliveryType, true, out var delivery)
+                ? delivery
+                : DeliveryType.Onshore,
             RoleId = userRole.RoleId,
+            ProjectId = dto.ProjectId, // Use the provided project ID (already validated)
         };
 
         await _userRepository.AddAsync(user);
@@ -90,54 +106,70 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
-    // Update existing user
+    // Update existing user - UPDATED
     // -----------------------------
     public async Task<(bool Success, string Message, UserDto? UpdatedUser)> UpdateUserAsync(
-        UpdateUserDto dto
+        UpdateUserDto dto,
+        User currentUser
     )
     {
-        // ✅ Step 1: Validate request
         var validation = await _updateValidator.ValidateAsync(dto);
         if (!validation.IsValid)
             return (false, validation.Errors.First().ErrorMessage, null);
 
-        // ✅ Step 2: Find existing user
         var user = await _userRepository.GetByIdAsync(dto.UserId);
         if (user == null)
             return (false, "User not found.", null);
 
-        // ✅ Step 3: Prevent duplicate UTCode
+        // All users can only edit users in their own project
+        if (user.ProjectId != currentUser.ProjectId)
+            return (false, "You cannot edit users outside your project.", null);
+
+        // Prevent updating project to a different project
+        if (dto.ProjectId.HasValue && dto.ProjectId.Value != currentUser.ProjectId)
+        {
+            return (false, "You can only assign users to your own project.", null);
+        }
+
+        // Prevent UTCode duplicates
         if (!string.IsNullOrWhiteSpace(dto.UtCode) && dto.UtCode != user.UtCode)
         {
             var duplicate = await _userRepository.GetByUtCodeAsync(dto.UtCode);
             if (duplicate != null)
                 return (false, "Another user with this UT Code already exists.", null);
         }
-        ///
-        // ✅ Step 4: Apply updates
+
+        // --- Update fields ---
         user.FirstName = dto.FirstName ?? user.FirstName;
         user.LastName = dto.LastName ?? user.LastName;
         user.UtCode = dto.UtCode ?? user.UtCode;
         user.RefId = dto.RefId ?? user.RefId;
         user.Domain = dto.Domain ?? user.Domain;
         user.Eid = dto.Eid ?? user.Eid;
-        user.TeamId = dto.TeamId ?? user.TeamId;
-        // Parse Enums
+
+        // Update ProjectId (must remain within current user's project)
+        if (dto.ProjectId.HasValue)
+        {
+            user.ProjectId = dto.ProjectId.Value;
+        }
+
+        // Update TeamId
+        if (dto.TeamId.HasValue)
+        {
+            user.TeamId = dto.TeamId;
+        }
+
         if (
             !string.IsNullOrWhiteSpace(dto.Status)
             && Enum.TryParse<UserStatus>(dto.Status, true, out var parsedStatus)
         )
-        {
             user.Status = parsedStatus;
-        }
 
         if (
             !string.IsNullOrWhiteSpace(dto.DeliveryType)
             && Enum.TryParse<DeliveryType>(dto.DeliveryType, true, out var parsedDelivery)
         )
-        {
             user.DeliveryType = parsedDelivery;
-        }
 
         if (!string.IsNullOrWhiteSpace(dto.RoleName))
         {
@@ -153,9 +185,9 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
-    // Update user role separately
+    // Update user role separately - UPDATED
     // -----------------------------
-    public async Task<bool> UpdateUserRoleAsync(int userId, string roleName)
+    public async Task<bool> UpdateUserRoleAsync(int userId, string roleName, User currentUser)
     {
         if (string.IsNullOrWhiteSpace(roleName))
             return false;
@@ -168,8 +200,12 @@ public sealed class UserService : IUserService
         if (user == null)
             return false;
 
+        // All users can only update roles for users in their project
+        if (user.ProjectId != currentUser.ProjectId)
+            return false;
+
         if (user.RoleId == role.RoleId)
-            return false; // no change
+            return false;
 
         user.RoleId = role.RoleId;
         await _userRepository.UpdateAsync(user);
@@ -179,6 +215,58 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
+    // Get User entity by domain + EID (for internal use) - UPDATED
+    // -----------------------------
+    public async Task<User?> GetUserEntityByDomainAndEidAsync(
+        string domain,
+        string eid,
+        User currentUser
+    )
+    {
+        if (string.IsNullOrWhiteSpace(eid))
+            return null;
+
+        var user = await _userRepository.GetByDomainAndEidAsync(domain, eid);
+
+        return user;
+    }
+
+    // -----------------------------
+    // Get UserDto by domain + EID (for UI / Pages) - UPDATED
+    // -----------------------------
+    public async Task<UserDto?> GetUserByDomainAndEidAsync(
+        string domain,
+        string eid,
+        User currentUser
+    )
+    {
+        if (string.IsNullOrWhiteSpace(domain) || string.IsNullOrWhiteSpace(eid))
+            return null;
+
+        var user = await _userRepository.GetByDomainAndEidAsync(domain, eid);
+
+        // Only return if user is in the same project
+        if (user?.ProjectId != currentUser.ProjectId)
+            return null;
+
+        return MapToDto(user);
+    }
+
+    // -----------------------------
+    // New method: Get users by project ID
+    // -----------------------------
+    public async Task<IEnumerable<UserDto>> GetUsersByProjectIdAsync(
+        int projectId,
+        User currentUser
+    )
+    {
+        // Users can only access their own project
+        if (projectId != currentUser.ProjectId)
+            return Enumerable.Empty<UserDto>();
+
+        var users = await _userRepository.GetByProjectIdAsync(projectId);
+        return users.Select(MapToDto);
+    }
 
     private static UserDto MapToDto(User u)
     {
@@ -194,8 +282,10 @@ public sealed class UserService : IUserService
             Eid = u.Eid,
             Status = u.Status,
             DeliveryType = u.DeliveryType,
-            TeamName = u.Team?.TeamName ?? string.Empty,
-            TeamId = u.Team?.TeamId ?? 0,
+            TeamId = u.TeamId,
+            ProjectId = u.ProjectId,
+            TeamName = u.Team.TeamName,
+            ProjectName = u.Project.ProjectName,
         };
     }
 }
