@@ -67,8 +67,20 @@ namespace SkillManager.Web.Pages.Users
             CurrentUserName = User.Identity?.Name ?? "Unknown User";
             Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
-            // Get available users and categories for filters
-            AvailableUsers = (await _userService.GetAllAsync()).ToList();
+            // Get current user entity for the service method
+            var domain = User.FindFirst("domain")?.Value ?? "";
+            var eid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            var currentUser = await _userService.GetUserEntityByDomainAndEidAsync(domain, eid);
+
+            if (currentUser != null)
+            {
+                // Get available users and categories for filters
+                AvailableUsers = (await _userService.GetAllAsync(currentUser)).ToList();
+            }
+            else
+            {
+                AvailableUsers = new List<UserDto>();
+            }
             AvailableCategories = (await _categoryService.GetAllCategoriesAsync()).ToList();
 
             // Get all user skills

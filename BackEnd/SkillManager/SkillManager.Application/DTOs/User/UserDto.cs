@@ -26,4 +26,9 @@ public class UserDto
     public int TeamId { get; set; }
     public UserStatus Status { get; set; }
     public DeliveryType DeliveryType { get; set; }
+    public int? ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
+
+    public int? TeamId { get; set; }
+    public string TeamName { get; set; } = string.Empty;
 }
