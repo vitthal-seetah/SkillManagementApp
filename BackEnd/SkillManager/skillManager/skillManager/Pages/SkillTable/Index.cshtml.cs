@@ -71,6 +71,10 @@ namespace SkillManager.Web.Pages.Users
             var domain = User.FindFirst("domain")?.Value ?? "";
             var eid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
             var currentUser = await _userService.GetUserEntityByDomainAndEidAsync(
+                domain,
+                eid,
+                null
+            );
 
             if (currentUser != null)
             {

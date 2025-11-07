@@ -21,9 +21,6 @@ public class UserDto
 
     public string Eid { get; set; } = string.Empty;
 
-    public string TeamName { get; set; } = string.Empty;
-
-    public int TeamId { get; set; }
     public UserStatus Status { get; set; }
     public DeliveryType DeliveryType { get; set; }
     public int? ProjectId { get; set; }

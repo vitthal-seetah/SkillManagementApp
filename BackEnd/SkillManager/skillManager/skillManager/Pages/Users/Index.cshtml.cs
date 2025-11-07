@@ -79,7 +79,11 @@ namespace SkillManager.Web.Pages.Users
             Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
             // Use the method that respects project restrictions
-            _currentUserEntity = await _userService.GetUserEntityByDomainAndEidAsync(Domain, Eid);
+            _currentUserEntity = await _userService.GetUserEntityByDomainAndEidAsync(
+                Domain,
+                Eid,
+                null
+            );
             return _currentUserEntity;
         }
 

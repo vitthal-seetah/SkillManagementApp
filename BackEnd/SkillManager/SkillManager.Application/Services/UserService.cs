@@ -217,12 +217,20 @@ public sealed class UserService : IUserService
     // -----------------------------
     // Get User entity by domain + EID (for internal use) - UPDATED
     // -----------------------------
-    public async Task<User?> GetUserEntityByDomainAndEidAsync(string domain, string eid)
+    public async Task<User?> GetUserEntityByDomainAndEidAsync(
+        string domain,
+        string eid,
+        User currentUser
+    )
     {
         if (string.IsNullOrWhiteSpace(eid))
             return null;
 
         var user = await _userRepository.GetByDomainAndEidAsync(domain, eid);
+
+        // Only return if user is in the same project as current user
+        if (user?.ProjectId != currentUser.ProjectId)
+            return null;
 
         return user;
     }
@@ -278,8 +286,10 @@ public sealed class UserService : IUserService
             Eid = u.Eid,
             Status = u.Status,
             DeliveryType = u.DeliveryType,
-            TeamName = u.Team?.TeamName ?? string.Empty,
-            TeamId = u.Team?.TeamId ?? 0,
+            TeamId = u.TeamId,
+            ProjectId = u.ProjectId,
+            TeamName = u.Team.TeamName,
+            ProjectName = u.Project.ProjectName,
         };
     }
 }
