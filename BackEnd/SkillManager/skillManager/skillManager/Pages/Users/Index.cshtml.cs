@@ -165,6 +165,31 @@ public class IndexModel : PageModel
         );
     }
 
+    public async Task<IActionResult> po()
+    {
+        var (success, message, _) = await _userService.CreateUserAsync(CreateUserModel);
+
+        if (success)
+            TempData["Success"] = message;
+        else
+        {
+            ModelState.AddModelError(string.Empty, message);
+            await OnGetAsync(); // re-populate Users table
+            return Page();
+        }
+
+        return RedirectToPage(
+            new
+            {
+                SelectedRole,
+                SelectedStatus,
+                SelectedDelivery,
+                SortBy,
+                PageNumber,
+            }
+        );
+    }
+
     // --- Create Handler ---
     public async Task<IActionResult> OnPostCreateAsync()
     {
