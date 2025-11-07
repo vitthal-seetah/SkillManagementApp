@@ -11,6 +11,7 @@ namespace SkillManager.Application.Interfaces.Repositories
     {
         Task<Team?> GetByIdAsync(int teamId);
         Task<IEnumerable<Team>> GetAllAsync();
+        Task<IEnumerable<Team>> GetAllWithProjectsAsync();
         Task<IEnumerable<Team>> GetTeamsByLeadAsync(User teamLead);
         Task<Team> AddAsync(Team team);
         Task<Team> UpdateAsync(Team team);

@@ -29,6 +29,11 @@ namespace SkillManager.Application.Services
             return await _teamRepository.GetAllAsync();
         }
 
+        public async Task<IEnumerable<Team>> GetAllTeamsWithProjectsAsync()
+        {
+            return await _teamRepository.GetAllWithProjectsAsync();
+        }
+
         public async Task<Team> CreateTeamAsync(CreateTeamDto teamDto)
         {
             // Convert DTO to entity

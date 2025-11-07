@@ -284,8 +284,8 @@ public sealed class UserService : IUserService
             DeliveryType = u.DeliveryType,
             TeamId = u.TeamId,
             ProjectId = u.ProjectId,
-            TeamName = u.Team.TeamName,
-            ProjectName = u.Project.ProjectName,
+            TeamName = u.Team?.TeamName ?? string.Empty,
+            ProjectName = u.Project?.ProjectName ?? string.Empty,
         };
     }
 }

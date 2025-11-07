@@ -109,8 +109,8 @@ public class IndexModel : PageModel
         // Get users only from current user's project
         var allUsers = await _userService.GetAllAsync(currentUser);
 
-        // Get all teams and filter by current user's project using ProjectTeam relationship
-        var allTeams = await _teamService.GetAllTeamsAsync();
+        // FIX: Use the new method that includes ProjectTeams
+        var allTeams = await _teamService.GetAllTeamsWithProjectsAsync();
         AvailableTeams = allTeams
             .Where(t => t.ProjectTeams?.Any(pt => pt.ProjectId == currentUser.ProjectId) == true)
             .ToList();
@@ -203,11 +203,11 @@ public class IndexModel : PageModel
         // Ensure updates stay within current user's project
         UpdateUserModel.ProjectId = currentUser.ProjectId;
 
-        // Validate team belongs to current user's project via ProjectTeam relationship
-        if (UpdateUserModel.TeamId.HasValue)
+        // FIX: Use the new method for team validation
+        if (UpdateUserModel.TeamId != null || UpdateUserModel.TeamId != 0)
         {
-            var allTeams = await _teamService.GetAllTeamsAsync();
-            var team = allTeams.FirstOrDefault(t => t.TeamId == UpdateUserModel.TeamId.Value);
+            var availableTeams = await _teamService.GetAllTeamsWithProjectsAsync();
+            var team = availableTeams.FirstOrDefault(t => t.TeamId == UpdateUserModel.TeamId);
 
             // Check if team is associated with current user's project through ProjectTeam
             if (
@@ -274,11 +274,11 @@ public class IndexModel : PageModel
         // Ensure new users are created in current user's project
         CreateUserModel.ProjectId = currentUser.ProjectId;
 
-        // Validate team belongs to current user's project via ProjectTeam relationship
+        // FIX: Use the new method for team validation
         if (CreateUserModel.TeamId.HasValue)
         {
-            var allTeams = await _teamService.GetAllTeamsAsync();
-            var team = allTeams.FirstOrDefault(t => t.TeamId == CreateUserModel.TeamId.Value);
+            var availableTeams = await _teamService.GetAllTeamsWithProjectsAsync();
+            var team = availableTeams.FirstOrDefault(t => t.TeamId == CreateUserModel.TeamId.Value);
 
             // Check if team is associated with current user's project through ProjectTeam
             if (
