@@ -70,7 +70,7 @@ namespace SkillManager.Web.Pages.Users
             // Get current user entity for the service method
             var domain = User.FindFirst("domain")?.Value ?? "";
             var eid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-            var currentUser = await _userService.GetUserEntityByDomainAndEidAsync(domain, eid);
+            var currentUser = await _userService.GetUserEntityByDomainAndEidAsync(
 
             if (currentUser != null)
             {
