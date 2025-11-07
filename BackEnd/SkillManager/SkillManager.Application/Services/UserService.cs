@@ -179,8 +179,7 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
-    // 🔹 MapToDto: Converts Entity → DTO
-    // -----------------------------
+
     private static UserDto MapToDto(User u)
     {
         return new UserDto
