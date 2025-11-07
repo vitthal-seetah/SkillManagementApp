@@ -228,10 +228,6 @@ public sealed class UserService : IUserService
 
         var user = await _userRepository.GetByDomainAndEidAsync(domain, eid);
 
-        // Only return if user is in the same project as current user
-        if (user?.ProjectId != currentUser.ProjectId)
-            return null;
-
         return user;
     }
 

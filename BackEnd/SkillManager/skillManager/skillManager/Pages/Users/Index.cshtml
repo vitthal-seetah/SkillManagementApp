@@ -183,7 +183,6 @@
                                 UT Code @Html.Raw(GetSortIcon("UtCode"))
                             </a>
                         </th>
-                        <th style="min-width:120px;">Team</th>
 
                         <th style="min-width:120px;">Ref ID</th>
 
@@ -199,9 +198,21 @@
                             </a>
                         </th>
 
-                        <!-- New Project and Team Columns -->
+                        <!-- Project Column -->
                         <th style="min-width:150px;">Project</th>
-                        <th style="min-width:150px;">Team</th>
+
+                        <!-- Team Column -->
+                        <th style="min-width:150px;">
+                            <a asp-page="Index"
+                               asp-route-SortBy="@(Model.SortBy == "TeamAsc" ? "TeamDesc" : "TeamAsc")"
+                               asp-route-SelectedRole="@Model.SelectedRole"
+                               asp-route-SelectedStatus="@Model.SelectedStatus"
+                               asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               asp-route-SelectedTeam="@Model.SelectedTeam"
+                               class="text-decoration-none text-dark fw-semibold">
+                                Team @Html.Raw(GetSortIcon("Team"))
+                            </a>
+                        </th>
 
                         @if (canEdit)
                         {
@@ -288,26 +299,7 @@
                                     <span class="form-control-plaintext">@user.UtCode</span>
                                 }
                             </td>
-                            <td>
-                                @if (isAdmin)
-                                {
-                                    <select name="teamId" class="form-select" disabled>
-                                        <option value="">No Team</option>
-                                        @foreach (var team in Model.AvailableTeams)
-                                        {
-                                            <option value="@team.TeamId" selected="@(user.TeamName == team.TeamName)">
-                                                @team.TeamName
-                                            </option>
-                                        }
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                }
-                                else
-                                {
-                                    <input type="hidden" name="teamId" value="@(user.TeamName?.ToString() ?? "")" />
-                                    <span class="form-control-plaintext">@user.TeamName</span>
-                                }
-                            </td>
+
                             <td>
                                 @if (isAdmin)
                                 {
@@ -320,7 +312,6 @@
                                     <span class="form-control-plaintext">@user.RefId</span>
                                 }
                             </td>
-
 
                             <td>
                                 @if (isAdmin)
@@ -341,7 +332,7 @@
 
                             <!-- Project Column -->
                             <td>
-                                @if (isAdmin | isManager)
+                                @if (isAdmin || isManager)
                                 {
                                     <select name="projectId" class="form-select" disabled>
                                         <option value="">Select Project</option>
@@ -361,11 +352,11 @@
                             </td>
 
                             <!-- Team Column -->
-                            @* <td>
-                                @if (isAdmin | isManager)
+                            <td>
+                                @if (isAdmin || isManager)
                                 {
                                     <select name="teamId" class="form-select" disabled>
-                                        <option value="">Select Team</option>
+                                        <option value="">No Team</option>
                                         @foreach (var team in Model.AvailableTeams)
                                         {
                                             <option value="@team.TeamId" selected="@(user.TeamId == team.TeamId)">
@@ -379,7 +370,7 @@
                                 {
                                     <span class="form-control-plaintext">@user.TeamName</span>
                                 }
-                            </td> *@
+                            </td>
 
                             @if (canEdit)
                             {
@@ -481,7 +472,7 @@
                                     }
                                 </select>
                             </div>
-                            @* <div class="mb-3">
+                            <div class="mb-3">
                                 <label class="form-label fw-semibold">Team</label>
                                 <select name="teamId" class="form-select">
                                     <option value="">Select Team</option>
@@ -490,7 +481,7 @@
                                         <option value="@team.TeamId">@team.TeamName</option>
                                     }
                                 </select>
-                            </div> *@
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -513,6 +504,7 @@
                    asp-route-SelectedRole="@Model.SelectedRole"
                    asp-route-SelectedStatus="@Model.SelectedStatus"
                    asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                   asp-route-SelectedTeam="@Model.SelectedTeam"
                    asp-route-SortBy="@Model.SortBy">Previous</a>
             </li>
             @for (int i = 1; i <= Model.TotalPages; i++)
@@ -522,6 +514,7 @@
                        asp-route-SelectedRole="@Model.SelectedRole"
                        asp-route-SelectedStatus="@Model.SelectedStatus"
                        asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                       asp-route-SelectedTeam="@Model.SelectedTeam"
                        asp-route-SortBy="@Model.SortBy">@i</a>
                 </li>
             }
@@ -530,6 +523,7 @@
                    asp-route-SelectedRole="@Model.SelectedRole"
                    asp-route-SelectedStatus="@Model.SelectedStatus"
                    asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                   asp-route-SelectedTeam="@Model.SelectedTeam"
                    asp-route-SortBy="@Model.SortBy">Next</a>
             </li>
         </ul>
