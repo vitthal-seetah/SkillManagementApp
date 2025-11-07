@@ -21,6 +21,7 @@ public static class DependencyInjection
         services.AddScoped<ILevelService, LevelService>();
         services.AddScoped<ISkillService, SkillService>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<ITeamService, TeamService>();
 
         // For scanning an assembly to register all validators
         services.AddValidatorsFromAssemblyContaining<CreateSkillValidator>();

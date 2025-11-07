@@ -47,6 +47,19 @@
         </select>
     </div>
     <div class="col-auto">
+        <label for="SelectedTeam" class="form-label fw-semibold">Filter by Team</label>
+        <select name="SelectedTeam" id="SelectedTeam" class="form-select" onchange="this.form.submit()">
+            <option value="All" selected="@(Model.SelectedTeam == null || Model.SelectedTeam == "All")">All Teams</option>
+            @foreach (var team in Model.AvailableTeams)
+            {
+                <option value="@team.TeamId" selected="@(Model.SelectedTeam == team.TeamId.ToString())">
+                    @team.TeamName
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="col-auto">
         <label for="SelectedDelivery" class="form-label fw-semibold">Filter by Delivery Type</label>
         <select name="SelectedDelivery" id="SelectedDelivery" class="form-select" onchange="this.form.submit()">
             <option value="All" selected="@(Model.SelectedDelivery == null || Model.SelectedDelivery == "All")">All Types</option>
@@ -70,6 +83,9 @@
             <option value="UTCodeDesc" selected="@(Model.SortBy == "UTCodeDesc")">UT Code (Z → A)</option>
             <option value="RoleAsc" selected="@(Model.SortBy == "RoleAsc")">Role (A → Z)</option>
             <option value="RoleDesc" selected="@(Model.SortBy == "RoleDesc")">Role (Z → A)</option>
+            <!-- Add Team sorting options -->
+            <option value="TeamAsc" selected="@(Model.SortBy == "TeamAsc")">Team Name (A → Z)</option>
+            <option value="TeamDesc" selected="@(Model.SortBy == "TeamDesc")">Team Name (Z → A)</option>
         </select>
     </div>
     <div class="col-auto">
@@ -121,6 +137,7 @@
                                asp-route-SelectedRole="@Model.SelectedRole"
                                asp-route-SelectedStatus="@Model.SelectedStatus"
                                asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               asp-route-SelectedTeam="@Model.SelectedTeam"
                                class="text-decoration-none text-dark fw-semibold">
                                 First Name @Html.Raw(GetSortIcon("FirstName"))
                             </a>
@@ -132,6 +149,7 @@
                                asp-route-SelectedRole="@Model.SelectedRole"
                                asp-route-SelectedStatus="@Model.SelectedStatus"
                                asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               asp-route-SelectedTeam="@Model.SelectedTeam"
                                class="text-decoration-none text-dark fw-semibold">
                                 Last Name @Html.Raw(GetSortIcon("LastName"))
                             </a>
@@ -145,6 +163,7 @@
                                asp-route-SelectedRole="@Model.SelectedRole"
                                asp-route-SelectedStatus="@Model.SelectedStatus"
                                asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               asp-route-SelectedTeam="@Model.SelectedTeam"
                                class="text-decoration-none text-dark fw-semibold">
                                 EID @Html.Raw(GetSortIcon("Eid"))
                             </a>
@@ -160,10 +179,12 @@
                                asp-route-SelectedRole="@Model.SelectedRole"
                                asp-route-SelectedStatus="@Model.SelectedStatus"
                                asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               asp-route-SelectedTeam="@Model.SelectedTeam"
                                class="text-decoration-none text-dark fw-semibold">
                                 UT Code @Html.Raw(GetSortIcon("UtCode"))
                             </a>
                         </th>
+                        <th style="min-width:120px;">Team</th>
 
                         <th style="min-width:120px;">Ref ID</th>
 
@@ -173,6 +194,7 @@
                                asp-route-SelectedRole="@Model.SelectedRole"
                                asp-route-SelectedStatus="@Model.SelectedStatus"
                                asp-route-SelectedDelivery="@Model.SelectedDelivery"
+                               asp-route-SelectedTeam="@Model.SelectedTeam"
                                class="text-decoration-none text-dark fw-semibold">
                                 Role @Html.Raw(GetSortIcon("Role"))
                             </a>
@@ -200,10 +222,9 @@
                             <td><input name="lastName" class="form-control" value="@user.LastName" disabled /><div class="invalid-feedback"></div></td>
 
                             <td>
-                                @if (isAdmin | isManager)
+                                @if (isAdmin || isManager)
                                 {
                                     <input name="domain" class="form-control" value="@user.Domain" disabled />
-
                                     <div class="invalid-feedback"></div>
                                 }
                                 else
@@ -215,7 +236,7 @@
                             </td>
 
                             <td>
-                                @if (isAdmin | isManager)
+                                @if (isAdmin || isManager)
                                 {
                                     <input name="eid" class="form-control" value="@user.Eid" disabled />
                                     <div class="invalid-feedback"></div>
@@ -225,7 +246,6 @@
                                     <input type="hidden" name="eid" value="@user.Eid" />
                                     <input class="form-control" value="@user.Eid" disabled />
                                     <div class="invalid-feedback"></div>
-
                                 }
                             </td>
 
@@ -243,7 +263,6 @@
 
                             <td>
                                 <select name="deliveryType" class="form-select" disabled>
-
                                     @foreach (var value in Enum.GetValues(typeof(SkillManager.Domain.Entities.Enums.DeliveryType)))
                                     {
                                         <option value="@value" selected="@(user.DeliveryType == (SkillManager.Domain.Entities.Enums.DeliveryType)value)">
@@ -266,7 +285,26 @@
                                     <span class="form-control-plaintext">@user.UtCode</span>
                                 }
                             </td>
-
+                            <td>
+                                @if (isAdmin)
+                                {
+                                    <select name="teamId" class="form-select" disabled>
+                                        <option value="">No Team</option>
+                                        @foreach (var team in Model.AvailableTeams)
+                                        {
+                                            <option value="@team.TeamId" selected="@(user.TeamName == team.TeamName)">
+                                                @team.TeamName
+                                            </option>
+                                        }
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="teamId" value="@(user.TeamName?.ToString() ?? "")" />
+                                    <span class="form-control-plaintext">@user.TeamName</span>
+                                }
+                            </td>
                             <td>
                                 @if (isAdmin)
                                 {
@@ -279,6 +317,7 @@
                                     <span class="form-control-plaintext">@user.RefId</span>
                                 }
                             </td>
+
 
                             <td>
                                 @if (isAdmin)

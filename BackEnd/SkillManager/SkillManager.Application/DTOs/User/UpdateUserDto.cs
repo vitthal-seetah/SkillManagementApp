@@ -15,4 +15,6 @@ public class UpdateUserDto
     public string? Status { get; set; } // <-- string
     public string? DeliveryType { get; set; } // <-- string
     public string? RoleName { get; set; }
+
+    public int? TeamId { get; set; }
 }

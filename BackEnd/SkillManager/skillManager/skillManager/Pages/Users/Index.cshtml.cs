@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SkillManager.Application.DTOs.User;
 using SkillManager.Application.Interfaces.Services;
+using SkillManager.Domain.Entities;
 
 namespace SkillManager.Web.Pages.Users;
 
@@ -11,10 +12,12 @@ namespace SkillManager.Web.Pages.Users;
 public class IndexModel : PageModel
 {
     private readonly IUserService _userService;
+    private readonly ITeamService _teamService;
 
-    public IndexModel(IUserService userService)
+    public IndexModel(IUserService userService, ITeamService teamService)
     {
         _userService = userService;
+        _teamService = teamService;
     }
 
     public IEnumerable<UserDto> Users { get; set; } = new List<UserDto>();
@@ -41,6 +44,11 @@ public class IndexModel : PageModel
     public int PageSize { get; set; } = 10;
     public int TotalPages { get; set; }
 
+    [BindProperty(SupportsGet = true)]
+    public string? SelectedTeam { get; set; }
+
+    public List<Team> AvailableTeams { get; set; } = new();
+
     // --- Bind Create / Update DTOs ---
     [BindProperty]
     public CreateUserDto CreateUserModel { get; set; } = new();
@@ -56,7 +64,7 @@ public class IndexModel : PageModel
         Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
         var allUsers = await _userService.GetAllAsync();
-
+        AvailableTeams = (await _teamService.GetAllTeamsAsync()).ToList();
         // --- Filters ---
         if (!string.IsNullOrWhiteSpace(SelectedRole) && SelectedRole != "All")
             allUsers = allUsers.Where(u =>
@@ -69,6 +77,13 @@ public class IndexModel : PageModel
         if (!string.IsNullOrWhiteSpace(SelectedDelivery) && SelectedDelivery != "All")
             allUsers = allUsers.Where(u => u.DeliveryType.ToString() == SelectedDelivery);
 
+        if (!string.IsNullOrWhiteSpace(SelectedTeam) && SelectedTeam != "All")
+        {
+            if (int.TryParse(SelectedTeam, out int teamId))
+            {
+                allUsers = allUsers.Where(u => u.TeamId == teamId);
+            }
+        }
         // --- Sorting ---
         allUsers = SortBy switch
         {
@@ -82,6 +97,9 @@ public class IndexModel : PageModel
             "UTCodeDesc" => allUsers.OrderByDescending(u => u.UtCode),
             "RoleAsc" => allUsers.OrderBy(u => u.RoleName),
             "RoleDesc" => allUsers.OrderByDescending(u => u.RoleName),
+            // Add Team sorting
+            "TeamAsc" => allUsers.OrderBy(u => u.TeamName ?? "").ToList(), // Handle null teams
+            "TeamDesc" => allUsers.OrderByDescending(u => u.TeamName ?? "").ToList(),
             _ => allUsers,
         };
 

@@ -19,7 +19,11 @@ namespace SkillManager.Infrastructure.Repositories
         // ------------------------------------------------------
         public async Task<IEnumerable<User>> GetAllAsync()
         {
-            return await _context.Users.AsNoTracking().Include(u => u.Role).ToListAsync();
+            return await _context
+                .Users.AsNoTracking()
+                .Include(u => u.Role)
+                .Include(u => u.Team)
+                .ToListAsync();
         }
 
         // ------------------------------------------------------

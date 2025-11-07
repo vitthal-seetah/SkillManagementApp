@@ -16,14 +16,7 @@
 //        _userService = userService;
 //    }
 
-//    // Anyone with access can list users
-//    [HttpGet]
-//    [Authorize(Policy = "EmployeePolicy")]
-//    public async Task<IActionResult> GetAllUsers()
-//    {
-//        var users = await _userService.GetAllAsync();
-//        return Ok(users);
-//    }
+// Anyone with access can list users
 
 //    // Get current authenticated user
 //    [HttpGet("current")]

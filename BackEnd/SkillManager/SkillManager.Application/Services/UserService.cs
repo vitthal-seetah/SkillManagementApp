@@ -20,6 +20,7 @@ public sealed class UserService : IUserService
     )
     {
         _userRepository = userRepository;
+
         _createValidator = createValidator;
         _updateValidator = updateValidator;
     }
@@ -120,6 +121,7 @@ public sealed class UserService : IUserService
         user.RefId = dto.RefId ?? user.RefId;
         user.Domain = dto.Domain ?? user.Domain;
         user.Eid = dto.Eid ?? user.Eid;
+        user.TeamId = dto.TeamId ?? user.TeamId;
         // Parse Enums
         if (
             !string.IsNullOrWhiteSpace(dto.Status)
@@ -193,6 +195,8 @@ public sealed class UserService : IUserService
             Eid = u.Eid,
             Status = u.Status,
             DeliveryType = u.DeliveryType,
+            TeamName = u.Team?.TeamName ?? string.Empty,
+            TeamId = u.Team?.TeamId ?? 0,
         };
     }
 }
