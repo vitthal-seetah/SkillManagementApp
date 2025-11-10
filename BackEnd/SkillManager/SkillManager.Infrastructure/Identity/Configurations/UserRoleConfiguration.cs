@@ -12,10 +12,11 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
         builder.Property(r => r.Name).HasMaxLength(50);
 
         builder.HasData(
-            new UserRole { RoleId = 1, Name = "Admin" },
-            new UserRole { RoleId = 2, Name = "TechLead" },
+            new UserRole { RoleId = 1, Name = "SuperAdmin" },
+            new UserRole { RoleId = 2, Name = "Admin" },
             new UserRole { RoleId = 3, Name = "Manager" },
-            new UserRole { RoleId = 4, Name = "Employee" }
+            new UserRole { RoleId = 4, Name = "TeamLead" },
+            new UserRole { RoleId = 5, Name = "Employee" }
         );
     }
 }

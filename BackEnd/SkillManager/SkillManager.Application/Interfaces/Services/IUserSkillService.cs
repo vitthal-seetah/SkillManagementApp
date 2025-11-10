@@ -8,7 +8,7 @@ namespace SkillManager.Application.Interfaces.Services;
 
 public interface IUserSkillService
 {
-    Task<IEnumerable<UserSkillDto>> GetMySkillsAsync(int userId);
+    Task<IEnumerable<UserSkillsViewModel>> GetMySkillsAsync(int userId);
     Task AddSkillAsync(int userId, AddUserSkillDto dto);
     Task<bool> UpdateSkillAsync(int userId, UpdateUserSkillsDto dto);
     Task<IEnumerable<UserSkillDto>> GetAllUserSkillsAsync();

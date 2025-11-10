@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using SkillManager.Application.DTOs.Category;
 
-namespace SkillManager.Application.Validators;
+namespace SkillManager.Application.Validators.Category;
 
 public class CreateCategoryTypeValidator : AbstractValidator<CreateCategoryTypeDto>
 {

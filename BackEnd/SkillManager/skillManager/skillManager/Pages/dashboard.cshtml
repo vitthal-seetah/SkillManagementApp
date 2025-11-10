@@ -1,0 +1,203 @@
+﻿@page
+@model SkillManager.Web.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Employee Dashboard";
+}
+
+<h2 class="mb-4">Your Skill Dashboard 👨‍💻</h2>
+
+<!-- Summary Cards -->
+<div class="row text-center mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3 bg-light">
+            <h5>Total Skills</h5>
+            <h2>@Model.TotalSkills</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3 bg-light">
+            <h5>Average Level Points</h5>
+            <h2>@Model.AverageLevelPoints.ToString("F1")</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3 bg-light">
+            <h5>Top Category</h5>
+            <h4>@Model.TopCategory</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3 bg-light">
+            <h5>Last Updated</h5>
+            <h4>@Model.LastUpdated.ToString("dd MMM yyyy")</h4>
+        </div>
+    </div>
+</div>
+<!-- Charts -->
+<div class="row">
+
+    <!-- Skills by Category -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow p-3">
+            <h5>Skills by Category</h5>
+            <div class="chart-container">
+                <canvas id="skillsByCategoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills by Level -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow p-3">
+            <h5>Skills by Level</h5>
+            <div class="chart-container">
+                <canvas id="skillsByLevelChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Average Level by Category -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow p-3">
+            <h5>Average Level Points by Category</h5>
+            <div class="chart-container">
+                <canvas id="avgLevelByCategoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Updated Over Time -->
+    <div class="col-md-6 mb-4">
+        
+            <div class="card shadow p-3">
+                <h5>Total Skill Points (Progress)</h5>
+                <div class="chart-container">
+                    <canvas id="levelPointsGauge"></canvas>
+                </div>
+            
+        </div>
+    </div><div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow p-3">
+                <h5>Recently Updated Skills</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered mb-0">
+                        <thead>
+                            <tr>
+                                <th>Skill</th>
+                                <th>Category</th>
+                                <th>Level</th>
+                                <th>Updated On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var s in Model.RecentSkills)
+                            {
+                                <tr>
+                                    <td>@s.SkillLabel</td>
+                                    <td>@s.CategoryName</td>
+                                    <td>@s.LevelName</td>
+                                    <td>@s.UpdatedTime.ToString("yyyy-MM-dd")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+
+
+<style>
+    .chart-container {
+        position: relative;
+        width: 100%;
+        height: 300px; /* Set desired chart height */
+    }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const skillsByCategory = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SkillsByCategory));
+        const skillsByLevel = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SkillsByLevel));
+        const avgLevelByCategory = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AvgLevelByCategory));
+        const skillsOverTime = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SkillsOverTime));
+
+        // Pie: Skills by Category
+        new Chart(document.getElementById('skillsByCategoryChart'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(skillsByCategory),
+                datasets: [{
+                    data: Object.values(skillsByCategory),
+                    backgroundColor: ['#4e79a7','#f28e2b','#e15759','#76b7b2','#59a14f','#edc948']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Bar: Skills by Level
+        new Chart(document.getElementById('skillsByLevelChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(skillsByLevel),
+                datasets: [{
+                    label: 'Number of Skills',
+                    data: Object.values(skillsByLevel),
+                    backgroundColor: '#4e79a7'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // Radar: Avg Level by Category
+        new Chart(document.getElementById('avgLevelByCategoryChart'), {
+            type: 'radar',
+            data: {
+                labels: Object.keys(avgLevelByCategory),
+                datasets: [{
+                    label: 'Average Level Points',
+                    data: Object.values(avgLevelByCategory),
+                    backgroundColor: 'rgba(78,121,167,0.2)',
+                    borderColor: '#4e79a7'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { r: { beginAtZero: true } }
+            }
+        });
+
+       
+
+        // Donut: Total Skill Points
+        const totalPoints = Object.values(avgLevelByCategory).reduce((a,b) => a+b, 0);
+        new Chart(document.getElementById('levelPointsGauge'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Achieved', 'Remaining'],
+                datasets: [{
+                    data: [totalPoints, Math.max(100 - totalPoints, 0)],
+                    backgroundColor: ['#59a14f', '#ddd']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '80%',
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+}

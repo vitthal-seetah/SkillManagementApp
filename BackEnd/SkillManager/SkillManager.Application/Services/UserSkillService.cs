@@ -26,14 +26,14 @@ namespace SkillManager.Application.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<IEnumerable<UserSkillDto>> GetMySkillsAsync(int userId)
+        public async Task<IEnumerable<UserSkillsViewModel>> GetMySkillsAsync(int userId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
                 throw new InvalidOperationException("User not found.");
 
             var skills = await _userSkillRepository.GetUserSkillsAsync(userId);
-            return skills.Select(MapToDto);
+            return skills.Select(skill => skill.ToUserSkillsViewModel());
         }
 
         public async Task<IEnumerable<UserSkillsWithLevels>> GetUserSkillsByCategoryAsync(
