@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SkillManager.Application.Interfaces.Services;
 using SkillManager.Application.Models;
+using SkillManager.Domain.Entities;
 
 namespace SkillManager.Web.Pages
 {
@@ -14,7 +11,21 @@ namespace SkillManager.Web.Pages
     public class DashboardModel : PageModel
     {
         private readonly IUserSkillService _userSkillService;
+        private readonly IUserService _userService;
 
+        public DashboardModel(IUserSkillService userSkillService, IUserService userService)
+        {
+            _userSkillService = userSkillService;
+            _userService = userService;
+        }
+
+        // --- Display properties ---
+        public string DisplayUserName { get; set; } = string.Empty;
+        public string UserRole { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
+        public bool IsViewingOwnDashboard { get; set; } = true;
+
+        // --- Skill Data ---
         public List<UserSkillsViewModel> Skills { get; set; } = new();
         public Dictionary<string, int> SkillsByCategory { get; set; } = new();
         public Dictionary<string, int> SkillsByLevel { get; set; } = new();
@@ -27,45 +38,67 @@ namespace SkillManager.Web.Pages
         public string TopCategory { get; set; } = string.Empty;
         public DateTime LastUpdated { get; set; }
 
-        // Optional: for display
-        public string Username { get; set; } = string.Empty;
-        public string UserRole { get; set; } = string.Empty;
-        public string UserId { get; set; } = string.Empty;
-
-        public DashboardModel(IUserSkillService userSkillService)
+        public async Task OnGetAsync(int? userId)
         {
-            _userSkillService = userSkillService;
-        }
+            var currentUser = await GetCurrentUserAsync();
+            int targetUserId;
 
-        public async Task OnGetAsync()
-        {
-            // 1?? Get user info from claims
-            Username = User.Identity?.Name ?? "Unknown User";
+            // Determine which user's dashboard to display
+            if (userId.HasValue)
+            {
+                // Viewing another user's dashboard (from ManagerDashboard navigation)
+                targetUserId = userId.Value;
+                IsViewingOwnDashboard = false;
+
+                // Verify the target user exists and is in the same project
+                var targetUserDto = await _userService.GetUserByIdAsync(targetUserId, currentUser);
+                if (targetUserDto == null)
+                {
+                    // Fall back to current user if target user not found or not accessible
+                    targetUserId = GetCurrentUserIdFromClaims();
+                    IsViewingOwnDashboard = true;
+                }
+            }
+            else
+            {
+                // Viewing own dashboard
+                targetUserId = GetCurrentUserIdFromClaims();
+                IsViewingOwnDashboard = true;
+            }
+
+            UserId = targetUserId.ToString();
             UserRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "No role";
 
-            var uidClaim = User.Claims.FirstOrDefault(c => c.Type == "uid");
-            if (uidClaim == null || !int.TryParse(uidClaim.Value, out int userId))
+            // Get user details using GetUserByIdAsync method
+            var userDto = await _userService.GetUserByIdAsync(targetUserId, currentUser);
+            if (userDto != null)
             {
-                throw new InvalidOperationException("User ID claim not found or invalid.");
+                DisplayUserName = $"{userDto.FirstName} {userDto.LastName}";
             }
-            UserId = userId.ToString();
+            else
+            {
+                DisplayUserName = "User Not Found";
+                // If user not found, clear skills and return early
+                Skills = new List<UserSkillsViewModel>();
+                return;
+            }
 
-            // 2?? Get skills for this user
-            Skills = (await _userSkillService.GetMySkillsAsync(userId)).ToList();
+            // Get skills for the target user
+            Skills = (await _userSkillService.GetMySkillsAsync(targetUserId)).ToList();
             if (!Skills.Any())
                 return;
 
-            // 3?? Populate summary
+            // Populate summary
             TotalSkills = Skills.Count;
             AverageLevelPoints = Skills.Average(s => s.LevelPoints);
-            TopCategory = Skills
+            var topCategoryGroup = Skills
                 .GroupBy(s => s.CategoryName)
                 .OrderByDescending(g => g.Count())
-                .First()
-                .Key;
+                .FirstOrDefault();
+            TopCategory = topCategoryGroup?.Key ?? "No Category";
             LastUpdated = Skills.Max(s => s.UpdatedTime);
 
-            // 4?? Prepare chart data
+            // Prepare chart data
             SkillsByCategory = Skills
                 .GroupBy(s => s.CategoryName)
                 .ToDictionary(g => g.Key, g => g.Count());
@@ -84,6 +117,38 @@ namespace SkillManager.Web.Pages
                 .ToDictionary(g => g.Key, g => g.Count());
 
             RecentSkills = Skills.OrderByDescending(s => s.UpdatedTime).Take(5).ToList();
+        }
+
+        private int GetCurrentUserIdFromClaims()
+        {
+            var uidClaim = User.Claims.FirstOrDefault(c => c.Type == "uid");
+            if (uidClaim == null || !int.TryParse(uidClaim.Value, out int userId))
+            {
+                throw new InvalidOperationException("User ID claim not found or invalid.");
+            }
+            return userId;
+        }
+
+        private async Task<User?> GetCurrentUserAsync()
+        {
+            // Extract current user's identity from claims (similar to IndexModel)
+            var fullName = User.Identity?.Name ?? "Unavailable";
+            string domain = "";
+            string eid = "";
+
+            if (fullName.Contains('\\'))
+            {
+                var parts = fullName.Split('\\', 2);
+                domain = parts[0];
+                eid = parts[1];
+            }
+            else
+            {
+                eid = fullName;
+            }
+
+            // Get current user entity using the same pattern as IndexModel
+            return await _userService.GetUserEntityByDomainAndEidAsync(domain, eid, null);
         }
     }
 }

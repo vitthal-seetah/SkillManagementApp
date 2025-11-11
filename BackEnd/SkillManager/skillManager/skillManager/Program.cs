@@ -55,12 +55,12 @@ builder.Services.AddAuthorization(options =>
     );
 
     options.AddPolicy(
-        "TechLeadPolicy",
+        "TeamLeadPolicy",
         policy =>
             policy.RequireAssertion(context =>
                 context.User.HasClaim(c =>
                     c.Type == ClaimTypes.Role
-                    && (c.Value == "TechLead" || c.Value == "Manager" || c.Value == "Admin")
+                    && (c.Value == "TeamLead" || c.Value == "Manager" || c.Value == "Admin")
                 )
             )
     );

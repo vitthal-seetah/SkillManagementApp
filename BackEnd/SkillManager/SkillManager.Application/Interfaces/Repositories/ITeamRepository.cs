@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SkillManager.Domain.Entities;
+﻿using SkillManager.Domain.Entities;
 
 namespace SkillManager.Application.Interfaces.Repositories
 {

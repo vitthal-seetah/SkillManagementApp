@@ -32,4 +32,5 @@ public interface IUserSkillService
     Task<DateTime?> GetLastUpdatedTimeAsync(int userId);
     Task<DateTime?> GetLastUpdatedTimeForSkillAsync(int userId, int skillId);
     Task<Dictionary<int, DateTime>> GetLastUpdatedTimesByCategoryAsync(int userId, int categoryId);
+    Task<IEnumerable<UserSkillDto>> GetUserSkillsByUserIdAsync(int userId);
 }

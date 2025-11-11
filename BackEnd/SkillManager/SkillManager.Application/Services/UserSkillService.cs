@@ -240,6 +240,12 @@ namespace SkillManager.Application.Services
                 ?? new Dictionary<int, DateTime>();
         }
 
+        public async Task<IEnumerable<UserSkillDto>> GetUserSkillsByUserIdAsync(int userId)
+        {
+            var userSkills = await _userSkillRepository.GetUserSkillsAsync(userId);
+            return userSkills.Select(MapToDto);
+        }
+
         private static UserSkillDto MapToDto(UserSkill us)
         {
             return new UserSkillDto
