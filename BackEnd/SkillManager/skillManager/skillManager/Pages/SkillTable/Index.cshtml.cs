@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -64,6 +65,7 @@ namespace SkillManager.Web.Pages.Users
 
         public async Task OnGetAsync()
         {
+            Console.WriteLine("on get normal called");
             CurrentUserName = User.Identity?.Name ?? "Unknown User";
             Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
@@ -168,6 +170,92 @@ namespace SkillManager.Web.Pages.Users
             PageNumber = Math.Clamp(PageNumber, 1, Math.Max(1, TotalPages));
 
             UserSkills = allUserSkills.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToList();
+        }
+
+        public async Task<IActionResult> OnGetExportAsync()
+        {
+            Console.WriteLine("excel function  launched");
+            // 1?? Get all skills
+            var allUserSkills = await _userSkillService.GetUserSkillsLevels();
+
+            // 2?? Apply same filters as OnGetAsync
+            if (
+                !string.IsNullOrWhiteSpace(SelectedUser)
+                && SelectedUser != "All"
+                && int.TryParse(SelectedUser, out int userId)
+            )
+                allUserSkills = allUserSkills.Where(us => us.UserId == userId).ToList();
+
+            if (
+                !string.IsNullOrWhiteSpace(SelectedCategory)
+                && SelectedCategory != "All"
+                && int.TryParse(SelectedCategory, out int categoryId)
+            )
+                allUserSkills = allUserSkills.Where(us => us.CategoryId == categoryId).ToList();
+
+            if (!string.IsNullOrWhiteSpace(SelectedSkill) && SelectedSkill != "All")
+                allUserSkills = allUserSkills
+                    .Where(us =>
+                        us.SkillLabel.Contains(SelectedSkill, StringComparison.OrdinalIgnoreCase)
+                        || us.SkillCode.Contains(SelectedSkill, StringComparison.OrdinalIgnoreCase)
+                    )
+                    .ToList();
+
+            if (!string.IsNullOrWhiteSpace(SelectedLevel) && SelectedLevel != "All")
+                allUserSkills = allUserSkills
+                    .Where(us =>
+                        us.LevelName.Equals(SelectedLevel, StringComparison.OrdinalIgnoreCase)
+                    )
+                    .ToList();
+
+            // 3?? Generate Excel
+            using var workbook = new XLWorkbook();
+            var ws = workbook.Worksheets.Add("UserSkills");
+
+            ws.Cell(1, 1).Value = "UserId";
+            ws.Cell(1, 2).Value = "FirstName";
+            ws.Cell(1, 3).Value = "LastName";
+            ws.Cell(1, 4).Value = "SkillId";
+            ws.Cell(1, 5).Value = "SkillCode";
+            ws.Cell(1, 6).Value = "SkillLabel";
+            ws.Cell(1, 7).Value = "CategoryId";
+            ws.Cell(1, 8).Value = "CategoryName";
+            ws.Cell(1, 9).Value = "LevelId";
+            ws.Cell(1, 10).Value = "LevelName";
+            ws.Cell(1, 11).Value = "LevelPoints";
+            ws.Cell(1, 12).Value = "UpdatedTime";
+
+            int row = 2;
+            foreach (var s in allUserSkills)
+            {
+                ws.Cell(row, 1).Value = s.UserId;
+                ws.Cell(row, 2).Value = s.FirstName;
+                ws.Cell(row, 3).Value = s.LastName;
+                ws.Cell(row, 4).Value = s.SkillId;
+                ws.Cell(row, 5).Value = s.SkillCode;
+                ws.Cell(row, 6).Value = s.SkillLabel;
+                ws.Cell(row, 7).Value = s.CategoryId;
+                ws.Cell(row, 8).Value = s.CategoryName;
+                ws.Cell(row, 9).Value = s.LevelId;
+                ws.Cell(row, 10).Value = s.LevelName;
+                ws.Cell(row, 11).Value = s.LevelPoints;
+                ws.Cell(row, 12).Value = s.UpdatedTime.ToString("yyyy-MM-dd");
+                row++;
+            }
+
+            ws.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            stream.Position = 0;
+
+            var fileName = $"UserSkills_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+
+            return File(
+                stream.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                fileName
+            );
         }
     }
 }
