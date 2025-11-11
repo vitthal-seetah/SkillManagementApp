@@ -13,4 +13,5 @@ public class UserSkillDto
     public int LevelId { get; set; }
     public string LevelName { get; set; }
     public DateTime UpdatedTime { get; set; }
+    public bool ApprovedSkill { get; set; }
 }

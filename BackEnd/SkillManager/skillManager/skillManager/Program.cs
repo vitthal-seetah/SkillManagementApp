@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using AppManagement.Application;
 using AppManagement.Infrastructure;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,11 +17,6 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddRazorPages();
 
 //builder.WebHost.UseIISIntegration();
-
-// --------------------
-// Register Claims Transformer
-// --------------------
-//builder.Services.AddTransient<IClaimsTransformation, RoleClaimsTransformer>();
 
 // --------------------
 // Windows Authentication
