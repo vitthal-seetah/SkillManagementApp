@@ -12,5 +12,5 @@ public class UserSkill
     public virtual Level Level { get; set; }
     public virtual User User { get; set; }
 
-    public bool ApprovedSkill { get; set; }
+    //public bool ApprovedSkill { get; set; }
 }

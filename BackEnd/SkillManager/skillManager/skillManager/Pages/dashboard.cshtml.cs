@@ -12,56 +12,57 @@ namespace SkillManager.Web.Pages
     {
         private readonly IUserSkillService _userSkillService;
         private readonly IUserService _userService;
+        private readonly ICategoryService _categoryService; // Add this
 
-        public DashboardModel(IUserSkillService userSkillService, IUserService userService)
+        public DashboardModel(
+            IUserSkillService userSkillService,
+            IUserService userService,
+            ICategoryService categoryService
+        )
         {
             _userSkillService = userSkillService;
             _userService = userService;
+            _categoryService = categoryService; // Add this
         }
 
-        // --- Display properties ---
+        // --- Existing properties ---
         public string DisplayUserName { get; set; } = string.Empty;
         public string UserRole { get; set; } = string.Empty;
         public string UserId { get; set; } = string.Empty;
         public bool IsViewingOwnDashboard { get; set; } = true;
-
-        // --- Skill Data ---
         public List<UserSkillsViewModel> Skills { get; set; } = new();
         public Dictionary<string, int> SkillsByCategory { get; set; } = new();
         public Dictionary<string, int> SkillsByLevel { get; set; } = new();
         public Dictionary<string, double> AvgLevelByCategory { get; set; } = new();
         public Dictionary<string, int> SkillsOverTime { get; set; } = new();
         public List<UserSkillsViewModel> RecentSkills { get; set; } = new();
-
         public int TotalSkills { get; set; }
         public double AverageLevelPoints { get; set; }
         public string TopCategory { get; set; } = string.Empty;
         public DateTime LastUpdated { get; set; }
+
+        // Add this new property for category mapping
+        public Dictionary<string, int> CategoryNameToIdMap { get; set; } = new();
 
         public async Task OnGetAsync(int? userId)
         {
             var currentUser = await GetCurrentUserAsync();
             int targetUserId;
 
-            // Determine which user's dashboard to display
+            // Determine which user's dashboard to display (your existing code)
             if (userId.HasValue)
             {
-                // Viewing another user's dashboard (from ManagerDashboard navigation)
                 targetUserId = userId.Value;
                 IsViewingOwnDashboard = false;
-
-                // Verify the target user exists and is in the same project
                 var targetUserDto = await _userService.GetUserByIdAsync(targetUserId, currentUser);
                 if (targetUserDto == null)
                 {
-                    // Fall back to current user if target user not found or not accessible
                     targetUserId = GetCurrentUserIdFromClaims();
                     IsViewingOwnDashboard = true;
                 }
             }
             else
             {
-                // Viewing own dashboard
                 targetUserId = GetCurrentUserIdFromClaims();
                 IsViewingOwnDashboard = true;
             }
@@ -69,7 +70,7 @@ namespace SkillManager.Web.Pages
             UserId = targetUserId.ToString();
             UserRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "No role";
 
-            // Get user details using GetUserByIdAsync method
+            // Get user details
             var userDto = await _userService.GetUserByIdAsync(targetUserId, currentUser);
             if (userDto != null)
             {
@@ -78,7 +79,6 @@ namespace SkillManager.Web.Pages
             else
             {
                 DisplayUserName = "User Not Found";
-                // If user not found, clear skills and return early
                 Skills = new List<UserSkillsViewModel>();
                 return;
             }
@@ -88,7 +88,11 @@ namespace SkillManager.Web.Pages
             if (!Skills.Any())
                 return;
 
-            // Populate summary
+            // Build category name to ID mapping
+            var allCategories = await _categoryService.GetAllCategoriesAsync();
+            CategoryNameToIdMap = allCategories.ToDictionary(c => c.Name, c => c.CategoryId);
+
+            // Populate summary (your existing code)
             TotalSkills = Skills.Count;
             AverageLevelPoints = Skills.Average(s => s.LevelPoints);
             var topCategoryGroup = Skills
@@ -131,7 +135,6 @@ namespace SkillManager.Web.Pages
 
         private async Task<User?> GetCurrentUserAsync()
         {
-            // Extract current user's identity from claims (similar to IndexModel)
             var fullName = User.Identity?.Name ?? "Unavailable";
             string domain = "";
             string eid = "";
@@ -147,7 +150,6 @@ namespace SkillManager.Web.Pages
                 eid = fullName;
             }
 
-            // Get current user entity using the same pattern as IndexModel
             return await _userService.GetUserEntityByDomainAndEidAsync(domain, eid, null);
         }
     }

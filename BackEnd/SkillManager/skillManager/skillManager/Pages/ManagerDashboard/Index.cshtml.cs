@@ -32,7 +32,16 @@ namespace SkillManager.Web.Pages
         public string Eid { get; set; } = "";
         public List<string> Roles { get; set; } = new();
         public Dictionary<string, string> CategoryColors { get; set; } = new();
-        public Dictionary<string, string> RoleColors { get; set; } = new(); // NEW: Fixed role colors
+        public Dictionary<string, string> RoleColors { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
+        public string? SelectedUser { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string? SelectedCategory { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string? SelectedLevel { get; set; }
 
         // Sorting property
         [BindProperty(SupportsGet = true)]

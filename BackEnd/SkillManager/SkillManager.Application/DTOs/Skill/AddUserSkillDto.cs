@@ -5,5 +5,5 @@ public class AddUserSkillDto
     public int SkillId { get; set; }
     public int LevelId { get; set; }
     public DateTime UpdatedTime { get; set; } = DateTime.UtcNow;
-    public bool ApprovedSkill { get; } = false;
+    //public bool ApprovedSkill { get; } = false;
 }

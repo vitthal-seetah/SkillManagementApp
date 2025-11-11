@@ -7,18 +7,17 @@ using SkillManager.Application.DTOs.Category;
 using SkillManager.Application.DTOs.User;
 using SkillManager.Application.Interfaces.Services;
 using SkillManager.Application.Models;
-using SkillManager.Domain.Entities;
 
 namespace SkillManager.Web.Pages.Users
 {
-    [Authorize(Policy = "EmployeePolicy")]
-    public class UserSkillsModel : PageModel
+    [Authorize(Policy = "ManagerPolicy")]
+    public class UserSkillManagementModel : PageModel
     {
         private readonly IUserSkillService _userSkillService;
         private readonly IUserService _userService;
         private readonly ICategoryService _categoryService;
 
-        public UserSkillsModel(
+        public UserSkillManagementModel(
             IUserSkillService userSkillService,
             IUserService userService,
             ICategoryService categoryService
@@ -71,22 +70,9 @@ namespace SkillManager.Web.Pages.Users
             CurrentUserName = User.Identity?.Name ?? "Unknown User";
             Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
-            // FIXED: Get current user entity using the same method as other pages
-            var fullName = User.Identity?.Name ?? "Unavailable";
-            string domain = "";
-            string eid = "";
-
-            if (fullName.Contains('\\'))
-            {
-                var parts = fullName.Split('\\', 2);
-                domain = parts[0];
-                eid = parts[1];
-            }
-            else
-            {
-                eid = fullName;
-            }
-
+            // Get current user entity for the service method
+            var domain = User.FindFirst("domain")?.Value ?? "";
+            var eid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
             var currentUser = await _userService.GetUserEntityByDomainAndEidAsync(
                 domain,
                 eid,
@@ -97,36 +83,14 @@ namespace SkillManager.Web.Pages.Users
             {
                 // Get available users and categories for filters
                 AvailableUsers = (await _userService.GetAllAsync(currentUser)).ToList();
-                Console.WriteLine($"AvailableUsers count: {AvailableUsers.Count}");
-
-                // Debug: Log the users being loaded
-                foreach (var user in AvailableUsers)
-                {
-                    Console.WriteLine(
-                        $"User: {user.FirstName} {user.LastName} (ID: {user.UserId})"
-                    );
-                }
             }
             else
             {
-                Console.WriteLine("Current user is null - cannot load AvailableUsers");
                 AvailableUsers = new List<UserDto>();
             }
-
             AvailableCategories = (await _categoryService.GetAllCategoriesAsync()).ToList();
-
-            // Load user skills based on current user's permissions
-            if (currentUser != null)
-            {
-                AllUserSkills = await _userSkillService.GetUserSkillsLevels();
-            }
-            else
-            {
-                AllUserSkills = new List<UserSkillsViewModel>();
-            }
-
+            AllUserSkills = await _userSkillService.GetUserSkillsLevels();
             // --- Apply Filters ---
-            // Your existing filtering code remains the same...
             if (!string.IsNullOrWhiteSpace(SelectedUser) && SelectedUser != "All")
             {
                 if (int.TryParse(SelectedUser, out int userId))
@@ -163,7 +127,6 @@ namespace SkillManager.Web.Pages.Users
             }
 
             // --- Sorting ---
-            // Your existing sorting code remains the same...
             AllUserSkills = SortBy switch
             {
                 "FirstNameAsc" => AllUserSkills.OrderBy(us => us.FirstName).ToList(),
