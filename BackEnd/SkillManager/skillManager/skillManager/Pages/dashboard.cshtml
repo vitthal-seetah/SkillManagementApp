@@ -3,8 +3,17 @@
 @{
     ViewData["Title"] = "Employee Dashboard";
 }
-
-<h2 class="mb-4">Your Skill Dashboard 👨‍💻</h2>
+<div>
+<h2 class="mb-0">
+    @if (Model.IsViewingOwnDashboard)
+    {
+        <text>Your Skill Dashboard</text>
+    }
+    else
+    {
+        <text>@Model.DisplayUserName's Dashboard</text>
+    }
+</h2>
 
 <!-- Summary Cards -->
 <div class="row text-center mb-4">

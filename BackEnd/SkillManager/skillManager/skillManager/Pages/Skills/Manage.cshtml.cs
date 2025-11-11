@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SkillManager.Application.DTOs.Category;
 using SkillManager.Application.DTOs.Skill;
 using SkillManager.Application.Interfaces.Repositories;
-using SkillManager.Application.Interfaces.Services;
 
 namespace SkillManager.Web.Pages.Skills;
 
