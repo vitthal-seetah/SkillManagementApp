@@ -8,14 +8,14 @@ using SkillManager.Domain.Entities;
 namespace SkillManager.Web.Pages
 {
     [Authorize(Policy = "ManagerPolicy")]
-    public class ManagerDashboardModel : PageModel
+    public class TeamLeadDashboardModel : PageModel
     {
         private readonly IUserService _userService;
         private readonly IUserSkillService _userSkillService;
         private readonly ICategoryService _categoryService;
         private User? _currentUserEntity;
 
-        public ManagerDashboardModel(
+        public TeamLeadDashboardModel(
             IUserService userService,
             IUserSkillService userSkillService,
             ICategoryService categoryService

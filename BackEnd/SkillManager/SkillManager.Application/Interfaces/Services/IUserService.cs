@@ -11,6 +11,8 @@ public interface IUserService
     // Get single user by ID
     Task<UserDto?> GetUserByIdAsync(int userId, User currentUser);
 
+    Task<UserDto?> GetByIdAsync(int userId);
+
     // Create a new user
     Task<(bool Success, string Message, UserDto? CreatedUser)> CreateUserAsync(
         CreateUserDto dto,

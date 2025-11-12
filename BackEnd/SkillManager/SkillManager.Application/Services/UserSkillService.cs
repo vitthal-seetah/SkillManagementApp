@@ -119,6 +119,18 @@ namespace SkillManager.Application.Services
             return skills.Select(MapToDto);
         }
 
+        public async Task<IEnumerable<UserSkillDto>> GetAllUserSkillsByTeamAsync(int userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                throw new InvalidOperationException(" user does not exists");
+            }
+
+            var skills = await _userSkillRepository.GetAllByTeamAsync(user);
+            return skills.Select(MapToDto);
+        }
+
         public async Task<IEnumerable<UserSkillDto>> FilterBySkillAsync(string skillName)
         {
             var skills = await _userSkillRepository.FilterBySkillAsync(skillName);
@@ -251,6 +263,8 @@ namespace SkillManager.Application.Services
             return new UserSkillDto
             {
                 UserId = us.UserId,
+                FirstName = us.User.FirstName ?? "",
+                LastName = us.User.LastName ?? "",
                 SkillId = us.SkillId,
                 SkillName = us.Skill?.Label ?? "", // <-- Map to SkillName
                 SkillCode = us.Skill?.Code ?? "",

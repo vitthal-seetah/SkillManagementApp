@@ -1,0 +1,462 @@
+﻿@page
+@model SkillManager.web.Pages.ManagerDashboard.LastUpdated.IndexModel
+@{
+    ViewData["Title"] = "Last Updated";
+}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar - Light Mode -->
+        <div class="col-lg-2 col-md-3 d-md-block sidebar collapse bg-light border-end p-0">
+            <div class="position-sticky pt-3">
+                <!-- Sidebar Header -->
+                <div class="text-center p-3 border-bottom">
+                    <h5 class="mb-0 text-primary">
+                        <i class="bi bi-briefcase-fill me-2"></i>TeamLead Dashboard
+                    </h5>
+                </div>
+
+                <!-- Navigation Menu -->
+                <!-- Navigation Menu -->
+                <ul class="nav flex-column mt-3">
+                    <li class="nav-item">
+                        <a href="/TeamLeadDashboard" class="nav-link text-dark sidebar-link rounded mx-2">
+                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/TeamLeadDashboard/Team" class="nav-link text-dark sidebar-link rounded mx-2">
+                            <i class="bi bi-people me-2"></i>My Team
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/TeamLeadDashboard/LastUpdated" class="nav-link active text-dark sidebar-link rounded mx-2">
+                            <i class="bi bi-clock-history me-2"></i>Last Updated
+                        </a>
+                    </li>
+                </ul>
+
+               
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-10 col-md-9 ms-sm-auto px-md-4 main-content">
+            <!-- Mobile Toggle Button -->
+            <div class="d-md-none py-2">
+                <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target=".sidebar">
+                    <i class="bi bi-list"></i> Menu
+                </button>
+            </div>
+
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-clock-history me-2 text-primary"></i>Last Updated Skills</h2>
+                <div class="text-end">
+                    <h5 class="text-muted">@Model.TeamLeadName</h5>
+                    <small class="text-muted">@Model.TeamName Team</small>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <!-- Summary Cards -->
+            <div class="row text-center mb-4">
+                <div class="col-md-3">
+                    <div class="card shadow-sm p-3 bg-primary text-white">
+                        <h5>Team Members</h5>
+                        <h2>@Model.TeamMembers.Count</h2>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card shadow-sm p-3 bg-success text-white">
+                        <h5>Recently Active</h5>
+                        <h2>@Model.RecentlyActiveMembers</h2>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card shadow-sm p-3 bg-info text-white">
+                        <h5>Avg Days Since Update</h5>
+                        <h2>@Model.AverageDaysSinceUpdate.ToString("F1")</h2>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card shadow-sm p-3 bg-warning text-white">
+                        <h5>Inactive Members</h5>
+                        <h2>@Model.InactiveMembers</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-funnel me-2"></i>Filter Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <!-- Activity Period Filter -->
+                        <div class="col-md-4">
+                            <label for="ActivityPeriod" class="form-label">Activity Period</label>
+                            <select class="form-select" asp-for="ActivityPeriod" onchange="this.form.submit()">
+                                <option value="All">All Time</option>
+                                <option value="Today">Today</option>
+                                <option value="ThisWeek">This Week</option>
+                                <option value="ThisMonth">This Month</option>
+                                <option value="Last30Days">Last 30 Days</option>
+                                <option value="Last90Days">Last 90 Days</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort By -->
+                        <div class="col-md-4">
+                            <label for="SortBy" class="form-label">Sort By</label>
+                            <select class="form-select" asp-for="SortBy" onchange="this.form.submit()">
+                                <option value="RecentFirst">Most Recent First</option>
+                                <option value="RecentLast">Oldest First</option>
+                                <option value="UserNameAsc">User Name (A-Z)</option>
+                                <option value="UserNameDesc">User Name (Z-A)</option>
+                                <option value="DaysSinceAsc">Days Since Update (Low-High)</option>
+                                <option value="DaysSinceDesc">Days Since Update (High-Low)</option>
+                            </select>
+                        </div>
+
+                        <!-- Reset Button -->
+                        <div class="col-md-2 d-flex align-items-end">
+                            <a href="/ManagerDashboard/LastUpdated" class="btn btn-outline-secondary w-100">Reset</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Last Updated Skills Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clock-history me-2"></i>Team Member Last Updated Skills
+                        <span class="badge bg-light text-dark ms-2">@Model.TeamMembers.Count members</span>
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Team Member</th>
+                                    <th>Last Updated Skill</th>
+                                    <th>Category</th>
+                                    <th>Level</th>
+                                    <th>Last Updated</th>
+                                    <th>Days Since Update</th>
+                                    <th>Activity Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var member in Model.TeamMembers)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                    <span class="fw-bold text-primary">
+                                                        @member.FirstName[0]@member.LastName[0]
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0 text-primary">@member.FirstName @member.LastName</h6>
+                                                    <small class="text-muted">ID: @member.UserId</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <strong>@member.SkillName</strong>
+                                            <br><small class="text-muted">@member.SkillCode</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">@member.CategoryName</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge @Model.GetLevelBadgeClass(member.LevelName)">@member.LevelName</span>
+                                            <div class="progress mt-1" style="height: 6px; width: 80px;">
+                                                <div class="progress-bar @Model.GetLevelProgressBarClass(member.LevelName)"
+                                                     style="width: @(member.LevelId * 25)%">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold @Model.GetRecencyTextClass(member.DaysSinceUpdate)">
+                                                @member.LastUpdated.ToString("MMM dd, yyyy")
+                                            </span>
+                                            <br>
+                                            <small class="text-muted">@member.LastUpdated.ToString("h:mm tt")</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge @Model.GetDaysBadgeClass(member.DaysSinceUpdate)">
+                                                @member.DaysSinceUpdate days
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge @Model.GetActivityBadgeClass(member.DaysSinceUpdate)">
+                                                @Model.GetActivityStatus(member.DaysSinceUpdate)
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.TeamMembers.Any())
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="fas fa-users fa-2x mb-2"></i>
+                                                <p>No team members found with current filters</p>
+                                                <a href="/ManagerDashboard/LastUpdated" class="btn btn-outline-primary btn-sm">Clear Filters</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Summary -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card shadow">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="card-title mb-0">
+                                <i class="bi bi-activity me-2"></i>Activity Summary
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="border-end">
+                                        <h4 class="text-success mb-1">@Model.ActiveMembers</h4>
+                                        <small class="text-muted">Active (&lt; 7 days)</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="border-end">
+                                        <h4 class="text-warning mb-1">@Model.WarningMembers</h4>
+                                        <small class="text-muted">Warning (7-30 days)</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div>
+                                        <h4 class="text-danger mb-1">@Model.InactiveMembers</h4>
+                                        <small class="text-muted">Inactive (&gt; 30 days)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="card-title mb-0">
+                                <i class="bi bi-calendar-event me-2"></i>Recent Activity
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Last 24 hours:</span>
+                                <strong class="text-success">@Model.SkillsUpdatedToday updates</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Last 7 days:</span>
+                                <strong class="text-info">@Model.SkillsUpdatedThisWeek updates</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Last 30 days:</span>
+                                <strong class="text-primary">@Model.SkillsUpdatedThisMonth updates</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+        
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            margin: 0.125rem 0.5rem;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: #0d6efd !important;
+            color: white !important;
+        }
+        
+        .sidebar-link:hover {
+            background-color: #e9ecef !important;
+            color: #0d6efd !important;
+            transform: translateX(5px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+            width: 20px;
+            text-align: center;
+            transition: all 0.2s ease-in-out;
+            color: #6c757d;
+        }
+        
+        .sidebar-stats {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .sidebar-stats:hover {
+            background-color: #f8f9fa;
+            border-radius: 0.375rem;
+        }
+        
+        .stats-item {
+            transition: all 0.2s ease-in-out;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        
+        .stats-item:hover {
+            background-color: #e9ecef;
+            transform: translateX(3px);
+        }
+        
+        .main-content {
+            transition: all 0.3s;
+        }
+        
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+            font-size: 0.8rem;
+        }
+        
+        .progress {
+            background-color: #f8f9fa;
+        }
+
+        /* Table specific styles */
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+            background-color: #f8f9fa;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        /* Level Badge Styles */
+        .badge.level-expert {
+            background: linear-gradient(135deg, #FF5722, #e64a19) !important;
+            color: white !important;
+            border: none;
+        }
+
+        .badge.level-maitrise {
+            background: linear-gradient(135deg, #9C27B0, #7b1fa2) !important;
+            color: white !important;
+            border: none;
+        }
+
+        .badge.level-pratique {
+            background: linear-gradient(135deg, #2196F3, #1976d2) !important;
+            color: white !important;
+            border: none;
+        }
+
+        .badge.level-notion {
+            background: linear-gradient(135deg, #FFC107, #e6ac00) !important;
+            color: white !important;
+            border: none;
+        }
+
+        /* Progress Bar Colors to Match Level Badges */
+        .progress-bar.bg-expert {
+            background: linear-gradient(135deg, #FF5722, #e64a19) !important;
+        }
+
+        .progress-bar.bg-maitrise {
+            background: linear-gradient(135deg, #9C27B0, #7b1fa2) !important;
+        }
+
+        .progress-bar.bg-pratique {
+            background: linear-gradient(135deg, #2196F3, #1976d2) !important;
+        }
+
+        .progress-bar.bg-notion {
+            background: linear-gradient(135deg, #FFC107, #e6ac00) !important;
+        }
+
+        /* Mobile responsiveness */
+        @@media (max-width: 767.98px) {
+            .sidebar {
+                position: fixed;
+                top: 56px;
+                bottom: 0;
+                left: 0;
+                z-index: 1000;
+                max-width: 250px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide alerts after 5 seconds
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    </script>
+}
+

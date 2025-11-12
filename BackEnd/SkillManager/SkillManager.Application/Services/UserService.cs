@@ -54,6 +54,15 @@ public sealed class UserService : IUserService
         return MapToDto(user);
     }
 
+    public async Task<UserDto?> GetByIdAsync(int userId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            return null;
+
+        return MapToDto(user);
+    }
+
     // -----------------------------
     // Create new user - UPDATED
     // -----------------------------

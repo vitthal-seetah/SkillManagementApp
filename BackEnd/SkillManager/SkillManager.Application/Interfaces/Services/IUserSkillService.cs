@@ -12,6 +12,8 @@ public interface IUserSkillService
     Task AddSkillAsync(int userId, AddUserSkillDto dto);
     Task<bool> UpdateSkillAsync(int userId, UpdateUserSkillsDto dto);
     Task<IEnumerable<UserSkillDto>> GetAllUserSkillsAsync();
+    Task<IEnumerable<UserSkillDto>> GetAllUserSkillsByTeamAsync(int userId);
+
     Task<IEnumerable<UserSkillDto>> FilterBySkillAsync(string skillName);
     Task<IEnumerable<UserSkillsWithLevels>> GetUserSkillsByCategoryAsync(
         int categoryId,

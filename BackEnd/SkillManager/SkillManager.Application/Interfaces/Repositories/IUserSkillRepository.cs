@@ -34,5 +34,6 @@ namespace SkillManager.Application.Interfaces.Repositories
         Task SaveChangesAsync();
         Task<List<CategoryGapDto>> GetSkillGapsByCategoryAsync(int userId);
         Task<List<SkillGapDto>> GetSkillGapsAsync(int userId);
+        Task<IEnumerable<UserSkill>> GetAllByTeamAsync(User user);
     }
 }

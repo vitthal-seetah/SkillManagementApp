@@ -20,7 +20,7 @@ namespace SkillManager.Infrastructure.Persistence.Repositories
         {
             return await _context
                 .UserSkills.Include(us => us.Skill)
-                .ThenInclude(s => s.Category)
+                    .ThenInclude(s => s.Category)
                 .Include(us => us.Level)
                 .Where(us => us.UserId == user.UserId && us.Skill.CategoryId == category.CategoryId)
                 .OrderBy(us => us.Skill.Code)
@@ -34,8 +34,8 @@ namespace SkillManager.Infrastructure.Persistence.Repositories
         {
             return await _context
                 .UserSkills.Include(us => us.Skill)
-                .ThenInclude(s => s.Category)
-                .ThenInclude(c => c.CategoryType)
+                    .ThenInclude(s => s.Category)
+                        .ThenInclude(c => c.CategoryType)
                 .Include(us => us.Level)
                 .Where(us => us.UserId == userId)
                 .ToListAsync();
@@ -48,10 +48,23 @@ namespace SkillManager.Infrastructure.Persistence.Repositories
         {
             return await _context
                 .UserSkills.Include(us => us.Skill)
-                .ThenInclude(s => s.Category)
-                .ThenInclude(c => c.CategoryType)
+                    .ThenInclude(s => s.Category)
+                        .ThenInclude(c => c.CategoryType)
                 .Include(us => us.Level)
                 .Include(us => us.User)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<UserSkill>> GetAllByTeamAsync(User user)
+        {
+            return await _context
+                .UserSkills.Include(us => us.Skill)
+                    .ThenInclude(s => s.Category)
+                        .ThenInclude(c => c.CategoryType)
+                .Include(us => us.Level)
+                .Include(us => us.User)
+                    .ThenInclude(us => us.Team)
+                .Where(us => us.User.TeamId == user.TeamId)
                 .ToListAsync();
         }
 
@@ -62,8 +75,8 @@ namespace SkillManager.Infrastructure.Persistence.Repositories
         {
             return await _context
                 .UserSkills.Include(us => us.Skill)
-                .ThenInclude(s => s.Category)
-                .ThenInclude(c => c.CategoryType)
+                    .ThenInclude(s => s.Category)
+                        .ThenInclude(c => c.CategoryType)
                 .Include(us => us.Level)
                 .FirstOrDefaultAsync(us => us.UserId == userId && us.SkillId == skillId);
         }
@@ -72,7 +85,7 @@ namespace SkillManager.Infrastructure.Persistence.Repositories
         {
             return await _context
                 .UserSkills.Include(us => us.Skill)
-                .ThenInclude(s => s.Category)
+                    .ThenInclude(s => s.Category)
                 .Include(us => us.Level)
                 .Include(us => us.User)
                 .ToListAsync();
@@ -118,8 +131,8 @@ namespace SkillManager.Infrastructure.Persistence.Repositories
             return await _context
                 .UserSkills.Include(us => us.User)
                 .Include(us => us.Skill)
-                .ThenInclude(s => s.Category)
-                .ThenInclude(c => c.CategoryType)
+                    .ThenInclude(s => s.Category)
+                        .ThenInclude(c => c.CategoryType)
                 .Include(us => us.Level)
                 .Where(us =>
                     EF.Functions.Like(us.Skill.Code, $"%{skillName}%")
@@ -149,7 +162,7 @@ namespace SkillManager.Infrastructure.Persistence.Repositories
             var userSkillsWithGaps = await _context
                 .UserSkills.Where(us => us.UserId == userId)
                 .Include(us => us.Skill)
-                .ThenInclude(s => s.Category)
+                    .ThenInclude(s => s.Category)
                 .Include(us => us.Skill)
                 .Include(us => us.Level) // User's current level
                 .Select(us => new SkillGapDto

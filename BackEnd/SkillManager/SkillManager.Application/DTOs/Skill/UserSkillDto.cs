@@ -5,6 +5,8 @@ namespace SkillManager.Infrastructure.DTOs.Skill;
 public class UserSkillDto
 {
     public int UserId { get; set; }
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
     public int SkillId { get; set; }
     public string SkillName { get; set; }
     public string SkillCode { get; set; }
