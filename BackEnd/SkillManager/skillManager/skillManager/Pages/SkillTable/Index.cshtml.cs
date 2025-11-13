@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -59,13 +60,16 @@ namespace SkillManager.Web.Pages.Users
         public int TotalPages { get; set; }
         public int TotalSkills { get; set; }
         public List<UserSkillsViewModel> AllUserSkills { get; set; }
+        public string UserId { get; set; } = "";
+        public string UserRole { get; set; } = " ";
 
         public List<UserDto> AvailableUsers { get; set; } = new();
         public List<CategoryDto> AvailableCategories { get; set; } = new();
         public List<string> AvailableLevels { get; set; } =
             new() { "Connaissance", "Pratique", "Maitrise", "Expert" };
+        public CategoryNavigationViewModel ViewModel { get; set; } = new();
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int? categoryyId)
         {
             Console.WriteLine("on get normal called");
             CurrentUserName = User.Identity?.Name ?? "Unknown User";
@@ -93,6 +97,26 @@ namespace SkillManager.Web.Pages.Users
                 null
             );
 
+            var claimsJson = System.Text.Json.JsonSerializer.Serialize(
+                User.Claims.Select(c => new { Type = c.Type, Value = c.Value }),
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+            );
+
+            Console.WriteLine("=== CLAIMS AS JSON ===");
+            Console.WriteLine(claimsJson);
+
+            // Simple UID extraction
+            UserRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "No role";
+
+            var uidClaim = User.Claims.FirstOrDefault(c => c.Type == "uid");
+            if (uidClaim != null && int.TryParse(uidClaim.Value, out int userId))
+            {
+                UserId = userId.ToString();
+                ViewModel = await _userSkillService.GetCategoryNavigationAsync(
+                    categoryyId,
+                    currentUser.UserId
+                );
+            }
             if (currentUser != null)
             {
                 // Get available users and categories for filters
@@ -129,9 +153,9 @@ namespace SkillManager.Web.Pages.Users
             // Your existing filtering code remains the same...
             if (!string.IsNullOrWhiteSpace(SelectedUser) && SelectedUser != "All")
             {
-                if (int.TryParse(SelectedUser, out int userId))
+                if (int.TryParse(SelectedUser, out int UserId))
                 {
-                    AllUserSkills = AllUserSkills.Where(us => us.UserId == userId).ToList();
+                    AllUserSkills = AllUserSkills.Where(us => us.UserId == UserId).ToList();
                 }
             }
 

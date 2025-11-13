@@ -7,8 +7,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
-        <!-- Sidebar -->
+     
         <div class="col-md-3 col-lg-2 sidebar bg-light">
             <div class="sidebar-sticky">
                 <div class="sidebar-header p-1 border-bottom">
@@ -17,23 +16,8 @@
                     </h5>
                 </div>
 
-                @* --- ADMIN/MANAGER BUTTON --- *@
-                @{
-                    bool isAdmin = Model.UserRole.Contains("Admin");
-                    bool isManager = Model.UserRole.Contains("Manager");
-                    bool seeButton = isAdmin || isManager;
-                }
-
-                @if (seeButton)
-                {
-                    <div class="p-2 mb-3 border-top">
-                        <a asp-page="/Skills/Manage"
-                           class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center">
-                            <i class="bi bi-gear-fill me-2"></i> Skill Manager
-                        </a>
-                    </div>
-                }
-
+             
+                
 
                 <nav class="sidebar-nav">
                     @foreach (var categoryType in Model.ViewModel.CategoryTypes)

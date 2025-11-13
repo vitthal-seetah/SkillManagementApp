@@ -4,61 +4,139 @@
 @{
     ViewData["Title"] = "Skill Gap Analysis";
 }
-
-<<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-people-fill me-2"></i>User Skills Overview</h2>
-        <a href="/skills" class="btn btn-outline-primary">
-            <i class="bi bi-arrow-left me-1"></i>Back
-        </a>
-    </div>
-
+<div class="container-fluid">
     <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Skill Gap Analysis</h2>
-                <div class="text-muted">
-                    <span class="badge bg-success me-2">On Track</span>
-                    <span class="badge bg-warning me-2">Needs Improvement</span>
-                    <span class="badge bg-danger">Critical Gap</span>
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 sidebar bg-light">
+            <div class="sidebar-sticky">
+                <div class="sidebar-header p-1 border-bottom">
+                    <h5 class="mb-0">
+                        Skills Categories
+                    </h5>
                 </div>
+
+                <nav class="sidebar-nav">
+                    @foreach (var categoryType in Model.ViewModel.CategoryTypes)
+                    {
+                        <div class="category-type-section">
+                            <div class="category-type-header p-2 border-bottom"
+                                 data-bs-toggle="collapse"
+                                 href="#categoryType-@categoryType.CategoryTypeId"
+                                 role="button">
+                                <h6 class="mb-0 d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-primary">
+                                        <i class="bi bi-folder-fill me-1"></i>@categoryType.Name
+                                    </span>
+                                    <i class="bi bi-chevron-down"></i>
+                                </h6>
+                            </div>
+
+                            <div class="collapse show" id="categoryType-@categoryType.CategoryTypeId">
+                                <ul class="list-unstyled mb-0">
+                                    @foreach (var category in categoryType.Categories)
+                                    {
+                                        <li class="category-item">
+                                            <a asp-page="/Skills/Index"
+                                               asp-route-categoryId="@category.CategoryId"
+                                               class="category-link d-block px-3 py-2 text-decoration-none @(Model.ViewModel.SelectedCategoryId == category.CategoryId ? "active" : "")">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span style="font-size: 0.75rem;" class="category-name fw-bold ">@category.Name</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!Model.ViewModel.CategoryTypes.Any())
+                    {
+                        <div class="p-3 text-center text-muted">
+                            <i class="bi bi-inbox"></i>
+                            <div>No categories available</div>
+                        </div>
+                    }
+                    <hr>
+                    <div class="category-item">
+                        <a href="/skillgap" class="category-link d-block px-3 text-decoration-none">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">
+                                    Skill Gap Analysis
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="category-item">
+                        <a href="/skilltable" class="category-link d-block px-3  text-decoration-none">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">
+                                    User Skill Table
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 ms-sm-auto px-4 py-3">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-people-fill me-2"></i>User Skills Overview</h2>
+                <a href="/skills" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left me-1"></i>Back
+                </a>
             </div>
 
-            <!-- Summary Cards -->
-            <div class="row mb-4">
-                <div class="col-md-3 mb-3">
-                    <div class="card border-0 bg-primary text-white">
-                        <div class="card-body text-center">
-                            <h4 class="card-title">@Model.TotalSkills</h4>
-                            <p class="card-text mb-0">Total Skills</p>
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Skill Gap Analysis</h2>
+                        <div class="text-muted">
+                            <span class="badge bg-success me-2">On Track</span>
+                            <span class="badge bg-warning me-2">Needs Improvement</span>
+                            <span class="badge bg-danger">Critical Gap</span>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="card border-0 bg-success text-white">
-                        <div class="card-body text-center">
-                            <h4 class="card-title">@Model.MeetingTarget</h4>
-                            <p class="card-text mb-0">Meeting Target</p>
+
+                    <!-- Summary Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-3">
+                            <div class="card border-0 bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">@Model.TotalSkills</h4>
+                                    <p class="card-text mb-0">Total Skills</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card border-0 bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">@Model.MeetingTarget</h4>
+                                    <p class="card-text mb-0">Meeting Target</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card border-0 bg-warning text-white">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">@Model.NeedsImprovement</h4>
+                                    <p class="card-text mb-0">Needs Improvement</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card border-0 bg-danger text-white">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">@Model.CriticalGaps</h4>
+                                    <p class="card-text mb-0">Critical Gaps</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="card border-0 bg-warning text-white">
-                        <div class="card-body text-center">
-                            <h4 class="card-title">@Model.NeedsImprovement</h4>
-                            <p class="card-text mb-0">Needs Improvement</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="card border-0 bg-danger text-white">
-                        <div class="card-body text-center">
-                            <h4 class="card-title">@Model.CriticalGaps</h4>
-                            <p class="card-text mb-0">Critical Gaps</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Category Filter and Sorting -->
             <div class="card shadow-sm mb-4">
@@ -398,6 +476,65 @@
 
 @section Styles {
     <style>
+        .sidebar {
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .category-type-header {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+            .category-type-header:hover {
+                background-color: #e9ecef;
+            }
+        /* Force all dropdowns to open downward */
+        .dropdown-menu {
+            top: 100% !important;
+            bottom: auto !important;
+            transform: none !important;
+        }
+
+        /* Remove any dropup styles */
+        .dropup .dropdown-menu {
+            top: 100% !important;
+            bottom: auto !important;
+        }
+
+        .category-link {
+            color: #495057;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+            .category-link:hover {
+                background-color: #f8f9fa;
+                border-left-color: #007bff;
+                color: #007bff;
+            }
+
+            .category-link.active {
+                background-color: #007bff;
+                color: white;
+                border-left-color: #0056b3;
+            }
+
+        .skill-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        /* Fix dropdown z-index inside cards */
+        .card .dropdown-menu {
+            z-index: 1060 !important; /* Higher than card z-index */
+        }
+
+        /* Ensure the card doesn't clip the dropdown */
+        .card {
+            overflow: visible !important;
+        }
         .level-expert { background: linear-gradient(135deg, #FF5722, #e64a19); }
         .level-maitrise { background: linear-gradient(135deg, #9C27B0, #7b1fa2); }
         .level-pratique { background: linear-gradient(135deg, #2196F3, #1976d2); }

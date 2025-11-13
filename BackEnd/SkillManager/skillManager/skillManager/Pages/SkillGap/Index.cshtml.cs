@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SkillManager.Application.DTOs.Category;
 using SkillManager.Application.DTOs.Skill;
 using SkillManager.Application.Interfaces.Services;
+using SkillManager.Application.Models;
+using SkillManager.Domain.Entities;
 
 namespace SkillManager.Web.Pages.SkillGap
 {
@@ -43,16 +45,34 @@ namespace SkillManager.Web.Pages.SkillGap
         public int ProjectRequiredSkills { get; set; }
         public int ProjectRequiredGaps { get; set; }
         public int FilteredSkillCount { get; set; }
+        public CategoryNavigationViewModel ViewModel { get; set; } = new();
+        public string UserRole { get; set; } = " ";
+        public string UserId { get; set; } = "";
 
         public async Task OnGetAsync(int? categoryId, string? gapStatus, string? sortBy)
         {
             SelectedCategoryId = categoryId;
             SelectedGapStatus = gapStatus;
             SortBy = sortBy ?? "skill-name";
+            var claimsJson = System.Text.Json.JsonSerializer.Serialize(
+                User.Claims.Select(c => new { Type = c.Type, Value = c.Value }),
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+            );
+
+            Console.WriteLine("=== CLAIMS AS JSON ===");
+            Console.WriteLine(claimsJson);
+
+            // Simple UID extraction
+            UserRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "No role";
 
             var uidClaim = User.Claims.FirstOrDefault(c => c.Type == "uid");
             if (uidClaim != null && int.TryParse(uidClaim.Value, out int userId))
             {
+                UserId = userId.ToString();
+
+                // Get the ViewModel with user skills
+                ViewModel = await _userSkillService.GetCategoryNavigationAsync(categoryId, userId);
+
                 // Get available categories for filter dropdown
                 AvailableCategories = (await _categoryService.GetAllCategoriesAsync()).ToList();
 

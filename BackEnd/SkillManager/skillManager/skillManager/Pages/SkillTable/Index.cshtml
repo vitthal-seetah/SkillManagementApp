@@ -5,13 +5,84 @@
 }
 
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-people-fill me-2"></i>User Skills Overview</h2>
-        <a href="/skills" class="btn btn-outline-primary">
-            <i class="bi bi-arrow-left me-1"></i>Back
-        </a>
-    </div>
-    <form method="get" asp-page="/skilltable">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 sidebar bg-light">
+            <div class="sidebar-sticky">
+                <div class="sidebar-header p-1 border-bottom">
+                    <h5 class="mb-0">
+                        Skills Categories
+                    </h5>
+                </div>
+
+                <nav class="sidebar-nav">
+                    @foreach (var categoryType in Model.ViewModel.CategoryTypes)
+                    {
+                        <div class="category-type-section">
+                            <div class="category-type-header p-2 border-bottom"
+                                 data-bs-toggle="collapse"
+                                 href="#categoryType-@categoryType.CategoryTypeId"
+                                 role="button">
+                                <h6 class="mb-0 d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-primary">
+                                        <i class="bi bi-folder-fill me-1"></i>@categoryType.Name
+                                    </span>
+                                    <i class="bi bi-chevron-down"></i>
+                                </h6>
+                            </div>
+
+                            <div class="collapse show" id="categoryType-@categoryType.CategoryTypeId">
+                                <ul class="list-unstyled mb-0">
+                                    @foreach (var category in categoryType.Categories)
+                                    {
+                                        <li class="category-item">
+                                            <a asp-page="/Skills/Index"
+                                               asp-route-categoryId="@category.CategoryId"
+                                               class="category-link d-block px-3 py-2 text-decoration-none @(Model.ViewModel.SelectedCategoryId == category.CategoryId ? "active" : "")">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span style="font-size: 0.75rem;" class="category-name fw-bold ">@category.Name</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                    <hr>
+                    <div class="category-item">
+                        <a href="/skillgap" class="category-link d-block px-3 text-decoration-none">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">
+                                    Skill Gap Analysis
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="category-item">
+                        <a href="/skilltable" class="category-link d-block px-3  text-decoration-none">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">
+                                    User Skill Table
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 ms-sm-auto px-4 py-3">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-people-fill me-2"></i>User Skills Overview</h2>
+                <a href="/skills" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left me-1"></i>Back
+                </a>
+            </div>
+
+            <form method="get" asp-page="/skilltable">
         <input type="hidden" name="handler" value="Export" />
         <input type="hidden" name="SelectedUser" value="@Model.SelectedUser" />
         <input type="hidden" name="SelectedCategory" value="@Model.SelectedCategory" />
@@ -281,6 +352,61 @@
 
 @section Styles {
     <style>
+                .sidebar {
+                    height: 100vh;
+                    position: sticky;
+                    top: 0;
+                    overflow-y: auto;
+                }
+
+                .category-type-header {
+                    cursor: pointer;
+                    transition: background-color 0.2s;
+                }
+
+                    .category-type-header:hover {
+                        background-color: #e9ecef;
+                    }
+                /* Force all dropdowns to open downward */
+                .dropdown-menu {
+                    top: 100% !important;
+                    bottom: auto !important;
+                    transform: none !important;
+                }
+
+                /* Remove any dropup styles */
+                .dropup .dropdown-menu {
+                    top: 100% !important;
+                    bottom: auto !important;
+                }
+
+                .category-link {
+                    color: #495057;
+                    transition: all 0.2s;
+                    border-left: 3px solid transparent;
+                }
+
+                    .category-link:hover {
+                        background-color: #f8f9fa;
+                        border-left-color: #007bff;
+                        color: #007bff;
+                    }
+
+                    .category-link.active {
+                        background-color: #007bff;
+                        color: white;
+                        border-left-color: #0056b3;
+                    }
+
+                .skill-card {
+                    transition: transform 0.2s, box-shadow 0.2s;
+                }
+
+                /* Fix dropdown z-index inside cards */
+                .card .dropdown-menu {
+                    z-index: 1060 !important; /* Higher than card z-index */
+                }
+
         .avatar-sm {
             width: 40px;
             height: 40px;
