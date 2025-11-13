@@ -8,7 +8,7 @@ using SkillManager.Application.Interfaces.Services;
 using SkillManager.Domain.Entities;
 using SkillManager.Infrastructure.DTOs.Skill;
 
-namespace SkillManager.web.Pages.ManagerDashboard.Team
+namespace SkillManager.web.Pages.TeamLeadDashboard.Team
 {
     // [Authorize(Policy = "TeamLeadPolicy")]
     public class IndexModel : PageModel

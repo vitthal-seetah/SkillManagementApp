@@ -18,5 +18,6 @@ namespace SkillManager.Application.Interfaces.Repositories
         Task<bool> RemoveUserFromTeamAsync(Team team, User user);
         Task<Team?> GetTeamWithMembersAsync(int teamId);
         Task<Team?> GetTeamWithProjectsAsync(int teamId);
+        Task<IEnumerable<Team>> GetTeamsByProjectIdAsync(int? projectId);
     }
 }

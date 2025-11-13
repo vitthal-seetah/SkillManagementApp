@@ -7,9 +7,9 @@ using SkillManager.Application.Interfaces.Services;
 using SkillManager.Domain.Entities;
 using SkillManager.Infrastructure.DTOs.Skill;
 
-namespace SkillManager.web.Pages.TeamLeadDashboard.LastUpdated;
+namespace SkillManager.web.Pages.ManagerDashboard.LastUpdated;
 
-[Authorize(Policy = "TeamLeadPolicy")]
+[Authorize(Policy = "ManagerPolicy")]
 public class IndexModel : PageModel
 {
     private readonly IUserService _userService;
@@ -25,7 +25,7 @@ public class IndexModel : PageModel
     public List<UserSummary> UserSummaries { get; set; } = new();
 
     public List<TeamMemberLastUpdatedDto> TeamMembers { get; set; } = new();
-    public string TeamLeadName { get; set; } = "";
+    public string ManagerName { get; set; } = "";
     public string TeamName { get; set; } = "";
 
     // Statistics
@@ -52,7 +52,7 @@ public class IndexModel : PageModel
         if (currentUserId > 0)
         {
             var currentUser = await _userService.GetByIdAsync(currentUserId);
-            TeamLeadName = $"{currentUser.FirstName} {currentUser.LastName}";
+            ManagerName = $"{currentUser.FirstName} {currentUser.LastName}";
             TeamName = currentUser.TeamName ?? "My Team";
 
             // Get all team skills

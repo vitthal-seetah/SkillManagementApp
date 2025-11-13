@@ -3,6 +3,7 @@ using SkillManager.Application.DTOs.Team;
 using SkillManager.Application.DTOs.User;
 using SkillManager.Application.Interfaces.Repositories;
 using SkillManager.Application.Interfaces.Services;
+using SkillManager.Application.Mappers;
 using SkillManager.Domain.Entities;
 
 namespace SkillManager.Application.Services
@@ -196,6 +197,38 @@ namespace SkillManager.Application.Services
         public async Task<bool> IsUserInTeamAsync(User user, Team team)
         {
             return user.TeamId == team.TeamId;
+        }
+
+        public async Task<IEnumerable<TeamDto>> GetTeamsByProjectIdAsync(int? projectId)
+        {
+            if (projectId <= 0)
+                throw new ArgumentException("Invalid project ID");
+
+            var teams = await _teamRepository.GetTeamsByProjectIdAsync(projectId);
+            return TeamMapper.ToDto(teams);
+        }
+
+        public async Task<Dictionary<int, string>> GetUserTeamMapByProjectIdAsync(int? projectId)
+        {
+            var userTeamMap = new Dictionary<int, string>();
+
+            if (projectId == null || projectId <= 0)
+                return userTeamMap;
+
+            // Get all teams in the project
+            var teams = await _teamRepository.GetTeamsByProjectIdAsync(projectId);
+
+            foreach (var team in teams)
+            {
+                // Get all members for this team
+                var members = await _teamRepository.GetTeamMembersAsync(team);
+                foreach (var member in members)
+                {
+                    userTeamMap[member.UserId] = team.TeamName;
+                }
+            }
+
+            return userTeamMap;
         }
     }
 }

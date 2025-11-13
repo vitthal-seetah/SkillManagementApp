@@ -120,5 +120,12 @@ namespace SkillManager.Infrastructure.Repositories
                 .ThenInclude(pt => pt.Project)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Team>> GetTeamsByProjectIdAsync(int? projectId)
+        {
+            return await _context
+                .Teams.Where(t => t.ProjectTeams.Any(pt => pt.ProjectId == projectId))
+                .ToListAsync();
+        }
     }
 }

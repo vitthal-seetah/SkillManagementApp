@@ -1,5 +1,5 @@
 ﻿@page
-@model SkillManager.web.Pages.TeamLeadDashboard.LastUpdated.IndexModel
+@model SkillManager.web.Pages.ManagerDashboard.LastUpdated.IndexModel
 @{
     ViewData["Title"] = "Last Updated";
 }
@@ -11,7 +11,7 @@
                 <!-- Sidebar Header -->
                 <div class="text-center p-3 border-bottom">
                     <h5 class="mb-0 text-primary">
-                        <i class="bi bi-briefcase-fill me-2"></i>TeamLead Dashboard
+                        <i class="bi bi-briefcase-fill me-2"></i>Manager Dashboard
                     </h5>
                 </div>
 
@@ -19,19 +19,19 @@
                 <!-- Navigation Menu -->
                 <ul class="nav flex-column mt-3">
                     <li class="nav-item">
-                        <a href="/TeamLeadDashboard" class="nav-link text-dark sidebar-link rounded mx-2">
+                        <a href="/ManagerDashboard" class="nav-link text-dark sidebar-link rounded mx-2">
                             <i class="bi bi-speedometer2 me-2"></i>Dashboard
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href="/TeamLeadDashboard/Team" class="nav-link text-dark sidebar-link rounded mx-2">
+                        <a href="/ManagerDashboard/Team" class="nav-link text-dark sidebar-link rounded mx-2">
                             <i class="bi bi-people me-2"></i>My Team
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href="/TeamLeadDashboard/LastUpdated" class="nav-link active text-dark sidebar-link rounded mx-2">
+                        <a href="/ManagerDashboard/LastUpdated" class="nav-link active text-dark sidebar-link rounded mx-2">
                             <i class="bi bi-clock-history me-2"></i>Last Updated
                         </a>
                     </li>
@@ -54,7 +54,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="bi bi-clock-history me-2 text-primary"></i>Last Updated Skills</h2>
                 <div class="text-end">
-                    <h5 class="text-muted">@Model.TeamLeadName</h5>
+                    <h5 class="text-muted">@Model.ManagerName</h5>
                     <small class="text-muted">@Model.TeamName Team</small>
                 </div>
             </div>

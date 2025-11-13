@@ -15,5 +15,7 @@ namespace SkillManager.Application.DTOs.Team
         public string TeamDescription { get; set; } = string.Empty;
 
         public int TeamLeadId { get; set; }
+
+        public int MemberCount { get; set; }
     }
 }

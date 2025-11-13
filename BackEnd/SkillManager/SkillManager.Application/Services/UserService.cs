@@ -285,6 +285,11 @@ public sealed class UserService : IUserService
         return users.Select(MapToDto);
     }
 
+    public async Task<User?> GetUserEntityByIdAsync(int userId)
+    {
+        return await _userRepository.GetByIdAsync(userId);
+    }
+
     private static UserDto MapToDto(User u)
     {
         return new UserDto

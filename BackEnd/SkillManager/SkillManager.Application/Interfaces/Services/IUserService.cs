@@ -30,4 +30,5 @@ public interface IUserService
 
     Task<User?> GetUserEntityByDomainAndEidAsync(string domain, string eid, User currentUser);
     Task<UserDto?> GetUserByDomainAndEidAsync(string domain, string eid, User currentUser);
+    Task<User?> GetUserEntityByIdAsync(int userId);
 }

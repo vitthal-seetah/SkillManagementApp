@@ -35,5 +35,7 @@ namespace SkillManager.Application.Interfaces.Services
         // User-specific team operations
         Task<Team?> GetUserTeamAsync(User user);
         Task<bool> IsUserInTeamAsync(User user, Team team);
+        Task<IEnumerable<TeamDto>> GetTeamsByProjectIdAsync(int? projectId);
+        Task<Dictionary<int, string>> GetUserTeamMapByProjectIdAsync(int? projectId);
     }
 }
