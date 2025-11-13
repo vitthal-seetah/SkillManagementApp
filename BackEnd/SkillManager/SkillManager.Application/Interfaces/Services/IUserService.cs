@@ -22,6 +22,7 @@ public interface IUserService
         UpdateUserDto dto,
         User currentUser
     );
+    Task<IEnumerable<UserDto>> GetAllByTeamAsync(User currentUser);
 
     // Update user role separately
     Task<bool> UpdateUserRoleAsync(int userId, string roleName, User currentUser);

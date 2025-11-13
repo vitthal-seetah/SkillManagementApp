@@ -90,7 +90,7 @@ namespace SkillManager.Web.Pages
             }
 
             // Get all users in the current user's project
-            var allUsers = await _userService.GetAllAsync(currentUser);
+            var allUsers = await _userService.GetAllByTeamAsync(currentUser);
 
             // Set header information
             ProjectName = currentUser.Project?.ProjectName ?? "No Project";
