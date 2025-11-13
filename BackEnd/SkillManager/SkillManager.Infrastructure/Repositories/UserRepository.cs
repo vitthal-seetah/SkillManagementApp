@@ -151,16 +151,29 @@ namespace SkillManager.Infrastructure.Repositories
             return await query.FirstOrDefaultAsync(u => u.Eid == eid);
         }
 
-        public async Task<IEnumerable<User?>> GetByProjectIdAsync(int? projectId)
+        public async Task<IEnumerable<User?>> GetByProjectIdAsync(User user)
         {
-            if (projectId == null || projectId == 0)
+            if (user.ProjectId == null || user.ProjectId == 0)
                 return null;
             return await _context
                 .Users.Include(u => u.Role)
                 .Include(u => u.Project)
                 .Include(u => u.Team)
-                .Where(u => u.ProjectId == projectId)
+                .Where(u => u.ProjectId == user.ProjectId)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<User?>> GetByProjectAndTeamAsync(User user)
+        {
+            if (user.ProjectId == null || user.ProjectId == 0)
+                return null;
+            return await _context
+                .Users.Include(u => u.Role)
+                .Include(u => u.Project)
+                .Include(u => u.Team)
+                .Where(u => u.ProjectId == user.ProjectId && u.TeamId == user.TeamId)
+                .ToListAsync();
+            ;
         }
     }
 }

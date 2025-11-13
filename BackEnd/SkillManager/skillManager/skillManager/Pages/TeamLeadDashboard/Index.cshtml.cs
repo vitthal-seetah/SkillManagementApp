@@ -7,7 +7,7 @@ using SkillManager.Domain.Entities;
 
 namespace SkillManager.Web.Pages
 {
-    [Authorize(Policy = "ManagerPolicy")]
+    [Authorize(Policy = "TeamLeadPolicy")]
     public class TeamLeadDashboardModel : PageModel
     {
         private readonly IUserService _userService;

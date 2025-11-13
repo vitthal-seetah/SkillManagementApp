@@ -64,7 +64,7 @@ namespace SkillManager.Infrastructure.Persistence.Repositories
                 .Include(us => us.Level)
                 .Include(us => us.User)
                     .ThenInclude(us => us.Team)
-                .Where(us => us.User.TeamId == user.TeamId)
+                .Where(us => us.User.TeamId == user.TeamId && us.User.ProjectId == user.ProjectId)
                 .ToListAsync();
         }
 
