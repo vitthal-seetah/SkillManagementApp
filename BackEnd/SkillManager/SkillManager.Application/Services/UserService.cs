@@ -31,6 +31,8 @@ public sealed class UserService : IUserService
     public async Task<IEnumerable<UserDto>> GetAllAsync(User currentUser)
     {
         // All users can only see users in their own project
+        if (currentUser == null)
+            return null;
         var users = await _userRepository.GetByProjectIdAsync(currentUser.ProjectId);
 
         return users.Select(MapToDto);
@@ -270,17 +272,12 @@ public sealed class UserService : IUserService
     }
 
     // -----------------------------
-    // New method: Get users by project ID
+    // Get users by project ID
     // -----------------------------
-    public async Task<IEnumerable<UserDto>> GetUsersByProjectIdAsync(
-        int projectId,
-        User currentUser
-    )
+    public async Task<IEnumerable<UserDto>> GetUsersByProjectIdAsync(int projectId)
     {
-        // Users can only access their own project
-        if (projectId != currentUser.ProjectId)
-            return Enumerable.Empty<UserDto>();
-
+        if (projectId == 0 || projectId == null)
+            return null;
         var users = await _userRepository.GetByProjectIdAsync(projectId);
         return users.Select(MapToDto);
     }

@@ -262,5 +262,16 @@ namespace SkillManager.Infrastructure.Repositories
                 return false;
             }
         }
+
+        public async Task<IEnumerable<SubCategory>> GetAllSubCategoriesAsync()
+        {
+            return await _context
+                .SubCategories.Include(sc => sc.Skills)
+                .Include(sc => sc.Category)
+                .ThenInclude(c => c.CategoryType)
+                .OrderBy(sc => sc.Category.Name)
+                .ThenBy(sc => sc.Name)
+                .ToListAsync();
+        }
     }
 }

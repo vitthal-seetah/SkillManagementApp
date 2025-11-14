@@ -16,7 +16,7 @@ namespace SkillManager.Application.Interfaces.Services
         Task<IEnumerable<Team>> GetAllTeamsAsync();
         Task<IEnumerable<Team>> GetAllTeamsWithProjectsAsync();
         Task<Team> CreateTeamAsync(CreateTeamDto teamDto);
-        Task<Team> UpdateTeamAsync(TeamDto teamDto);
+        Task<Team> UpdateTeamAsync(UpdateTeamDto teamDto);
         Task<bool> DeleteTeamAsync(int teamId);
         Task<bool> TeamExistsAsync(int teamId);
 

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,6 +7,7 @@ using SkillManager.Application.DTOs.Project;
 using SkillManager.Application.DTOs.User;
 using SkillManager.Application.Interfaces.Services;
 using SkillManager.Domain.Entities;
+using SkillManager.Domain.Entities.Enums;
 
 namespace SkillManager.Web.Pages.Users;
 
@@ -68,6 +70,10 @@ public class IndexModel : PageModel
     public UpdateUserDto UpdateUserModel { get; set; } = new();
     public int TotalUsersCount { get; set; }
 
+    // --- Export Properties ---
+    public string ManagerName { get; set; } = "";
+    public string ProjectName { get; set; } = "";
+
     private async Task<User?> GetCurrentUserAsync()
     {
         if (_currentUserEntity != null)
@@ -120,51 +126,76 @@ public class IndexModel : PageModel
             .Where(p => p.ProjectId == currentUser.ProjectId)
             .ToList();
 
-        // --- Filters ---
-        if (!string.IsNullOrWhiteSpace(SelectedRole) && SelectedRole != "All")
-            allUsers = allUsers.Where(u =>
-                string.Equals(u.RoleName, SelectedRole, StringComparison.OrdinalIgnoreCase)
-            );
-
-        if (!string.IsNullOrWhiteSpace(SelectedStatus) && SelectedStatus != "All")
-            allUsers = allUsers.Where(u => u.Status.ToString() == SelectedStatus);
-
-        if (!string.IsNullOrWhiteSpace(SelectedDelivery) && SelectedDelivery != "All")
-            allUsers = allUsers.Where(u => u.DeliveryType.ToString() == SelectedDelivery);
-
-        if (!string.IsNullOrWhiteSpace(SelectedTeam) && SelectedTeam != "All")
-        {
-            if (int.TryParse(SelectedTeam, out int teamId))
-            {
-                allUsers = allUsers.Where(u => u.TeamId == teamId);
-            }
-        }
-
-        // --- Sorting ---
-        allUsers = SortBy switch
-        {
-            "FirstNameAsc" => allUsers.OrderBy(u => u.FirstName),
-            "FirstNameDesc" => allUsers.OrderByDescending(u => u.FirstName),
-            "LastNameAsc" => allUsers.OrderBy(u => u.LastName),
-            "LastNameDesc" => allUsers.OrderByDescending(u => u.LastName),
-            "FullNameAsc" => allUsers.OrderBy(u => $"{u.FirstName} {u.LastName}"),
-            "FullNameDesc" => allUsers.OrderByDescending(u => $"{u.FirstName} {u.LastName}"),
-            "UTCodeAsc" => allUsers.OrderBy(u => u.UtCode),
-            "UTCodeDesc" => allUsers.OrderByDescending(u => u.UtCode),
-            "RoleAsc" => allUsers.OrderBy(u => u.RoleName),
-            "RoleDesc" => allUsers.OrderByDescending(u => u.RoleName),
-            // Add Team sorting
-            "TeamAsc" => allUsers.OrderBy(u => u.TeamName ?? ""),
-            "TeamDesc" => allUsers.OrderByDescending(u => u.TeamName ?? ""),
-            _ => allUsers,
-        };
+        // Apply filters and sorting
+        var filteredUsers = ApplyFilters(allUsers);
+        var sortedUsers = ApplySorting(filteredUsers);
 
         // --- Pagination ---
-        TotalUsersCount = allUsers.Count();
+        TotalUsersCount = sortedUsers.Count();
         TotalPages = (int)Math.Ceiling(TotalUsersCount / (double)PageSize);
         PageNumber = Math.Clamp(PageNumber, 1, Math.Max(1, TotalPages));
 
-        Users = allUsers.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToList();
+        Users = sortedUsers.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToList();
+    }
+
+    // --- NEW: ApplyFilters method ---
+    private IEnumerable<UserDto> ApplyFilters(IEnumerable<UserDto> users)
+    {
+        var filtered = users;
+
+        if (!string.IsNullOrEmpty(SelectedRole) && SelectedRole != "All")
+        {
+            filtered = filtered.Where(u =>
+                string.Equals(u.RoleName, SelectedRole, StringComparison.OrdinalIgnoreCase)
+            );
+        }
+
+        if (!string.IsNullOrEmpty(SelectedStatus) && SelectedStatus != "All")
+        {
+            if (Enum.TryParse<UserStatus>(SelectedStatus, out var status))
+            {
+                filtered = filtered.Where(u => u.Status == status);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(SelectedDelivery) && SelectedDelivery != "All")
+        {
+            if (Enum.TryParse<DeliveryType>(SelectedDelivery, out var deliveryType))
+            {
+                filtered = filtered.Where(u => u.DeliveryType == deliveryType);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(SelectedTeam) && SelectedTeam != "All")
+        {
+            if (int.TryParse(SelectedTeam, out var teamId))
+            {
+                filtered = filtered.Where(u => u.TeamId == teamId);
+            }
+        }
+
+        return filtered;
+    }
+
+    // --- NEW: ApplySorting method ---
+    private IEnumerable<UserDto> ApplySorting(IEnumerable<UserDto> users)
+    {
+        return SortBy switch
+        {
+            "FirstNameAsc" => users.OrderBy(u => u.FirstName),
+            "FirstNameDesc" => users.OrderByDescending(u => u.FirstName),
+            "LastNameAsc" => users.OrderBy(u => u.LastName),
+            "LastNameDesc" => users.OrderByDescending(u => u.LastName),
+            "FullNameAsc" => users.OrderBy(u => $"{u.FirstName} {u.LastName}"),
+            "FullNameDesc" => users.OrderByDescending(u => $"{u.FirstName} {u.LastName}"),
+            "UTCodeAsc" => users.OrderBy(u => u.UtCode),
+            "UTCodeDesc" => users.OrderByDescending(u => u.UtCode),
+            "RoleAsc" => users.OrderBy(u => u.RoleName),
+            "RoleDesc" => users.OrderByDescending(u => u.RoleName),
+            "TeamAsc" => users.OrderBy(u => u.TeamName ?? ""),
+            "TeamDesc" => users.OrderByDescending(u => u.TeamName ?? ""),
+            _ => users.OrderBy(u => u.FirstName).ThenBy(u => u.LastName),
+        };
     }
 
     // --- Save / Update Handler (AJAX-friendly) ---
@@ -204,7 +235,7 @@ public class IndexModel : PageModel
         UpdateUserModel.ProjectId = currentUser.ProjectId;
 
         // FIX: Use the new method for team validation
-        if (UpdateUserModel.TeamId != null || UpdateUserModel.TeamId != 0)
+        if (UpdateUserModel.TeamId != null && UpdateUserModel.TeamId != 0)
         {
             var availableTeams = await _teamService.GetAllTeamsWithProjectsAsync();
             var team = availableTeams.FirstOrDefault(t => t.TeamId == UpdateUserModel.TeamId);
@@ -258,6 +289,126 @@ public class IndexModel : PageModel
                 SortBy,
                 PageNumber,
             }
+        );
+    }
+
+    // --- Export Handler ---
+    public async Task<IActionResult> OnGetExportAsync()
+    {
+        Console.WriteLine("Excel export function launched for User Management");
+
+        var currentUser = await GetCurrentUserAsync();
+        if (currentUser == null)
+        {
+            return RedirectToPage("/Error");
+        }
+
+        ManagerName = $"{currentUser.FirstName} {currentUser.LastName}";
+        ProjectName = currentUser.Project?.ProjectName ?? "Current Project";
+
+        // Get all users with current filters applied
+        var allUsers = await _userService.GetAllAsync(currentUser);
+        var filteredUsers = ApplyFilters(allUsers);
+        var sortedUsers = ApplySorting(filteredUsers);
+
+        // Generate Excel
+        using var workbook = new XLWorkbook();
+        var ws = workbook.Worksheets.Add("Users");
+
+        // Add title with project info
+        ws.Cell(1, 1).Value = $"User Management Report - {ProjectName} - {DateTime.Now:yyyy-MM-dd}";
+        ws.Cell(1, 1).Style.Font.Bold = true;
+        ws.Cell(1, 1).Style.Font.FontSize = 16;
+        ws.Range(1, 1, 1, 12).Merge();
+
+        // Add filters info
+        ws.Cell(2, 1).Value = $"Project: {ProjectName}";
+        ws.Cell(3, 1).Value = $"Generated By: {ManagerName}";
+        ws.Cell(4, 1).Value = $"Role Filter: {SelectedRole ?? "All"}";
+        ws.Cell(5, 1).Value = $"Status Filter: {SelectedStatus ?? "All"}";
+        ws.Cell(6, 1).Value = $"Team Filter: {SelectedTeam ?? "All"}";
+        ws.Cell(7, 1).Value = $"Delivery Type Filter: {SelectedDelivery ?? "All"}";
+        ws.Cell(8, 1).Value = $"Total Users: {sortedUsers.Count()}";
+
+        // Headers starting from row 10
+        int headerRow = 10;
+        ws.Cell(headerRow, 1).Value = "User ID";
+        ws.Cell(headerRow, 2).Value = "First Name";
+        ws.Cell(headerRow, 3).Value = "Last Name";
+        ws.Cell(headerRow, 4).Value = "Domain";
+        ws.Cell(headerRow, 5).Value = "EID";
+        ws.Cell(headerRow, 6).Value = "Status";
+        ws.Cell(headerRow, 7).Value = "Delivery Type";
+        ws.Cell(headerRow, 8).Value = "UT Code";
+        ws.Cell(headerRow, 9).Value = "Ref ID";
+        ws.Cell(headerRow, 10).Value = "Role";
+        ws.Cell(headerRow, 11).Value = "Project";
+        ws.Cell(headerRow, 12).Value = "Team";
+
+        // Style headers
+        var headerRange = ws.Range(headerRow, 1, headerRow, 12);
+        headerRange.Style.Font.Bold = true;
+        headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
+        headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+        // Data rows
+        int row = headerRow + 1;
+        foreach (var user in sortedUsers)
+        {
+            ws.Cell(row, 1).Value = user.UserId;
+            ws.Cell(row, 2).Value = user.FirstName;
+            ws.Cell(row, 3).Value = user.LastName;
+            ws.Cell(row, 4).Value = user.Domain;
+            ws.Cell(row, 5).Value = user.Eid;
+            ws.Cell(row, 6).Value = user.Status.ToString();
+            ws.Cell(row, 7).Value = user.DeliveryType.ToString();
+            ws.Cell(row, 8).Value = user.UtCode;
+            ws.Cell(row, 9).Value = user.RefId;
+            ws.Cell(row, 10).Value = user.RoleName;
+            ws.Cell(row, 11).Value = user.ProjectName;
+            ws.Cell(row, 12).Value = user.TeamName;
+            row++;
+        }
+
+        // Add summary statistics
+        int summaryRow = row + 2;
+        ws.Cell(summaryRow, 1).Value = "Summary Statistics";
+        ws.Cell(summaryRow, 1).Style.Font.Bold = true;
+        ws.Cell(summaryRow, 1).Style.Font.FontSize = 14;
+
+        ws.Cell(summaryRow + 1, 1).Value = "Total Users:";
+        ws.Cell(summaryRow + 1, 2).Value = sortedUsers.Count();
+
+        // Role distribution
+        var roleDistribution = sortedUsers
+            .GroupBy(u => u.RoleName)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        int roleRow = summaryRow + 3;
+        ws.Cell(roleRow, 1).Value = "Role Distribution";
+        ws.Cell(roleRow, 1).Style.Font.Bold = true;
+
+        foreach (var role in roleDistribution)
+        {
+            roleRow++;
+            ws.Cell(roleRow, 1).Value = $"{role.Key}:";
+            ws.Cell(roleRow, 2).Value = role.Value;
+        }
+
+        // Format columns
+        ws.Columns().AdjustToContents();
+
+        // Create the file stream
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        stream.Position = 0;
+
+        var fileName = $"UserManagement_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+
+        return File(
+            stream.ToArray(),
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            fileName
         );
     }
 

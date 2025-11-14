@@ -54,7 +54,7 @@ namespace SkillManager.Application.Services
             return await _teamRepository.AddAsync(team);
         }
 
-        public async Task<Team> UpdateTeamAsync(TeamDto teamDto)
+        public async Task<Team> UpdateTeamAsync(UpdateTeamDto teamDto)
         {
             // Get existing team
             var existingTeam = await _teamRepository.GetByIdAsync(teamDto.TeamId);
@@ -229,6 +229,31 @@ namespace SkillManager.Application.Services
             }
 
             return userTeamMap;
+        }
+
+        public async Task<TeamDto> UpdateTeamAsync(int teamId, UpdateTeamDto teamDto)
+        {
+            var existingTeam = await _teamRepository.GetByIdAsync(teamId);
+            if (existingTeam == null)
+                throw new ArgumentException("Team not found");
+
+            existingTeam.TeamName = teamDto.TeamName;
+            existingTeam.TeamDescription = teamDto.TeamDescription;
+            existingTeam.TeamLeadId = teamDto.TeamLeadId;
+
+            var teamLead = await _userRepository.GetByIdAsync(teamDto.TeamLeadId);
+            if (teamLead == null)
+                throw new ArgumentException("Team lead user not found");
+
+            var updatedTeam = await _teamRepository.UpdateAsync(existingTeam);
+
+            return new TeamDto
+            {
+                TeamId = updatedTeam.TeamId,
+                TeamName = updatedTeam.TeamName,
+                TeamDescription = updatedTeam.TeamDescription,
+                TeamLeadId = updatedTeam.TeamLeadId ?? 0,
+            };
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SkillManager.Application.Interfaces.Services;
+using SkillManager.Application.Services;
 using SkillManager.Domain.Entities;
 
 namespace SkillManager.Web.Pages
@@ -13,20 +14,24 @@ namespace SkillManager.Web.Pages
         private readonly IUserService _userService;
         private readonly IUserSkillService _userSkillService;
         private readonly ICategoryService _categoryService;
+        private readonly ITeamService _teamService;
         private User? _currentUserEntity;
 
         public ManagerDashboardModel(
             IUserService userService,
             IUserSkillService userSkillService,
-            ICategoryService categoryService
+            ICategoryService categoryService,
+            ITeamService teamService
         )
         {
             _userService = userService;
             _userSkillService = userSkillService;
             _categoryService = categoryService;
+            _teamService = teamService;
         }
 
         public List<UserSummary> UserSummaries { get; set; } = new();
+        public List<UserSummary> AllUserSummaries { get; set; } = new(); // For charts and analytics
         public string FullName { get; set; } = "";
         public string Domain { get; set; } = "";
         public string Eid { get; set; } = "";
@@ -35,22 +40,20 @@ namespace SkillManager.Web.Pages
         public Dictionary<string, string> RoleColors { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
-        public string? SelectedUser { get; set; }
-
-        [BindProperty(SupportsGet = true)]
-        public string? SelectedCategory { get; set; }
-
-        [BindProperty(SupportsGet = true)]
-        public string? SelectedLevel { get; set; }
-
-        // Sorting property
-        [BindProperty(SupportsGet = true)]
         public string? SortBy { get; set; }
 
         // New properties for header information
         public string ManagerTeamName { get; set; } = "";
         public int TeammateCount { get; set; }
         public string ProjectName { get; set; } = "";
+        public int NumberOfTeams { get; set; }
+
+        // Pagination properties
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+        public int TotalPages { get; set; }
+        public int TotalUsersCount { get; set; }
 
         private async Task<User?> GetCurrentUserAsync()
         {
@@ -72,12 +75,34 @@ namespace SkillManager.Web.Pages
             }
 
             Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
-            _currentUserEntity = await _userService.GetUserEntityByDomainAndEidAsync(
-                Domain,
-                Eid,
-                null
-            );
+
+            // Use the same approach as Team/IndexModel to get current user entity
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId > 0)
+            {
+                _currentUserEntity = await _userService.GetUserEntityByIdAsync(currentUserId);
+            }
+            else
+            {
+                // Fallback to domain/eid lookup
+                _currentUserEntity = await _userService.GetUserEntityByDomainAndEidAsync(
+                    Domain,
+                    Eid,
+                    null
+                );
+            }
+
             return _currentUserEntity;
+        }
+
+        private int GetCurrentUserId()
+        {
+            var uidClaim = User.FindFirst("uid");
+            if (uidClaim != null && int.TryParse(uidClaim.Value, out int userId))
+            {
+                return userId;
+            }
+            return 0;
         }
 
         public async Task OnGetAsync()
@@ -89,25 +114,45 @@ namespace SkillManager.Web.Pages
                 return;
             }
 
-            // Get all users in the current user's project
+            // Check if user has a project assigned
+            if (!currentUser.ProjectId.HasValue)
+            {
+                TempData["Error"] =
+                    "You are not assigned to any project. Please contact an administrator.";
+                return;
+            }
+            var teams = await _teamService.GetTeamsByProjectIdAsync(currentUser.ProjectId);
+            NumberOfTeams = teams.Count();
+
+            // FIX: Get ALL users in the same PROJECT, not just the same team
             var allUsers = await _userService.GetAllAsync(currentUser);
+
+            // DEBUG: Check what we're getting
+            Console.WriteLine($"=== MANAGER DASHBOARD DEBUG ===");
+            Console.WriteLine($"Current User: {currentUser.FirstName} {currentUser.LastName}");
+            Console.WriteLine($"Current User ProjectId: {currentUser.ProjectId}");
+            Console.WriteLine($"Current User TeamId: {currentUser.TeamId}");
+            Console.WriteLine($"Total users from service: {allUsers.Count()}");
+
+            // Filter to only users in the same project (additional safety check)
+            var projectUsers = allUsers.Where(u => u.ProjectId == currentUser.ProjectId).ToList();
+            Console.WriteLine($"Users in same project: {projectUsers.Count}");
+
+            foreach (var user in projectUsers)
+            {
+                Console.WriteLine(
+                    $"- {user.FirstName} {user.LastName} | Project: {user.ProjectId} | Team: {user.TeamId}"
+                );
+            }
+            Console.WriteLine($"=== END DEBUG ===");
 
             // Set header information
             ProjectName = currentUser.Project?.ProjectName ?? "No Project";
             ManagerTeamName = currentUser.Team?.TeamName ?? "No Team";
 
-            // Count teammates (users in the same team, excluding the manager)
-            if (currentUser.TeamId.HasValue)
-            {
-                TeammateCount = allUsers.Count(u =>
-                    u.TeamId == currentUser.TeamId && u.UserId != currentUser.UserId
-                );
-            }
-            else
-            {
-                // If no team, count all other users in the project
-                TeammateCount = allUsers.Count(u => u.UserId != currentUser.UserId);
-            }
+            // Count teammates (users in the same project, excluding the manager)
+            TotalUsersCount = projectUsers.Count(u => u.UserId != currentUser.UserId);
+            TeammateCount = TotalUsersCount;
 
             // Get actual categories from database
             var categories = await _categoryService.GetAllCategoriesAsync();
@@ -133,9 +178,9 @@ namespace SkillManager.Web.Pages
                 .ToDictionary(x => x.Name, x => x.Color);
 
             // Get skill summaries for each user
-            UserSummaries = new List<UserSummary>();
+            var allUserSummaries = new List<UserSummary>();
 
-            foreach (var user in allUsers)
+            foreach (var user in projectUsers)
             {
                 var userSkills = await _userSkillService.GetUserSkillsByUserIdAsync(user.UserId);
 
@@ -159,11 +204,13 @@ namespace SkillManager.Web.Pages
                     LastUpdated = await _userSkillService.GetLastUpdatedTimeAsync(user.UserId),
                 };
 
-                UserSummaries.Add(summary);
+                allUserSummaries.Add(summary);
             }
 
-            // NEW: Set up fixed colors for roles
-            var distinctRoles = UserSummaries
+            AllUserSummaries = allUserSummaries;
+
+            // Set up fixed colors for roles
+            var distinctRoles = allUserSummaries
                 .Select(u => u.RoleName)
                 .Distinct()
                 .OrderBy(r => r)
@@ -198,36 +245,44 @@ namespace SkillManager.Web.Pages
                 )
                 .ToDictionary(x => x.Role, x => x.Color);
 
-            // Apply Sorting
-            UserSummaries = SortBy switch
+            // Apply Sorting and Pagination
+            ApplySortingAndPagination();
+        }
+
+        private void ApplySortingAndPagination()
+        {
+            // Apply sorting to all summaries
+            var sortedSummaries = SortBy switch
             {
-                "UserAsc" => UserSummaries
+                "UserAsc" => AllUserSummaries
                     .OrderBy(u => u.FirstName)
                     .ThenBy(u => u.LastName)
                     .ToList(),
-                "UserDesc" => UserSummaries
+                "UserDesc" => AllUserSummaries
                     .OrderByDescending(u => u.FirstName)
                     .ThenByDescending(u => u.LastName)
                     .ToList(),
-                "UtCodeAsc" => UserSummaries.OrderBy(u => u.UtCode).ToList(),
-                "UtCodeDesc" => UserSummaries.OrderByDescending(u => u.UtCode).ToList(),
-                "RoleAsc" => UserSummaries.OrderBy(u => u.RoleName).ToList(),
-                "RoleDesc" => UserSummaries.OrderByDescending(u => u.RoleName).ToList(),
-                "TeamAsc" => UserSummaries.OrderBy(u => u.TeamName ?? "").ToList(),
-                "TeamDesc" => UserSummaries.OrderByDescending(u => u.TeamName ?? "").ToList(),
-                "TotalSkillsAsc" => UserSummaries.OrderBy(u => u.TotalSkills).ToList(),
-                "TotalSkillsDesc" => UserSummaries.OrderByDescending(u => u.TotalSkills).ToList(),
-                "OverallAverageAsc" => UserSummaries.OrderBy(u => u.OverallAverage).ToList(),
-                "OverallAverageDesc" => UserSummaries
+                "UtCodeAsc" => AllUserSummaries.OrderBy(u => u.UtCode).ToList(),
+                "UtCodeDesc" => AllUserSummaries.OrderByDescending(u => u.UtCode).ToList(),
+                "RoleAsc" => AllUserSummaries.OrderBy(u => u.RoleName).ToList(),
+                "RoleDesc" => AllUserSummaries.OrderByDescending(u => u.RoleName).ToList(),
+                "TeamAsc" => AllUserSummaries.OrderBy(u => u.TeamName ?? "").ToList(),
+                "TeamDesc" => AllUserSummaries.OrderByDescending(u => u.TeamName ?? "").ToList(),
+                "TotalSkillsAsc" => AllUserSummaries.OrderBy(u => u.TotalSkills).ToList(),
+                "TotalSkillsDesc" => AllUserSummaries
+                    .OrderByDescending(u => u.TotalSkills)
+                    .ToList(),
+                "OverallAverageAsc" => AllUserSummaries.OrderBy(u => u.OverallAverage).ToList(),
+                "OverallAverageDesc" => AllUserSummaries
                     .OrderByDescending(u => u.OverallAverage)
                     .ToList(),
-                "LastUpdatedAsc" => UserSummaries
+                "LastUpdatedAsc" => AllUserSummaries
                     .OrderBy(u => u.LastUpdated ?? DateTime.MinValue)
                     .ToList(),
-                "LastUpdatedDesc" => UserSummaries
+                "LastUpdatedDesc" => AllUserSummaries
                     .OrderByDescending(u => u.LastUpdated ?? DateTime.MinValue)
                     .ToList(),
-                _ => UserSummaries.OrderByDescending(u => u.OverallAverage).ToList(), // Default sort
+                _ => AllUserSummaries.OrderByDescending(u => u.OverallAverage).ToList(), // Default sort
             };
 
             // Handle category sorting
@@ -236,7 +291,7 @@ namespace SkillManager.Web.Pages
                 var category = CategoryColors.Keys.First(c => SortBy.StartsWith(c));
                 if (SortBy.EndsWith("Asc"))
                 {
-                    UserSummaries = UserSummaries
+                    sortedSummaries = sortedSummaries
                         .OrderBy(u =>
                             u.CategoryAverages.ContainsKey(category)
                                 ? u.CategoryAverages[category]
@@ -246,7 +301,7 @@ namespace SkillManager.Web.Pages
                 }
                 else if (SortBy.EndsWith("Desc"))
                 {
-                    UserSummaries = UserSummaries
+                    sortedSummaries = sortedSummaries
                         .OrderByDescending(u =>
                             u.CategoryAverages.ContainsKey(category)
                                 ? u.CategoryAverages[category]
@@ -255,6 +310,15 @@ namespace SkillManager.Web.Pages
                         .ToList();
                 }
             }
+
+            // Apply pagination
+            TotalPages = (int)Math.Ceiling(sortedSummaries.Count / (double)PageSize);
+            PageNumber = Math.Clamp(PageNumber, 1, Math.Max(1, TotalPages));
+
+            UserSummaries = sortedSummaries
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
         }
     }
 }

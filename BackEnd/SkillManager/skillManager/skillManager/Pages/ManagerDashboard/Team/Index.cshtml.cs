@@ -31,6 +31,7 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
         public List<UserSummary> UserSummaries { get; set; } = new();
         public List<UserSkillDto> TeamMembers { get; set; } = new();
         public List<UserSkillDto> FilteredTeamMembers { get; set; } = new();
+        public List<UserSkillDto> AllFilteredTeamMembers { get; set; } = new(); // For pagination
 
         // NEW: Dictionary to map UserId to TeamName
         public Dictionary<int, string> UserTeamMap { get; set; } = new();
@@ -43,7 +44,7 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
         public string ProjectName { get; set; } = "";
 
         // MULTI-TEAM SUPPORT
-        public IEnumerable<TeamDto> AllTeams { get; set; }
+        public IEnumerable<TeamDto> AllTeams { get; set; } = new List<TeamDto>();
         public string SelectedTeamId { get; set; } = "All";
 
         // Statistics
@@ -51,7 +52,7 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
         public double TeamAverageLevel { get; set; }
         public DateTime? LastTeamUpdate { get; set; }
         public int UniqueTeamMembers =>
-            FilteredTeamMembers.Select(t => t.UserId).Distinct().Count();
+            AllFilteredTeamMembers.Select(t => t.UserId).Distinct().Count();
 
         // Filtering & Sorting Properties
         [BindProperty(SupportsGet = true)]
@@ -71,6 +72,14 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
 
         [BindProperty(SupportsGet = true)]
         public string? Handler { get; set; }
+
+        // Pagination properties
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+
+        public int PageSize { get; set; } = 10;
+        public int TotalPages { get; set; }
+        public int TotalCount { get; set; }
 
         // Available options for filters
         public List<string> AvailableUsers =>
@@ -94,16 +103,22 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
                 if (currentUserEntity.ProjectId.HasValue)
                 {
                     AllTeams = await _teamService.GetTeamsByProjectIdAsync(
-                        currentUserEntity.ProjectId
+                        currentUserEntity.ProjectId.Value
                     );
 
                     // NEW: Get user-team mapping for the entire project
                     UserTeamMap = await _teamService.GetUserTeamMapByProjectIdAsync(
-                        currentUserEntity.ProjectId
+                        currentUserEntity.ProjectId.Value
                     );
 
                     // NEW: Calculate no team member count
                     await CalculateNoTeamMemberCountAsync(
+                        currentUserEntity.ProjectId,
+                        currentUserEntity
+                    );
+
+                    // NEW: Calculate member counts for each team
+                    await CalculateTeamMemberCountsAsync(
                         currentUserEntity.ProjectId,
                         currentUserEntity
                     );
@@ -131,8 +146,9 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
                     // Get skills for specific team
                     if (int.TryParse(SelectedTeamId, out int teamId))
                     {
+                        // FIXED: Use the correct method to get skills by team ID
                         TeamMembers = (
-                            await _userSkillService.GetAllUserSkillsByTeamAsync(GetCurrentUserId())
+                            await _userSkillService.GetAllUserSkillsByTeamAsync(teamId)
                         ).ToList();
 
                         // NEW: For single team, all users belong to the same team
@@ -152,14 +168,28 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
                     }
                 }
 
-                // Apply filters
-                ApplyFilters();
-
-                // Apply sorting
-                ApplySorting();
+                // Apply filters and sorting
+                ApplyFiltersAndSorting();
 
                 // Calculate team statistics
                 CalculateStatistics();
+            }
+        }
+
+        // NEW: Method to calculate member counts for each team
+        private async Task CalculateTeamMemberCountsAsync(int? projectId, User currentUser)
+        {
+            if (!projectId.HasValue)
+                return;
+
+            // Get all project users
+            var allProjectUsers = await _userService.GetAllAsync(currentUser);
+
+            // Group users by team and update the MemberCount for each team
+            foreach (var team in AllTeams)
+            {
+                var teamUsers = allProjectUsers.Where(u => u.TeamId == team.TeamId).ToList();
+                team.MemberCount = teamUsers.Count;
             }
         }
 
@@ -169,8 +199,6 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
             var currentUserId = GetCurrentUserId();
             if (currentUserId > 0)
             {
-                // Assuming you have a method to get user entity by ID
-                // If not, you'll need to add this to your IUserService
                 return await _userService.GetUserEntityByIdAsync(currentUserId);
             }
             return null;
@@ -231,6 +259,7 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
             {
                 foreach (var team in AllTeams)
                 {
+                    // FIXED: Use the correct method to get skills by team ID
                     var teamSkills = await _userSkillService.GetAllUserSkillsByTeamAsync(
                         team.TeamId
                     );
@@ -256,12 +285,16 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
                 if (currentUserEntity.ProjectId.HasValue)
                 {
                     AllTeams = await _teamService.GetTeamsByProjectIdAsync(
-                        currentUserEntity.ProjectId
+                        currentUserEntity.ProjectId.Value
                     );
                     UserTeamMap = await _teamService.GetUserTeamMapByProjectIdAsync(
-                        currentUserEntity.ProjectId
+                        currentUserEntity.ProjectId.Value
                     );
                     await CalculateNoTeamMemberCountAsync(
+                        currentUserEntity.ProjectId,
+                        currentUserEntity
+                    );
+                    await CalculateTeamMemberCountsAsync(
                         currentUserEntity.ProjectId,
                         currentUserEntity
                     );
@@ -282,8 +315,9 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
                 {
                     if (int.TryParse(SelectedTeamId, out int teamId))
                     {
+                        // FIXED: Use the correct method to get skills by team ID
                         TeamMembers = (
-                            await _userSkillService.GetAllUserSkillsByTeamAsync(GetCurrentUserId())
+                            await _userSkillService.GetAllUserSkillsByTeamAsync(teamId)
                         ).ToList();
                         var selectedTeam = AllTeams.FirstOrDefault(t => t.TeamId == teamId);
                         if (selectedTeam != null)
@@ -297,8 +331,12 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
                     }
                 }
 
+                // Apply filters and sorting for export (without pagination)
                 ApplyFilters();
-                CalculateStatistics();
+                ApplySorting();
+
+                // Use AllFilteredTeamMembers for export (all data, not paginated)
+                CalculateStatisticsForExport();
             }
 
             // Generate Excel - UPDATE to include Team Name and handle NoTeam case
@@ -351,7 +389,7 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
 
             // Data rows
             int row = headerRow + 1;
-            foreach (var skill in FilteredTeamMembers)
+            foreach (var skill in AllFilteredTeamMembers)
             {
                 ws.Cell(row, 1).Value = skill.UserId;
                 ws.Cell(row, 2).Value = skill.FirstName;
@@ -458,20 +496,33 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
                     SelectedSkill = SelectedSkill,
                     SelectedLevel = SelectedLevel,
                     SortBy = SortBy,
+                    PageNumber = PageNumber,
                 }
             );
         }
 
+        private void ApplyFiltersAndSorting()
+        {
+            // Apply filters
+            ApplyFilters();
+
+            // Apply sorting to all filtered data
+            ApplySorting();
+
+            // Apply pagination
+            ApplyPagination();
+        }
+
         private void ApplyFilters()
         {
-            FilteredTeamMembers = TeamMembers;
+            AllFilteredTeamMembers = TeamMembers;
 
             // Filter by User
             if (!string.IsNullOrEmpty(SelectedUser) && SelectedUser != "All")
             {
                 if (int.TryParse(SelectedUser.Split('-')[0], out int userId))
                 {
-                    FilteredTeamMembers = FilteredTeamMembers
+                    AllFilteredTeamMembers = AllFilteredTeamMembers
                         .Where(us => us.UserId == userId)
                         .ToList();
                 }
@@ -480,7 +531,7 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
             // Filter by Category
             if (!string.IsNullOrEmpty(SelectedCategory) && SelectedCategory != "All")
             {
-                FilteredTeamMembers = FilteredTeamMembers
+                AllFilteredTeamMembers = AllFilteredTeamMembers
                     .Where(us =>
                         us.CategoryName.Equals(SelectedCategory, StringComparison.OrdinalIgnoreCase)
                     )
@@ -490,7 +541,7 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
             // Filter by Skill
             if (!string.IsNullOrEmpty(SelectedSkill) && SelectedSkill != "All")
             {
-                FilteredTeamMembers = FilteredTeamMembers
+                AllFilteredTeamMembers = AllFilteredTeamMembers
                     .Where(us =>
                         us.SkillName.Contains(SelectedSkill, StringComparison.OrdinalIgnoreCase)
                     )
@@ -500,7 +551,7 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
             // Filter by Level
             if (!string.IsNullOrEmpty(SelectedLevel) && SelectedLevel != "All")
             {
-                FilteredTeamMembers = FilteredTeamMembers
+                AllFilteredTeamMembers = AllFilteredTeamMembers
                     .Where(us =>
                         us.LevelName.Equals(SelectedLevel, StringComparison.OrdinalIgnoreCase)
                     )
@@ -510,31 +561,31 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
 
         private void ApplySorting()
         {
-            FilteredTeamMembers = SortBy switch
+            AllFilteredTeamMembers = SortBy switch
             {
-                "UserNameAsc" => FilteredTeamMembers
+                "UserNameAsc" => AllFilteredTeamMembers
                     .OrderBy(us => us.FirstName)
                     .ThenBy(us => us.LastName)
                     .ToList(),
-                "UserNameDesc" => FilteredTeamMembers
+                "UserNameDesc" => AllFilteredTeamMembers
                     .OrderByDescending(us => us.FirstName)
                     .ThenByDescending(us => us.LastName)
                     .ToList(),
-                "SkillNameAsc" => FilteredTeamMembers.OrderBy(us => us.SkillName).ToList(),
-                "SkillNameDesc" => FilteredTeamMembers
+                "SkillNameAsc" => AllFilteredTeamMembers.OrderBy(us => us.SkillName).ToList(),
+                "SkillNameDesc" => AllFilteredTeamMembers
                     .OrderByDescending(us => us.SkillName)
                     .ToList(),
-                "CategoryAsc" => FilteredTeamMembers.OrderBy(us => us.CategoryName).ToList(),
-                "CategoryDesc" => FilteredTeamMembers
+                "CategoryAsc" => AllFilteredTeamMembers.OrderBy(us => us.CategoryName).ToList(),
+                "CategoryDesc" => AllFilteredTeamMembers
                     .OrderByDescending(us => us.CategoryName)
                     .ToList(),
-                "LevelAsc" => FilteredTeamMembers.OrderBy(us => us.LevelId).ToList(),
-                "LevelDesc" => FilteredTeamMembers.OrderByDescending(us => us.LevelId).ToList(),
-                "UpdatedAsc" => FilteredTeamMembers.OrderBy(us => us.UpdatedTime).ToList(),
-                "UpdatedDesc" => FilteredTeamMembers
+                "LevelAsc" => AllFilteredTeamMembers.OrderBy(us => us.LevelId).ToList(),
+                "LevelDesc" => AllFilteredTeamMembers.OrderByDescending(us => us.LevelId).ToList(),
+                "UpdatedAsc" => AllFilteredTeamMembers.OrderBy(us => us.UpdatedTime).ToList(),
+                "UpdatedDesc" => AllFilteredTeamMembers
                     .OrderByDescending(us => us.UpdatedTime)
                     .ToList(),
-                _ => FilteredTeamMembers
+                _ => AllFilteredTeamMembers
                     .OrderBy(us => us.FirstName)
                     .ThenBy(us => us.LastName)
                     .ThenBy(us => us.SkillName)
@@ -542,11 +593,23 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
             };
         }
 
+        private void ApplyPagination()
+        {
+            TotalCount = AllFilteredTeamMembers.Count;
+            TotalPages = (int)Math.Ceiling(TotalCount / (double)PageSize);
+            PageNumber = Math.Clamp(PageNumber, 1, Math.Max(1, TotalPages));
+
+            FilteredTeamMembers = AllFilteredTeamMembers
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+        }
+
         private void CalculateStatistics()
         {
-            if (FilteredTeamMembers.Any())
+            if (AllFilteredTeamMembers.Any())
             {
-                var userStats = FilteredTeamMembers
+                var userStats = AllFilteredTeamMembers
                     .GroupBy(us => us.UserId)
                     .Select(g => new
                     {
@@ -557,7 +620,34 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
                     })
                     .ToList();
 
-                TotalTeamSkills = FilteredTeamMembers.Count;
+                TotalTeamSkills = AllFilteredTeamMembers.Count;
+                TeamAverageLevel = userStats.Average(u => u.AverageLevel);
+                LastTeamUpdate = userStats.Max(u => u.LastUpdated);
+            }
+            else
+            {
+                TotalTeamSkills = 0;
+                TeamAverageLevel = 0;
+                LastTeamUpdate = null;
+            }
+        }
+
+        private void CalculateStatisticsForExport()
+        {
+            if (AllFilteredTeamMembers.Any())
+            {
+                var userStats = AllFilteredTeamMembers
+                    .GroupBy(us => us.UserId)
+                    .Select(g => new
+                    {
+                        UserId = g.Key,
+                        TotalSkills = g.Count(),
+                        AverageLevel = g.Average(us => us.LevelId),
+                        LastUpdated = g.Max(us => us.UpdatedTime),
+                    })
+                    .ToList();
+
+                TotalTeamSkills = AllFilteredTeamMembers.Count;
                 TeamAverageLevel = userStats.Average(u => u.AverageLevel);
                 LastTeamUpdate = userStats.Max(u => u.LastUpdated);
             }

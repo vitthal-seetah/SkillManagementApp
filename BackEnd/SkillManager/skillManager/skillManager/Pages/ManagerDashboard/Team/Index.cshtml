@@ -10,7 +10,7 @@
                 <!-- Sidebar Header -->
                 <div class="text-center p-3 border-bottom">
                     <h5 class="mb-0 text-primary">
-                        <i class="bi bi-briefcase-fill me-2"></i>My Teams
+                        <i class="bi bi-briefcase-fill me-2"></i>Manager Dashboard
                     </h5>
                 </div>
 
@@ -23,8 +23,21 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="/ManagerDashboard/Team" class="nav-link active text-dark sidebar-link rounded mx-2">
+                        <a href="/ManagerDashboard/Team" class="nav-link active text-dark bg-primary text-white rounded mx-2">
                             <i class="bi bi-people me-2"></i>My Teams
+                        </a>
+                    </li>
+
+                    <!-- User Management Navigation -->
+                    <li class="nav-item">
+                        <a href="/Users/Index" class="nav-link text-dark sidebar-link rounded mx-2">
+                            <i class="bi bi-person-gear me-2"></i>User Management
+                        </a>
+                    </li>
+                    <!-- Skill Management Navigation -->
+                    <li class="nav-item">
+                        <a href="/Skills/Manage" class="nav-link text-dark sidebar-link rounded mx-2">
+                            <i class="bi bi-tools me-2"></i>Manage Skills
                         </a>
                     </li>
 
@@ -85,13 +98,13 @@
                         <div class="col-md-12">
                             <div class="btn-group flex-wrap" role="group">
                                 <!-- All Teams Option -->
-                                <a href="?selectedTeamId=All"
+                                <a href="?selectedTeamId=All&PageNumber=@Model.PageNumber"
                                    class="btn @(Model.SelectedTeamId == "All" ? "btn-primary" : "btn-outline-primary") m-1">
                                     <i class="bi bi-collection me-1"></i>All Teams (@Model.AllTeams.Count())
                                 </a>
 
                                 <!-- No Team Option -->
-                                <a href="?selectedTeamId=NoTeam"
+                                <a href="?selectedTeamId=NoTeam&PageNumber=@Model.PageNumber"
                                    class="btn @(Model.SelectedTeamId == "NoTeam" ? "btn-warning" : "btn-outline-warning") m-1">
                                     <i class="bi bi-person-x me-1"></i>No Team (@Model.NoTeamMemberCount)
                                 </a>
@@ -99,7 +112,7 @@
                                 <!-- Individual Team Options -->
                                 @foreach (var team in Model.AllTeams)
                                 {
-                                    <a href="?selectedTeamId=@team.TeamId"
+                                    <a href="?selectedTeamId=@team.TeamId&PageNumber=@Model.PageNumber"
                                        class="btn @(Model.SelectedTeamId == team.TeamId.ToString() ? "btn-info" : "btn-outline-info") m-1">
                                         @team.TeamName (@team.MemberCount)
                                     </a>
@@ -175,6 +188,7 @@
                         <input type="hidden" name="SelectedSkill" value="@Model.SelectedSkill" />
                         <input type="hidden" name="SelectedLevel" value="@Model.SelectedLevel" />
                         <input type="hidden" name="SortBy" value="@Model.SortBy" />
+                        <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
 
                         <button type="submit" class="btn btn-success w-100">
                             <i class="bi bi-file-earmark-excel me-2"></i>Export to Excel
@@ -192,7 +206,7 @@
                 <div class="card-body">
                     <form method="get" class="row g-3">
                         <input type="hidden" name="selectedTeamId" value="@Model.SelectedTeamId" />
-
+                        <input type="hidden" name="PageNumber" value="1" /> <!-- Reset to page 1 when filtering -->
                         <!-- User Filter -->
                         <div class="col-md-3">
                             <label for="SelectedUser" class="form-label">Team Member</label>
@@ -272,10 +286,10 @@
                 <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">
                         <i class="bi bi-table me-2"></i>Team Skills
-                        <span class="badge bg-light text-dark ms-2">@Model.FilteredTeamMembers.Count skills</span>
+                        <span class="badge bg-light text-dark ms-2">@Model.TotalCount skills</span>
                     </h5>
                     <div class="text-muted small">
-                        Showing @Model.FilteredTeamMembers.Count of @Model.TeamMembers.Count skills
+                        Showing @Model.FilteredTeamMembers.Count of @Model.TotalCount skills
                         @if (Model.SelectedTeamId == "All")
                         {
                             <span>across @Model.AllTeams.Count() teams</span>
@@ -372,6 +386,7 @@
                                                 <input type="hidden" name="userId" value="@skill.UserId" />
                                                 <input type="hidden" name="skillId" value="@skill.SkillId" />
                                                 <input type="hidden" name="selectedTeamId" value="@Model.SelectedTeamId" />
+                                                <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
                                                 <div class="dropdown">
                                                     <button class="btn btn-sm dropdown-toggle level-dropdown @GetLevelColorClass(skill.LevelName) text-start"
                                                             type="button"
@@ -437,6 +452,36 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 📄 PAGINATION -->
+            @if (Model.TotalPages > 1)
+            {
+                <nav aria-label="Team skills pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                            <a class="page-link"
+                               href="?selectedTeamId=@Model.SelectedTeamId&SelectedUser=@Model.SelectedUser&SelectedCategory=@Model.SelectedCategory&SelectedSkill=@Model.SelectedSkill&SelectedLevel=@Model.SelectedLevel&SortBy=@Model.SortBy&PageNumber=@(Model.PageNumber - 1)">
+                                Previous
+                            </a>
+                        </li>
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link"
+                                   href="?selectedTeamId=@Model.SelectedTeamId&SelectedUser=@Model.SelectedUser&SelectedCategory=@Model.SelectedCategory&SelectedSkill=@Model.SelectedSkill&SelectedLevel=@Model.SelectedLevel&SortBy=@Model.SortBy&PageNumber=@i">
+                                    @i
+                                </a>
+                            </li>
+                        }
+                        <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                            <a class="page-link"
+                               href="?selectedTeamId=@Model.SelectedTeamId&SelectedUser=@Model.SelectedUser&SelectedCategory=@Model.SelectedCategory&SelectedSkill=@Model.SelectedSkill&SelectedLevel=@Model.SelectedLevel&SortBy=@Model.SortBy&PageNumber=@(Model.PageNumber + 1)">
+                                Next
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            }
         </div>
     </div>
 </div>
@@ -499,7 +544,7 @@
             newSort = $"{sortField}Asc";
         }
 
-        return $"?selectedTeamId={Model.SelectedTeamId}&SelectedUser={Model.SelectedUser}&SelectedCategory={Model.SelectedCategory}&SelectedSkill={Model.SelectedSkill}&SelectedLevel={Model.SelectedLevel}&SortBy={newSort}";
+        return $"?selectedTeamId={Model.SelectedTeamId}&SelectedUser={Model.SelectedUser}&SelectedCategory={Model.SelectedCategory}&SelectedSkill={Model.SelectedSkill}&SelectedLevel={Model.SelectedLevel}&SortBy={newSort}&PageNumber={Model.PageNumber}";
     }
 
     private string GetSortIcon(string sortField)

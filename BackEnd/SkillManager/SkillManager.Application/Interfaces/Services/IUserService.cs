@@ -26,7 +26,7 @@ public interface IUserService
 
     // Update user role separately
     Task<bool> UpdateUserRoleAsync(int userId, string roleName, User currentUser);
-    Task<IEnumerable<UserDto>> GetUsersByProjectIdAsync(int projectId, User currentUser);
+    Task<IEnumerable<UserDto>> GetUsersByProjectIdAsync(int projectId);
 
     Task<User?> GetUserEntityByDomainAndEidAsync(string domain, string eid, User currentUser);
     Task<UserDto?> GetUserByDomainAndEidAsync(string domain, string eid, User currentUser);

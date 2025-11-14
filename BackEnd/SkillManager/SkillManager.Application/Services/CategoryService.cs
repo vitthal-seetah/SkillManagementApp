@@ -69,6 +69,12 @@ namespace SkillManager.Application.Services
             return categories.Select(c => c.ToCategoryDto());
         }
 
+        public async Task<IEnumerable<SubCategoryDto>> GetAllSubCategoriesAsync()
+        {
+            var subCategories = await _categoryRepository.GetAllSubCategoriesAsync();
+            return subCategories.Select(c => c.ToSubCategoryDto());
+        }
+
         public async Task<IEnumerable<CategoryDto>> GetCategoriesByTypeAsync(int categoryTypeId)
         {
             if (categoryTypeId <= 0)
@@ -253,7 +259,9 @@ namespace SkillManager.Application.Services
             }
 
             // Check if category type already exists
-            var existingCategoryType = await _categoryRepository.GetCategoryTypeByNameAsync(createDto.Name);
+            var existingCategoryType = await _categoryRepository.GetCategoryTypeByNameAsync(
+                createDto.Name
+            );
             if (existingCategoryType != null)
                 throw new ValidationException(
                     $"Category type with name '{createDto.Name}' already exists."
@@ -266,7 +274,9 @@ namespace SkillManager.Application.Services
                 throw new ApplicationException("Failed to create category type.");
 
             // Return the created category type
-            var newCategoryType = await _categoryRepository.GetCategoryTypeByNameAsync(createDto.Name);
+            var newCategoryType = await _categoryRepository.GetCategoryTypeByNameAsync(
+                createDto.Name
+            );
             return newCategoryType?.ToCategoryTypeDto()
                 ?? throw new ApplicationException("Failed to retrieve created category type.");
         }
@@ -279,7 +289,9 @@ namespace SkillManager.Application.Services
             if (categoryTypeId <= 0)
                 throw new ValidationException("Invalid category type ID.");
 
-            var existingCategoryType = await _categoryRepository.GetCategoryTypeByIdAsync(categoryTypeId);
+            var existingCategoryType = await _categoryRepository.GetCategoryTypeByIdAsync(
+                categoryTypeId
+            );
             if (existingCategoryType == null)
                 throw new NotFoundException($"Category type with ID {categoryTypeId} not found.");
 
@@ -304,7 +316,10 @@ namespace SkillManager.Application.Services
                 var categoryTypeWithSameName = await _categoryRepository.GetCategoryTypeByNameAsync(
                     updateDto.Name.Trim()
                 );
-                if (categoryTypeWithSameName != null && categoryTypeWithSameName.CategoryTypeId != categoryTypeId)
+                if (
+                    categoryTypeWithSameName != null
+                    && categoryTypeWithSameName.CategoryTypeId != categoryTypeId
+                )
                     throw new ValidationException(
                         $"Category type with name '{updateDto.Name}' already exists."
                     );
@@ -316,7 +331,9 @@ namespace SkillManager.Application.Services
             if (!updated)
                 throw new ApplicationException("Failed to update category type.");
 
-            var updatedCategoryType = await _categoryRepository.GetCategoryTypeByIdAsync(categoryTypeId);
+            var updatedCategoryType = await _categoryRepository.GetCategoryTypeByIdAsync(
+                categoryTypeId
+            );
             return updatedCategoryType?.ToCategoryTypeDto()
                 ?? throw new ApplicationException("Failed to retrieve updated category type.");
         }
@@ -333,7 +350,9 @@ namespace SkillManager.Application.Services
             // Check if category type has categories
             var categories = await _categoryRepository.GetByCategoryTypeAsync(categoryType);
             if (categories != null && categories.Any())
-                throw new ValidationException("Cannot delete category type that has associated categories.");
+                throw new ValidationException(
+                    "Cannot delete category type that has associated categories."
+                );
 
             return await _categoryRepository.DeleteCategoryTypeAsync(categoryTypeId);
         }
@@ -543,7 +562,9 @@ namespace SkillManager.Application.Services
 
         public async Task<bool> CategoryTypeExistsAsync(string categoryTypeName)
         {
-            var categoryType = await _categoryRepository.GetCategoryTypeByNameAsync(categoryTypeName);
+            var categoryType = await _categoryRepository.GetCategoryTypeByNameAsync(
+                categoryTypeName
+            );
             return categoryType != null;
         }
 

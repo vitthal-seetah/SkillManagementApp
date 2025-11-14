@@ -1,0 +1,192 @@
+﻿@page
+@model SkillManager.Web.Pages.Teams.ManageTeamsModel
+@{
+    ViewData["Title"] = "Team Management";
+}
+
+<div class="container-fluid">
+    <!-- Header with Back Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-4">Team Management</h2>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+    </div>
+
+    <!-- Alerts -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        @(Model.EditTeamId.HasValue ? "Edit Team" : "Create New Team")
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.EditTeamId.HasValue)
+                    {
+                        <form method="post" asp-page-handler="UpdateTeam">
+                            <input type="hidden" name="id" value="@Model.EditTeamId" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Team Name</label>
+                                <input type="text" class="form-control" asp-for="UpdateTeamDto.TeamName" required />
+                                <span asp-validation-for="UpdateTeamDto.TeamName" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Team Description</label>
+                                <textarea class="form-control" asp-for="UpdateTeamDto.TeamDescription" rows="3"></textarea>
+                                <span asp-validation-for="UpdateTeamDto.TeamDescription" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Team Lead</label>
+                                <select class="form-select" asp-for="UpdateTeamDto.TeamLeadId" required>
+                                    <option value="">Select Team Lead</option>
+                                    @foreach (var user in Model.Users)
+                                    {
+                                        <option value="@user.UserId">@user.FirstName (@user.Eid)</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="UpdateTeamDto.TeamLeadId" class="text-danger"></span>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>Update Team
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="clearEditMode()">
+                                    <i class="fas fa-times me-1"></i>Cancel
+                                </button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post" asp-page-handler="CreateTeam">
+                            <div class="mb-3">
+                                <label class="form-label">Team Name</label>
+                                <input type="text" class="form-control" asp-for="CreateTeamDto.TeamName" required />
+                                <span asp-validation-for="CreateTeamDto.TeamName" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Team Description</label>
+                                <textarea class="form-control" asp-for="CreateTeamDto.TeamDescription" rows="3"></textarea>
+                                <span asp-validation-for="CreateTeamDto.TeamDescription" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Team Lead</label>
+                                <select class="form-select" asp-for="CreateTeamDto.TeamLeadId" required>
+                                    <option value="">Select Team Lead</option>
+                                    @foreach (var user in Model.Users)
+                                    {
+                                        <option value="@user.UserId">@user.FirstName (@user.Eid)</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="CreateTeamDto.TeamLeadId" class="text-danger"></span>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-plus me-1"></i>Create Team
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">All Teams (@Model.Teams.Count)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Team Name</th>
+                                    <th>Description</th>
+                                    <th>Team Lead</th>
+                                    <th>Members</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var team in Model.Teams)
+                                {
+                                    var teamLead = Model.Users.FirstOrDefault(u => u.UserId == team.TeamLeadId);
+                                    <tr>
+                                        <td>@team.TeamName</td>
+                                        <td>@team.TeamDescription</td>
+                                        <td>@(teamLead?.Eid  ?? "Unknown")</td>
+                                        <td>
+                                            <span class="badge bg-info">@team.MemberCount</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="?editTeamId=@team.TeamId"
+                                                   class="btn btn-outline-primary" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form method="post" asp-page-handler="DeleteTeam" class="d-inline">
+                                                    <input type="hidden" name="id" value="@team.TeamId" />
+                                                    <button type="submit" class="btn btn-outline-danger"
+                                                            onclick="return confirm('Are you sure you want to delete this team?')" title="Delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.Teams.Any())
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center">No teams found</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function clearEditMode() {
+            // Remove edit parameter from URL and reload
+            const url = new URL(window.location.href);
+            url.searchParams.delete('editTeamId');
+            window.location.href = url.toString();
+        }
+
+        // Set the selected option for team lead in edit mode
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (Model.EditTeamId.HasValue)
+            {
+                    <text>
+                    const teamLeadSelect = document.querySelector('select[asp-for="UpdateTeamDto.TeamLeadId"]');
+                    if (teamLeadSelect) {
+                        teamLeadSelect.value = '@Model.UpdateTeamDto.TeamLeadId';
+                    }
+                    </text>
+            }
+        });
+    </script>
+}
