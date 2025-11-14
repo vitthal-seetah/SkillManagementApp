@@ -1,9 +1,13 @@
 ﻿@page
-@model SkillManager.Web.Pages.TeamLeadDashboardModel
+@model SkillManager.Web.Pages.ManagerDashboardModel
 @{
-    ViewData["Title"] = "Manager Dashboard";
     bool isAdmin = Model.Roles.Contains("Admin");
     bool isManager = Model.Roles.Contains("Manager");
+
+    // NEW: Set title and header based on role
+    string dashboardTitle = isAdmin ? "Admin Dashboard" : "Manager Dashboard";
+    string sidebarHeader = isAdmin ? "Admin Dashboard" : "Manager Dashboard";
+    ViewData["Title"] = dashboardTitle;
 }
 
 <div class="container-fluid">
@@ -14,11 +18,10 @@
                 <!-- Sidebar Header -->
                 <div class="text-center p-3 border-bottom">
                     <h5 class="mb-0 text-primary">
-                        <i class="bi bi-briefcase-fill me-2"></i>Manager Dashboard
+                        <i class="bi bi-briefcase-fill me-2"></i>@sidebarHeader
                     </h5>
                 </div>
 
-                <!-- Navigation Menu -->
                 <!-- Navigation Menu -->
                 <ul class="nav flex-column mt-3">
                     <li class="nav-item">
@@ -33,18 +36,27 @@
                         </a>
                     </li>
 
+                    <!-- User Management Navigation -->
+                    <li class="nav-item">
+                        <a href="/Users/Index" class="nav-link text-dark sidebar-link rounded mx-2">
+                            <i class="bi bi-person-gear me-2"></i>User Management
+                        </a>
+                    </li>
+                    <!-- Skill Management Navigation -->
+                    <li class="nav-item">
+                        <a href="/Skills/Manage" class="nav-link text-dark sidebar-link rounded mx-2">
+                            <i class="bi bi-tools me-2"></i>Manage Skills
+                        </a>
+                    </li>
+
                     <li class="nav-item">
                         <a href="/ManagerDashboard/LastUpdated" class="nav-link text-dark sidebar-link rounded mx-2">
                             <i class="bi bi-clock-history me-2"></i>Last Updated
                         </a>
                     </li>
                 </ul>
-
-                <!-- Team Stats in Sidebar -->
-              
             </div>
         </div>
-
 
         <!-- Main Content -->
         <div class="col-lg-10 col-md-9 ms-sm-auto px-md-4 main-content">
@@ -54,8 +66,6 @@
                     <i class="bi bi-list"></i> Menu
                 </button>
             </div>
-
-            <!-- Your existing content starts here -->
 
             <!-- Manager Header Information -->
             <div class="row mb-4">
@@ -73,7 +83,7 @@
                                 </div>
                                 <div class="col-md-4 text-center">
                                     <h4><i class="fas fa-users me-2"></i>@Model.ManagerTeamName</h4>
-                                    <p class="mb-0">@Model.TeammateCount Teammates</p>
+                                    <p class="mb-0">@Model.TotalUsersCount Teammates</p>
                                 </div>
                             </div>
                         </div>
@@ -85,8 +95,8 @@
             <div class="row text-center mb-4">
                 <div class="col-md-3">
                     <div class="card shadow-sm p-3 bg-primary text-white">
-                        <h5>Total Team Members</h5>
-                        <h2>@Model.UserSummaries.Count</h2>
+                        <h5>Number Of Teams</h5>
+                        <h2>@Model.NumberOfTeams</h2>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -152,7 +162,7 @@
                 <div class="card-header bg-black text-white">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-chart-bar me-2"></i>Team Skills Overview
-                        <span class="badge bg-light text-dark ms-2">@Model.UserSummaries.Count entries</span>
+                        <span class="badge bg-light text-dark ms-2">@Model.TotalUsersCount entries</span>
                     </h5>
                 </div>
                 <div class="card-body p-0">
@@ -164,7 +174,7 @@
                                         @{
                                             var userSort = Model.SortBy == "UserAsc" ? "UserDesc" : "UserAsc";
                                         }
-                                        <a href="?SortBy=@userSort" class="text-decoration-none text-dark fw-semibold">
+                                        <a href="?SortBy=@userSort&PageNumber=@Model.PageNumber" class="text-decoration-none text-dark fw-semibold">
                                             User @Html.Raw(GetSortIcon("User"))
                                         </a>
                                     </th>
@@ -172,7 +182,7 @@
                                         @{
                                             var utCodeSort = Model.SortBy == "UtCodeAsc" ? "UtCodeDesc" : "UtCodeAsc";
                                         }
-                                        <a href="?SortBy=@utCodeSort" class="text-decoration-none text-dark fw-semibold">
+                                        <a href="?SortBy=@utCodeSort&PageNumber=@Model.PageNumber" class="text-decoration-none text-dark fw-semibold">
                                             UT Code @Html.Raw(GetSortIcon("UtCode"))
                                         </a>
                                     </th>
@@ -180,7 +190,7 @@
                                         @{
                                             var roleSort = Model.SortBy == "RoleAsc" ? "RoleDesc" : "RoleAsc";
                                         }
-                                        <a href="?SortBy=@roleSort" class="text-decoration-none text-dark fw-semibold">
+                                        <a href="?SortBy=@roleSort&PageNumber=@Model.PageNumber" class="text-decoration-none text-dark fw-semibold">
                                             Role @Html.Raw(GetSortIcon("Role"))
                                         </a>
                                     </th>
@@ -188,7 +198,7 @@
                                         @{
                                             var teamSort = Model.SortBy == "TeamAsc" ? "TeamDesc" : "TeamAsc";
                                         }
-                                        <a href="?SortBy=@teamSort" class="text-decoration-none text-dark fw-semibold">
+                                        <a href="?SortBy=@teamSort&PageNumber=@Model.PageNumber" class="text-decoration-none text-dark fw-semibold">
                                             Team @Html.Raw(GetSortIcon("Team"))
                                         </a>
                                     </th>
@@ -196,7 +206,7 @@
                                         @{
                                             var totalSkillsSort = Model.SortBy == "TotalSkillsAsc" ? "TotalSkillsDesc" : "TotalSkillsAsc";
                                         }
-                                        <a href="?SortBy=@totalSkillsSort" class="text-decoration-none text-dark fw-semibold">
+                                        <a href="?SortBy=@totalSkillsSort&PageNumber=@Model.PageNumber" class="text-decoration-none text-dark fw-semibold">
                                             Total Skills @Html.Raw(GetSortIcon("TotalSkills"))
                                         </a>
                                     </th>
@@ -204,7 +214,7 @@
                                         @{
                                             var overallAvgSort = Model.SortBy == "OverallAverageAsc" ? "OverallAverageDesc" : "OverallAverageAsc";
                                         }
-                                        <a href="?SortBy=@overallAvgSort" class="text-decoration-none text-dark fw-semibold">
+                                        <a href="?SortBy=@overallAvgSort&PageNumber=@Model.PageNumber" class="text-decoration-none text-dark fw-semibold">
                                             Overall Avg @Html.Raw(GetSortIcon("OverallAverage"))
                                         </a>
                                     </th>
@@ -212,7 +222,7 @@
                                         @{
                                             var lastUpdatedSort = Model.SortBy == "LastUpdatedAsc" ? "LastUpdatedDesc" : "LastUpdatedAsc";
                                         }
-                                        <a href="?SortBy=@lastUpdatedSort" class="text-decoration-none text-dark fw-semibold">
+                                        <a href="?SortBy=@lastUpdatedSort&PageNumber=@Model.PageNumber" class="text-decoration-none text-dark fw-semibold">
                                             Last Updated @Html.Raw(GetSortIcon("LastUpdated"))
                                         </a>
                                     </th>
@@ -222,7 +232,7 @@
                                             @{
                                                 var categorySort = Model.SortBy == $"{category}Asc" ? $"{category}Desc" : $"{category}Asc";
                                             }
-                                            <a href="?SortBy=@categorySort" class="text-decoration-none text-dark fw-semibold">
+                                            <a href="?SortBy=@categorySort&PageNumber=@Model.PageNumber" class="text-decoration-none text-dark fw-semibold">
                                                 @category Avg @Html.Raw(GetSortIcon(category))
                                             </a>
                                         </th>
@@ -330,6 +340,30 @@
                 </div>
             </div>
 
+            <!-- 📄 PAGINATION -->
+            @if (Model.TotalPages > 1)
+            {
+                <nav aria-label="Team skills pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                            <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)"
+                               asp-route-SortBy="@Model.SortBy">Previous</a>
+                        </li>
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" asp-route-PageNumber="@i"
+                                   asp-route-SortBy="@Model.SortBy">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                            <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)"
+                               asp-route-SortBy="@Model.SortBy">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+
             <!-- Team Analytics -->
             <div class="row">
                 <div class="col-md-6">
@@ -349,11 +383,11 @@
                     </div>
                 </div>
             </div>
-            <!-- Your existing content ends here -->
         </div>
     </div>
 </div>
 
+<!-- Rest of your styles and scripts remain the same -->
 <style>
     .sidebar {
         min-height: calc(100vh - 56px);
@@ -373,7 +407,6 @@
                 color: white !important;
             }
 
-    /* Hover effects for sidebar links */
     .sidebar-link:hover {
         background-color: #e9ecef !important;
         color: #0d6efd !important;
@@ -381,7 +414,6 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-        /* Make icons turn blue on hover */
         .sidebar-link:hover i {
             color: #0d6efd !important;
             transform: scale(1.1);
@@ -392,10 +424,9 @@
         width: 20px;
         text-align: center;
         transition: all 0.2s ease-in-out;
-        color: #6c757d; /* Default icon color */
+        color: #6c757d;
     }
 
-    /* Section headers hover effect */
     .sidebar-section-header:hover {
         background-color: #f8f9fa !important;
         color: #0d6efd !important;
@@ -405,7 +436,6 @@
             color: #0d6efd !important;
         }
 
-    /* Stats section hover effects */
     .sidebar-stats {
         transition: all 0.2s ease-in-out;
     }
@@ -456,7 +486,6 @@
         }
     }
 
-    /* Rest of your existing styles */
     .avatar-sm {
         width: 32px;
         height: 32px;
@@ -493,7 +522,6 @@
         background: linear-gradient(45deg, #4e79a7, #2c5282) !important;
     }
 
-    /* Ensure consistent column sizing */
     table th {
         table-layout: fixed;
     }
@@ -508,120 +536,120 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-            // Team Averages by Category Chart
-            const teamCategories = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryColors.Keys));
-            const teamAverages = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
-                                            Model.CategoryColors.Keys.Select(category =>
-                                                            Model.UserSummaries.Any() ?
-                                                            Model.UserSummaries.Average(u => u.CategoryAverages.ContainsKey(category) ? u.CategoryAverages[category] : 0) : 0
-                                            )
-                            ));
+        // Team Averages by Category Chart
+        const teamCategories = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryColors.Keys));
+        const teamAverages = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    Model.CategoryColors.Keys.Select(category =>
+                            Model.AllUserSummaries.Any() ?
+                            Model.AllUserSummaries.Average(u => u.CategoryAverages.ContainsKey(category) ? u.CategoryAverages[category] : 0) : 0
+                    )
+            ));
     const categoryColors = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryColors.Values));
 
-            new Chart(document.getElementById('teamAvgByCategoryChart'), {
-                type: 'bar',
-                data: {
-                    labels: teamCategories,
-                    datasets: [{
-                        label: 'Average Level Points',
-                        data: teamAverages,
-                        backgroundColor: categoryColors
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 4,
-                            title: {
-                                display: true,
-                                text: 'Level Points'
-                            }
+        new Chart(document.getElementById('teamAvgByCategoryChart'), {
+            type: 'bar',
+            data: {
+                labels: teamCategories,
+                datasets: [{
+                    label: 'Average Level Points',
+                    data: teamAverages,
+                    backgroundColor: categoryColors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 4,
+                        title: {
+                            display: true,
+                            text: 'Level Points'
                         }
                     }
                 }
-            });
-
-            // Skill Distribution by Role Chart
-            const roleDistribution = {};
-        @foreach (var user in Model.UserSummaries)
-            {
-                    <text>
-                    if (!roleDistribution['@user.RoleName']) {
-                        roleDistribution['@user.RoleName'] = 0;
-                    }
-                    roleDistribution['@user.RoleName'] += @user.TotalSkills;
-                    </text>
             }
+        });
 
-            // Use fixed colors from the model
-            const roleColorsMap = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RoleColors));
+        // Skill Distribution by Role Chart
+        const roleDistribution = {};
+    @foreach (var user in Model.AllUserSummaries)
+        {
+                <text>
+                if (!roleDistribution['@user.RoleName']) {
+                    roleDistribution['@user.RoleName'] = 0;
+                }
+                roleDistribution['@user.RoleName'] += @user.TotalSkills;
+                </text>
+        }
 
-            // Create arrays for labels and colors in the same order
-            const roleLabels = Object.keys(roleDistribution);
-            const roleBackgroundColors = roleLabels.map(role => roleColorsMap[role]);
+        // Use fixed colors from the model
+        const roleColorsMap = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RoleColors));
 
-            new Chart(document.getElementById('skillDistributionChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: roleLabels,
-                    datasets: [{
-                        data: Object.values(roleDistribution),
-                        backgroundColor: roleBackgroundColors
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = Math.round((value / total) * 100);
-                                    return `${label}: ${value} skills (${percentage}%)`;
-                                }
+        // Create arrays for labels and colors in the same order
+        const roleLabels = Object.keys(roleDistribution);
+        const roleBackgroundColors = roleLabels.map(role => roleColorsMap[role]);
+
+        new Chart(document.getElementById('skillDistributionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: roleLabels,
+                datasets: [{
+                    data: Object.values(roleDistribution),
+                    backgroundColor: roleBackgroundColors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} skills (${percentage}%)`;
                             }
                         }
                     }
                 }
+            }
+        });
+
+        // Make rows clickable to redirect to user dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            const clickableRows = document.querySelectorAll('.clickable-row');
+
+            clickableRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-user-id');
+                    if (userId) {
+                        // Redirect to the user's dashboard
+                        window.location.href = `/Dashboard?userId=${userId}`;
+                    }
+                });
             });
 
-            // Make rows clickable to redirect to user dashboard
-            document.addEventListener('DOMContentLoaded', function() {
-                const clickableRows = document.querySelectorAll('.clickable-row');
-
-                clickableRows.forEach(row => {
-                    row.addEventListener('click', function() {
-                        const userId = this.getAttribute('data-user-id');
-                        if (userId) {
-                            // Redirect to the user's dashboard
-                            window.location.href = `/Dashboard?userId=${userId}`;
-                        }
-                    });
-                });
-
-                // Initialize tooltips
-                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
-
-                // Mobile sidebar toggle
-                const sidebarToggle = document.querySelector('[data-bs-target=".sidebar"]');
-                if (sidebarToggle) {
-                    sidebarToggle.addEventListener('click', function() {
-                        document.querySelector('.sidebar').classList.toggle('show');
-                    });
-                }
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
+
+            // Mobile sidebar toggle
+            const sidebarToggle = document.querySelector('[data-bs-target=".sidebar"]');
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    document.querySelector('.sidebar').classList.toggle('show');
+                });
+            }
+        });
     </script>
 }
 

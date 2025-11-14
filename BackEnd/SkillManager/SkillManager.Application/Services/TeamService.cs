@@ -12,11 +12,17 @@ namespace SkillManager.Application.Services
     {
         private readonly ITeamRepository _teamRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IProjectRepository _projectRepository;
 
-        public TeamService(ITeamRepository teamRepository, IUserRepository userRepository)
+        public TeamService(
+            ITeamRepository teamRepository,
+            IUserRepository userRepository,
+            IProjectRepository projectRepository
+        )
         {
             _teamRepository = teamRepository;
             _userRepository = userRepository;
+            _projectRepository = projectRepository;
         }
 
         // Basic CRUD operations
@@ -37,24 +43,36 @@ namespace SkillManager.Application.Services
 
         public async Task<Team> CreateTeamAsync(CreateTeamDto teamDto)
         {
+            // Validate project exists
+            var project = await _projectRepository.GetByIdAsync(teamDto.ProjectId);
+            if (project == null)
+                throw new ArgumentException("Project not found");
+
+            // Validate team lead exists if specified
+            if (teamDto.TeamLeadId > 0)
+            {
+                var teamLead = await _userRepository.GetByIdAsync(teamDto.TeamLeadId);
+                if (teamLead == null)
+                    throw new ArgumentException("Team lead user not found");
+            }
+
             // Convert DTO to entity
             var team = new Team
             {
                 TeamName = teamDto.TeamName,
                 TeamDescription = teamDto.TeamDescription,
-                TeamLeadId = teamDto.TeamLeadId,
+                TeamLeadId = teamDto.TeamLeadId > 0 ? teamDto.TeamLeadId : null,
             };
 
-            // Validate team lead exists if specified
+            var createdTeam = await _teamRepository.AddAsync(team);
 
-            var teamLead = await _userRepository.GetByIdAsync(teamDto.TeamLeadId);
-            if (teamLead == null)
-                throw new ArgumentException("Team lead user not found");
+            // Associate team with project through ProjectTeam
+            await _teamRepository.AddTeamToProjectAsync(createdTeam.TeamId, teamDto.ProjectId);
 
-            return await _teamRepository.AddAsync(team);
+            return createdTeam;
         }
 
-        public async Task<Team> UpdateTeamAsync(TeamDto teamDto)
+        public async Task<Team> UpdateTeamAsync(UpdateTeamDto teamDto)
         {
             // Get existing team
             var existingTeam = await _teamRepository.GetByIdAsync(teamDto.TeamId);
@@ -64,13 +82,15 @@ namespace SkillManager.Application.Services
             // Update properties
             existingTeam.TeamName = teamDto.TeamName;
             existingTeam.TeamDescription = teamDto.TeamDescription;
-            existingTeam.TeamLeadId = teamDto.TeamLeadId;
+            existingTeam.TeamLeadId = teamDto.TeamLeadId > 0 ? teamDto.TeamLeadId : null;
 
             // Validate team lead exists if specified
-
-            var teamLead = await _userRepository.GetByIdAsync(teamDto.TeamLeadId);
-            if (teamLead == null)
-                throw new ArgumentException("Team lead user not found");
+            if (teamDto.TeamLeadId > 0)
+            {
+                var teamLead = await _userRepository.GetByIdAsync(teamDto.TeamLeadId);
+                if (teamLead == null)
+                    throw new ArgumentException("Team lead user not found");
+            }
 
             return await _teamRepository.UpdateAsync(existingTeam);
         }
@@ -229,6 +249,46 @@ namespace SkillManager.Application.Services
             }
 
             return userTeamMap;
+        }
+
+        public async Task<TeamDto> UpdateTeamAsync(int teamId, UpdateTeamDto teamDto)
+        {
+            var existingTeam = await _teamRepository.GetByIdAsync(teamId);
+            if (existingTeam == null)
+                throw new ArgumentException("Team not found");
+
+            existingTeam.TeamName = teamDto.TeamName;
+            existingTeam.TeamDescription = teamDto.TeamDescription;
+            existingTeam.TeamLeadId = teamDto.TeamLeadId > 0 ? teamDto.TeamLeadId : null;
+
+            if (teamDto.TeamLeadId > 0)
+            {
+                var teamLead = await _userRepository.GetByIdAsync(teamDto.TeamLeadId);
+                if (teamLead == null)
+                    throw new ArgumentException("Team lead user not found");
+            }
+
+            var updatedTeam = await _teamRepository.UpdateAsync(existingTeam);
+
+            return new TeamDto
+            {
+                TeamId = updatedTeam.TeamId,
+                TeamName = updatedTeam.TeamName,
+                TeamDescription = updatedTeam.TeamDescription,
+                TeamLeadId = updatedTeam.TeamLeadId ?? 0,
+                MemberCount = (await _teamRepository.GetTeamMembersAsync(updatedTeam)).Count(),
+            };
+        }
+
+        // Add method to get project ID for a team
+        public async Task<int> GetTeamProjectIdAsync(int teamId)
+        {
+            var team = await _teamRepository.GetTeamWithProjectsAsync(teamId);
+            if (team?.ProjectTeams?.FirstOrDefault() != null)
+            {
+                return team.ProjectTeams.First().ProjectId;
+            }
+            return 0;
         }
     }
 }

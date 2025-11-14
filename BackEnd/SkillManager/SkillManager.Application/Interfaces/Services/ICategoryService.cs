@@ -25,6 +25,7 @@ public interface ICategoryService
 
     // SubCategory methods
     Task<SubCategoryDto> GetSubCategoryByIdAsync(int subCategoryId);
+    Task<IEnumerable<SubCategoryDto>> GetAllSubCategoriesAsync();
     Task<IEnumerable<SubCategoryDto>> GetSubCategoriesByCategoryAsync(int categoryId);
     Task<SubCategoryDto> CreateSubCategoryAsync(CreateSubCategoryDto createDto);
     Task<SubCategoryDto> UpdateSubCategoryAsync(int subCategoryId, UpdateSubCategoryDto updateDto);

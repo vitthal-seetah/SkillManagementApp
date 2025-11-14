@@ -20,6 +20,7 @@ namespace SkillManager.Application.Interfaces.Repositories
         // ✅ NEW: Additional methods needed for service
         Task<Category?> GetByNameAsync(string name);
         Task<bool> ExistsAsync(string categoryName);
+        Task<IEnumerable<SubCategory>> GetAllSubCategoriesAsync();
         Task<IEnumerable<SubCategory>> GetSubCategoriesByCategoryIdAsync(int categoryId);
         Task<bool> AddSubCategoryAsync(SubCategory subCategory);
         Task<bool> UpdateSubCategoryAsync(SubCategory subCategory);

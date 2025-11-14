@@ -114,6 +114,12 @@ public class ManageCategoryModel : PageModel
     // Category CRUD Operations
     public async Task<IActionResult> OnPostCreateCategoryAsync()
     {
+        if (!ModelState.IsValid)
+        {
+            await LoadDataAsync();
+            return Page();
+        }
+
         try
         {
             await _categoryService.CreateCategoryAsync(CreateCategoryDto);
@@ -129,6 +135,12 @@ public class ManageCategoryModel : PageModel
 
     public async Task<IActionResult> OnPostUpdateCategoryAsync(int id)
     {
+        if (!ModelState.IsValid)
+        {
+            await LoadDataAsync();
+            return Page();
+        }
+
         try
         {
             await _categoryService.UpdateCategoryAsync(id, UpdateCategoryDto);
@@ -160,6 +172,12 @@ public class ManageCategoryModel : PageModel
     // Category Type Operations
     public async Task<IActionResult> OnPostCreateCategoryTypeAsync()
     {
+        if (!ModelState.IsValid)
+        {
+            await LoadDataAsync();
+            return Page();
+        }
+
         try
         {
             await _categoryService.CreateCategoryTypeAsync(CreateCategoryTypeDto);
@@ -176,6 +194,12 @@ public class ManageCategoryModel : PageModel
 
     public async Task<IActionResult> OnPostUpdateCategoryTypeAsync(int id)
     {
+        if (!ModelState.IsValid)
+        {
+            await LoadDataAsync();
+            return Page();
+        }
+
         try
         {
             await _categoryService.UpdateCategoryTypeAsync(id, UpdateCategoryTypeDto);
@@ -207,6 +231,12 @@ public class ManageCategoryModel : PageModel
     // SubCategory CRUD Operations
     public async Task<IActionResult> OnPostCreateSubCategoryAsync()
     {
+        if (!ModelState.IsValid)
+        {
+            await LoadDataAsync();
+            return Page();
+        }
+
         try
         {
             await _categoryService.CreateSubCategoryAsync(CreateSubCategoryDto);
@@ -223,6 +253,12 @@ public class ManageCategoryModel : PageModel
 
     public async Task<IActionResult> OnPostUpdateSubCategoryAsync(int id)
     {
+        if (!ModelState.IsValid)
+        {
+            await LoadDataAsync();
+            return Page();
+        }
+
         try
         {
             await _categoryService.UpdateSubCategoryAsync(id, UpdateSubCategoryDto);
@@ -251,32 +287,10 @@ public class ManageCategoryModel : PageModel
         return RedirectToPage();
     }
 
-    // AJAX handler for getting subcategories by category
-    public async Task<JsonResult> OnGetSubCategoriesByCategory(int categoryId)
-    {
-        try
-        {
-            var subCategories = await _categoryService.GetSubCategoriesByCategoryAsync(categoryId);
-            return new JsonResult(
-                subCategories.Select(sc => new
-                {
-                    subCategoryId = sc.SubCategoryId,
-                    name = sc.Name,
-                    categoryName = sc.CategoryName,
-                    skillCount = sc.SkillCount,
-                })
-            );
-        }
-        catch (Exception ex)
-        {
-            return new JsonResult(new { error = ex.Message });
-        }
-    }
-
     private async Task LoadDataAsync()
     {
         Categories = (await _categoryService.GetAllCategoriesAsync()).ToList();
         CategoryTypes = (await _categoryService.GetAllCategoryTypesAsync()).ToList();
-        // For subcategories, we'll load them on demand via AJAX to avoid loading all at once
+        SubCategories = (await _categoryService.GetAllSubCategoriesAsync()).ToList();
     }
 }

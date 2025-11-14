@@ -127,5 +127,71 @@ namespace SkillManager.Infrastructure.Repositories
                 .Teams.Where(t => t.ProjectTeams.Any(pt => pt.ProjectId == projectId))
                 .ToListAsync();
         }
+
+        // Add team to project association
+        public async Task AddTeamToProjectAsync(int teamId, int projectId)
+        {
+            // Check if the association already exists
+            var existingAssociation = await _context.ProjectTeams.FirstOrDefaultAsync(pt =>
+                pt.TeamId == teamId && pt.ProjectId == projectId
+            );
+
+            if (existingAssociation == null)
+            {
+                var projectTeam = new ProjectTeam { TeamId = teamId, ProjectId = projectId };
+
+                _context.ProjectTeams.Add(projectTeam);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        //  Remove team from project association
+        public async Task RemoveTeamFromProjectAsync(int teamId, int projectId)
+        {
+            var projectTeam = await _context.ProjectTeams.FirstOrDefaultAsync(pt =>
+                pt.TeamId == teamId && pt.ProjectId == projectId
+            );
+
+            if (projectTeam != null)
+            {
+                _context.ProjectTeams.Remove(projectTeam);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        // Update team's project association
+        public async Task UpdateTeamProjectAsync(int teamId, int newProjectId)
+        {
+            // Remove existing project associations for this team
+            var existingAssociations = await _context
+                .ProjectTeams.Where(pt => pt.TeamId == teamId)
+                .ToListAsync();
+
+            _context.ProjectTeams.RemoveRange(existingAssociations);
+
+            // Add new association
+            var newProjectTeam = new ProjectTeam { TeamId = teamId, ProjectId = newProjectId };
+
+            _context.ProjectTeams.Add(newProjectTeam);
+            await _context.SaveChangesAsync();
+        }
+
+        // ADD THIS METHOD: Get project ID for a team
+        public async Task<int?> GetProjectIdForTeamAsync(int teamId)
+        {
+            var projectTeam = await _context.ProjectTeams.FirstOrDefaultAsync(pt =>
+                pt.TeamId == teamId
+            );
+
+            return projectTeam?.ProjectId;
+        }
+
+        // ADD THIS METHOD: Check if team is associated with project
+        public async Task<bool> IsTeamInProjectAsync(int teamId, int projectId)
+        {
+            return await _context.ProjectTeams.AnyAsync(pt =>
+                pt.TeamId == teamId && pt.ProjectId == projectId
+            );
+        }
     }
 }

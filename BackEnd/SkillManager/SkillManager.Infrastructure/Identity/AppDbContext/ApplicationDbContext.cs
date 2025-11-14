@@ -22,6 +22,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<AppEntity> Applications { get; set; }
     public DbSet<ApplicationSkill> ApplicationSkills { get; set; }
     public DbSet<Project> Projects { get; set; }
+    public DbSet<ProjectTeam> ProjectTeams { get; set; }
     public DbSet<Team> Teams { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

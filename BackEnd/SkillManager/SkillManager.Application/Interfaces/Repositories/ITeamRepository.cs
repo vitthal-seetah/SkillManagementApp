@@ -19,5 +19,6 @@ namespace SkillManager.Application.Interfaces.Repositories
         Task<Team?> GetTeamWithMembersAsync(int teamId);
         Task<Team?> GetTeamWithProjectsAsync(int teamId);
         Task<IEnumerable<Team>> GetTeamsByProjectIdAsync(int? projectId);
+        Task AddTeamToProjectAsync(int teamId, int projectId);
     }
 }

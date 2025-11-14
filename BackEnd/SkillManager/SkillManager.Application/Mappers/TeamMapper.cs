@@ -18,6 +18,7 @@ public static class TeamMapper
             TeamDescription = entity.TeamDescription,
             TeamLeadId = entity.TeamLeadId ?? 0, // Handle nullable to non-nullable
             MemberCount = entity.Members?.Count ?? 0, // Calculate from Members collection
+            ProjectId = entity.ProjectTeams?.FirstOrDefault()?.ProjectId ?? 0, // Get project ID from ProjectTeams
         };
     }
 
@@ -35,7 +36,7 @@ public static class TeamMapper
             TeamLeadId = dto.TeamLeadId == 0 ? null : dto.TeamLeadId, // Handle non-nullable to nullable
             Members = new List<User>(), // Initialize empty collection
         };
-        // Note: MemberCount is not set as it's calculated from Members collection
+        // Note: ProjectId is not set here as it's handled through ProjectTeams association
     }
 
     // Update existing entity from DTO
@@ -47,8 +48,7 @@ public static class TeamMapper
         entity.TeamName = dto.TeamName;
         entity.TeamDescription = dto.TeamDescription;
         entity.TeamLeadId = dto.TeamLeadId == 0 ? null : dto.TeamLeadId;
-        // Note: TeamId and Members collection are not updated
-        // MemberCount is calculated, so we don't set it
+        // Note: TeamId, Members collection, and ProjectTeams are not updated
     }
 
     // Map collection from Entity to DTO

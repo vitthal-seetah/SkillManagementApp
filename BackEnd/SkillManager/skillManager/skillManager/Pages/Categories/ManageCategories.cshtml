@@ -304,15 +304,15 @@
                                     <input type="hidden" name="id" value="@Model.EditSubCategoryId" />
                                     <div class="mb-3">
                                         <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" name="UpdateSubCategoryDto.Name" value="@Model.UpdateSubCategoryDto.Name" required />
+                                        <input type="text" class="form-control" asp-for="UpdateSubCategoryDto.Name" required />
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Category</label>
-                                        <select class="form-select" name="UpdateSubCategoryDto.CategoryId" required>
+                                        <select class="form-select" asp-for="UpdateSubCategoryDto.CategoryId" required>
                                             <option value="">Select Category</option>
                                             @foreach (var category in Model.Categories)
                                             {
-                                                <option value="@category.CategoryId" selected="@(category.CategoryId == Model.UpdateSubCategoryDto.CategoryId)">@category.Name</option>
+                                                <option value="@category.CategoryId">@category.Name</option>
                                             }
                                         </select>
                                     </div>
@@ -354,7 +354,7 @@
                 <div class="col-md-8">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Browse SubCategories</h5>
+                            <h5 class="card-title mb-0">All SubCategories (@Model.SubCategories.Count)</h5>
                         </div>
                         <div class="card-body">
                             <div class="row mb-3">
@@ -380,13 +380,35 @@
                                         </tr>
                                     </thead>
                                     <tbody id="subcategoriesTableBody">
-                                        <tr>
-                                            <td colspan="4" class="text-center">
-                                                <div class="spinner-border" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        @foreach (var subCategory in Model.SubCategories)
+                                        {
+                                            <tr data-category-id="@subCategory.CategoryId">
+                                                <td>@subCategory.Name</td>
+                                                <td>@subCategory.CategoryName</td>
+                                                <td><span class="badge bg-secondary">@subCategory.SkillCount</span></td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <a href="?editSubCategoryId=@subCategory.SubCategoryId"
+                                                           class="btn btn-outline-primary" title="Edit">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <form method="post" asp-page-handler="DeleteSubCategory" class="d-inline">
+                                                            <input type="hidden" name="id" value="@subCategory.SubCategoryId" />
+                                                            <button type="submit" class="btn btn-outline-danger"
+                                                                    onclick="return confirm('Are you sure you want to delete this subcategory?')" title="Delete">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                        @if (!Model.SubCategories.Any())
+                                        {
+                                            <tr>
+                                                <td colspan="4" class="text-center">No subcategories found</td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>
@@ -399,6 +421,7 @@
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
         function clearEditMode() {
             // Remove all edit parameters from URL and reload
@@ -412,67 +435,24 @@
         document.addEventListener('DOMContentLoaded', function() {
             const categoryFilter = document.getElementById('categoryFilter');
             const tableBody = document.getElementById('subcategoriesTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
 
-            function loadSubCategories(categoryId = '') {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center">
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-
-                fetch(`?handler=SubCategoriesByCategory&categoryId=${categoryId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Error: ${data.error}</td></tr>`;
-                            return;
+            function filterSubCategories(categoryId = '') {
+                for (let row of rows) {
+                    if (row.getAttribute('data-category-id')) {
+                        if (categoryId === '' || row.getAttribute('data-category-id') === categoryId) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
                         }
-
-                        if (data.length === 0) {
-                            tableBody.innerHTML = `<tr><td colspan="4" class="text-center">No subcategories found</td></tr>`;
-                            return;
-                        }
-
-                        tableBody.innerHTML = data.map(subCategory => `
-                            <tr>
-                                <td>${subCategory.name}</td>
-                                <td>${subCategory.categoryName}</td>
-                                <td><span class="badge bg-secondary">${subCategory.skillCount}</span></td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="?editSubCategoryId=${subCategory.subCategoryId}"
-                                           class="btn btn-outline-primary" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form method="post" asp-page-handler="DeleteSubCategory" class="d-inline">
-                                            <input type="hidden" name="id" value="${subCategory.subCategoryId}" />
-                                            <button type="submit" class="btn btn-outline-danger"
-                                                    onclick="return confirm('Are you sure you want to delete this subcategory?')" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        `).join('');
-                    })
-                    .catch(error => {
-                        console.error('Error loading subcategories:', error);
-                        tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Error loading subcategories</td></tr>`;
-                    });
+                    }
+                }
             }
 
-            // Load all subcategories initially
-            loadSubCategories();
-
-            // Load subcategories when filter changes
+            // Filter subcategories when filter changes
             if (categoryFilter) {
                 categoryFilter.addEventListener('change', function() {
-                    loadSubCategories(this.value);
+                    filterSubCategories(this.value);
                 });
             }
         });
