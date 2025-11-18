@@ -37,7 +37,7 @@ This application allows users to record and maintain their professional and tech
 ✅ Excel import/export for Admin  
 ✅ Many-to-many relationship between Users and Skills  
 ✅ Authentication & Authorization using Windows Authentication 
-✅ RESTful API + Angular Frontend Integration  
+✅ RESTful API + Razor Frontend Integration  
 
 ---
 
