@@ -2,7 +2,7 @@
 using SkillManager.Application.DTOs.Skill;
 using SkillManager.Application.Interfaces.Repositories;
 
-namespace SkillManager.Application.Validators;
+namespace SkillManager.Application.Validators.Skill;
 
 public class UpdateSkillValidator : AbstractValidator<UpdateSkillDto>
 {

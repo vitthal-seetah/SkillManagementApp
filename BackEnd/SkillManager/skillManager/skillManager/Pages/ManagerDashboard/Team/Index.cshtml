@@ -1,7 +1,15 @@
 ﻿@page
 @model SkillManager.web.Pages.ManagerDashboard.Team.IndexModel
 @{
+    bool isAdmin = Model.Roles.Contains("Admin");
+    bool isManager = Model.Roles.Contains("Manager");
+
+    // NEW: Set title and header based on role
+    string dashboardTitle = isAdmin ? "Admin Dashboard" : "Manager Dashboard";
+    string sidebarHeader = isAdmin ? "Admin Dashboard" : "Manager Dashboard";
+    ViewData["Title"] = dashboardTitle;
 }
+
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar - Light Mode -->
@@ -10,7 +18,7 @@
                 <!-- Sidebar Header -->
                 <div class="text-center p-3 border-bottom">
                     <h5 class="mb-0 text-primary">
-                        <i class="bi bi-briefcase-fill me-2"></i>Manager Dashboard
+                        <i class="bi bi-briefcase-fill me-2"></i>@sidebarHeader
                     </h5>
                 </div>
 
@@ -23,8 +31,13 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="/ManagerDashboard/Team" class="nav-link active text-dark bg-primary text-white rounded mx-2">
+                        <a href="/ManagerDashboard/Team" class="nav-link text-dark sidebar-link rounded mx-2">
                             <i class="bi bi-people me-2"></i>My Teams
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/ManagerDashboard/LastUpdated" class="nav-link text-dark sidebar-link rounded mx-2">
+                            <i class="bi bi-clock-history me-2"></i>Last Updated
                         </a>
                     </li>
 
@@ -34,16 +47,27 @@
                             <i class="bi bi-person-gear me-2"></i>User Management
                         </a>
                     </li>
+
+                    @if (isAdmin)
+                    {
+                        <!--ADMIN ONLY: Team Management Navigation -->
+                        <li class="nav-item">
+                            <a href="/TeamManagement" class="nav-link text-dark sidebar-link rounded mx-2">
+                                <i class="bi bi-building-gear me-2"></i>Team Management
+                            </a>
+                        </li>
+                        <!-- ADMIN ONLY:Categories Management Navigation -->
+
+                        <li class="nav-item">
+                            <a href="/Categories/ManageCategories" class="nav-link text-dark sidebar-link rounded mx-2">
+                                <i class="bi bi-tags me-2"></i>Categories Management
+                            </a>
+                        </li>
+                    }
                     <!-- Skill Management Navigation -->
                     <li class="nav-item">
                         <a href="/Skills/Manage" class="nav-link text-dark sidebar-link rounded mx-2">
                             <i class="bi bi-tools me-2"></i>Manage Skills
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="/ManagerDashboard/LastUpdated" class="nav-link text-dark sidebar-link rounded mx-2">
-                            <i class="bi bi-clock-history me-2"></i>Last Updated
                         </a>
                     </li>
                 </ul>

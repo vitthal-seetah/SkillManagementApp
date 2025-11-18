@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,7 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
 
         // NEW: Dictionary to map UserId to TeamName
         public Dictionary<int, string> UserTeamMap { get; set; } = new();
+        public List<string> Roles { get; set; } = new();
 
         // NEW: No Team Members Count
         public int NoTeamMemberCount { get; set; }
@@ -94,11 +96,11 @@ namespace SkillManager.web.Pages.ManagerDashboard.Team
         {
             // Get current manager info
             var currentUserEntity = await GetCurrentUserEntityAsync();
+            Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
             if (currentUserEntity != null)
             {
                 ManagerName = $"{currentUserEntity.FirstName} {currentUserEntity.LastName}";
                 ProjectName = currentUserEntity.Project?.ProjectName ?? "Current Project";
-
                 // GET ALL TEAMS IN MANAGER'S PROJECT
                 if (currentUserEntity.ProjectId.HasValue)
                 {

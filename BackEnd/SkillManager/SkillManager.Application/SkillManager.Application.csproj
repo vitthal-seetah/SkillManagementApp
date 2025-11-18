@@ -19,4 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SkillManager.Domain\SkillManager.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Validators\Team\" />
+  </ItemGroup>
 </Project>

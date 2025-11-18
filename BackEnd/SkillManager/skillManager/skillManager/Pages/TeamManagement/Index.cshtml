@@ -8,8 +8,8 @@
     <!-- Header with Back Button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-4">Team Management</h2>
-        <a href="/" class="btn btn-outline-primary">
-            <i class="bi bi-arrow-left me-1"></i>Back
+        <a href="/ManagerDashboard" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
         </a>
     </div>
 
@@ -147,14 +147,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var team in Model.Teams)
+                                @foreach (var team in Model.TeamTable)
                                 {
                                     var teamLead = Model.Users.FirstOrDefault(u => u.UserId == team.TeamLeadId);
-                                    var project = Model.Projects.FirstOrDefault(p => p.ProjectId == team.ProjectId);
                                     <tr>
                                         <td>@team.TeamName</td>
                                         <td>@team.TeamDescription</td>
-                                        <td>@(project?.ProjectName ?? "Unknown")</td>
+                                        <td>@team.ProjectName</td>
                                         <td>@(teamLead?.FirstName ?? "Unknown") (@(teamLead?.Eid ?? "No EID"))</td>
                                         <td>
                                             <span class="badge bg-info">@team.MemberCount</span>
@@ -176,7 +175,7 @@
                                         </td>
                                     </tr>
                                 }
-                                @if (!Model.Teams.Any())
+                                @if (!Model.TeamTable.Any())
                                 {
                                     <tr>
                                         <td colspan="6" class="text-center">No teams found</td>

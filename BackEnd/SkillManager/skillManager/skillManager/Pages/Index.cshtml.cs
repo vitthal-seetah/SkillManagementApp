@@ -18,11 +18,22 @@ namespace skillManager.Pages
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
             // Redirect based on role
+
             if (!string.IsNullOrEmpty(role))
             {
-                if (role == "Employee" || role == "TeamLead" || role == "Admin")
+                if (role == "Employee")
                 {
-                    return RedirectToPage("/Dashboard");
+                    return Redirect("/Dashboard");
+                }
+
+                if (role == "TeamLead")
+                {
+                    return Redirect("/teamleaddashboard");
+                }
+
+                if (role == "Admin" || role == "Manager")
+                {
+                    return Redirect("/ManagerDashboard");
                 }
             }
             return Page();

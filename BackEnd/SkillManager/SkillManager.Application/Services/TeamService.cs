@@ -56,18 +56,26 @@ namespace SkillManager.Application.Services
                     throw new ArgumentException("Team lead user not found");
             }
 
-            // Convert DTO to entity
+            // Create team entity
             var team = new Team
             {
                 TeamName = teamDto.TeamName,
                 TeamDescription = teamDto.TeamDescription,
                 TeamLeadId = teamDto.TeamLeadId > 0 ? teamDto.TeamLeadId : null,
+                ProjectTeams = new List<ProjectTeam>(), // initialize
             };
 
+            // Add team to database
             var createdTeam = await _teamRepository.AddAsync(team);
 
-            // Associate team with project through ProjectTeam
-            await _teamRepository.AddTeamToProjectAsync(createdTeam.TeamId, teamDto.ProjectId);
+            // Explicitly link team to project
+            var projectTeam = new ProjectTeam
+            {
+                TeamId = createdTeam.TeamId,
+                ProjectId = teamDto.ProjectId,
+            };
+
+            await _teamRepository.AddProjectTeamAsync(projectTeam); // make sure this saves in DB
 
             return createdTeam;
         }
@@ -225,7 +233,27 @@ namespace SkillManager.Application.Services
                 throw new ArgumentException("Invalid project ID");
 
             var teams = await _teamRepository.GetTeamsByProjectIdAsync(projectId);
-            return TeamMapper.ToDto(teams);
+
+            var result = new List<TeamDto>();
+            foreach (var team in teams)
+            {
+                // Pick the first project (or all if you need multiple)
+                var projectIdForTeam = team.ProjectTeams.FirstOrDefault()?.ProjectId ?? 0;
+
+                result.Add(
+                    new TeamDto
+                    {
+                        TeamId = team.TeamId,
+                        TeamName = team.TeamName,
+                        TeamDescription = team.TeamDescription,
+                        TeamLeadId = team.TeamLeadId ?? 0,
+                        MemberCount = (await _teamRepository.GetTeamMembersAsync(team)).Count(),
+                        ProjectId = projectIdForTeam,
+                    }
+                );
+            }
+
+            return result;
         }
 
         public async Task<Dictionary<int, string>> GetUserTeamMapByProjectIdAsync(int? projectId)

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SkillManager.Application.Interfaces.Repositories;
 using SkillManager.Domain.Entities;
 using SkillManager.Infrastructure.Identity.AppDbContext;
@@ -124,7 +119,8 @@ namespace SkillManager.Infrastructure.Repositories
         public async Task<IEnumerable<Team>> GetTeamsByProjectIdAsync(int? projectId)
         {
             return await _context
-                .Teams.Where(t => t.ProjectTeams.Any(pt => pt.ProjectId == projectId))
+                .Teams.Include(t => t.ProjectTeams)
+                .Where(t => t.ProjectTeams.Any(pt => pt.ProjectId == projectId))
                 .ToListAsync();
         }
 
@@ -176,7 +172,7 @@ namespace SkillManager.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // ADD THIS METHOD: Get project ID for a team
+        //  Get project ID for a team
         public async Task<int?> GetProjectIdForTeamAsync(int teamId)
         {
             var projectTeam = await _context.ProjectTeams.FirstOrDefaultAsync(pt =>
@@ -186,12 +182,18 @@ namespace SkillManager.Infrastructure.Repositories
             return projectTeam?.ProjectId;
         }
 
-        // ADD THIS METHOD: Check if team is associated with project
+        //Check if team is associated with project
         public async Task<bool> IsTeamInProjectAsync(int teamId, int projectId)
         {
             return await _context.ProjectTeams.AnyAsync(pt =>
                 pt.TeamId == teamId && pt.ProjectId == projectId
             );
+        }
+
+        public async Task AddProjectTeamAsync(ProjectTeam projectTeam)
+        {
+            _context.ProjectTeams.Add(projectTeam);
+            await _context.SaveChangesAsync();
         }
     }
 }

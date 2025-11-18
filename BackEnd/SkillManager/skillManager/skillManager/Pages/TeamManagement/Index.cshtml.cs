@@ -7,6 +7,7 @@ using SkillManager.Application.DTOs.Team;
 using SkillManager.Application.DTOs.User;
 using SkillManager.Application.Interfaces.Services;
 using SkillManager.Application.Mappers;
+using SkillManager.Application.Models;
 
 namespace SkillManager.Web.Pages.Teams;
 
@@ -31,6 +32,7 @@ public class ManageTeamsModel : PageModel
 
     // Properties for the page
     public List<TeamDto> Teams { get; set; } = new();
+    public List<TeamViewModel> TeamTable { get; set; } = new();
     public List<UserDto> Users { get; set; } = new();
     public List<ProjectDto> Projects { get; set; } = new();
 
@@ -59,7 +61,7 @@ public class ManageTeamsModel : PageModel
                 if (team != null)
                 {
                     // Get the project ID for this team
-                    var teamProjectId = await GetTeamProjectIdAsync(team.TeamId);
+                    var teamProjectId = await _teamService.GetTeamProjectIdAsync(team.TeamId);
 
                     UpdateTeamDto = new UpdateTeamDto
                     {
@@ -175,42 +177,53 @@ public class ManageTeamsModel : PageModel
 
     private async Task LoadDataAsync()
     {
-        try
+        var currentUserEntity = await GetCurrentUserAsync();
+        if (currentUserEntity == null)
         {
-            // Get current user entity
-            var currentUserEntity = await GetCurrentUserAsync();
-
-            if (currentUserEntity != null)
-            {
-                // Pass the User entity (not DTO) to the service method
-                Users = (await _userService.GetAllAsync(currentUserEntity)).ToList();
-
-                // Load teams for current user's project
-                var teams = await _teamService.GetTeamsByProjectIdAsync(
-                    currentUserEntity.ProjectId
-                );
-                Teams = teams.ToList();
-
-                // Load projects (only current user's project for non-admins)
-                var allProjects = await _projectService.GetAllProjectsAsync();
-                Projects = allProjects
-                    .Where(p => p.ProjectId == currentUserEntity.ProjectId)
-                    .ToList();
-            }
-            else
-            {
-                Users = new List<UserDto>();
-                Teams = new List<TeamDto>();
-                Projects = new List<ProjectDto>();
-                TempData["Error"] = "Could not load current user information.";
-            }
-        }
-        catch (Exception ex)
-        {
-            TempData["Error"] = $"Error loading data: {ex.Message}";
-            Teams = new List<TeamDto>();
             Users = new List<UserDto>();
+            Teams = new List<TeamDto>();
+            TeamTable = new List<TeamViewModel>();
             Projects = new List<ProjectDto>();
+            TempData["Error"] = "Could not load current user information.";
+            return;
+        }
+
+        // Load users
+        Users = (await _userService.GetAllAsync(currentUserEntity)).ToList();
+
+        // Load teams
+        Teams = (await _teamService.GetTeamsByProjectIdAsync(currentUserEntity.ProjectId)).ToList();
+
+        // Load projects for dropdown (only current user's project)
+        Projects = (await _projectService.GetAllProjectsAsync())
+            .Where(p => p.ProjectId == currentUserEntity.ProjectId)
+            .ToList();
+
+        // Map TeamDto -> TeamViewModel with ProjectName fetched via GetByIdAsync
+        TeamTable = new List<TeamViewModel>();
+        foreach (var team in Teams)
+        {
+            string projectName = "Unknown";
+
+            if (team.ProjectId > 0)
+            {
+                var project = await _projectService.GetByIdAsync(team.ProjectId);
+                if (project != null)
+                    projectName = project.ProjectName;
+            }
+
+            TeamTable.Add(
+                new TeamViewModel
+                {
+                    TeamId = team.TeamId,
+                    TeamName = team.TeamName,
+                    TeamDescription = team.TeamDescription,
+                    TeamLeadId = team.TeamLeadId,
+                    MemberCount = team.MemberCount,
+                    ProjectId = team.ProjectId,
+                    ProjectName = projectName,
+                }
+            );
         }
     }
 
@@ -250,30 +263,6 @@ public class ManageTeamsModel : PageModel
         {
             System.Diagnostics.Debug.WriteLine($"Error getting current user: {ex.Message}");
             return null;
-        }
-    }
-
-    // Add the missing method to get team project ID
-    private async Task<int> GetTeamProjectIdAsync(int teamId)
-    {
-        try
-        {
-            // This method should get the project ID associated with the team
-            // You might need to implement this in your TeamService or TeamRepository
-            var team = await _teamService.GetTeamWithProjectsAsync(teamId);
-            if (team?.ProjectTeams?.FirstOrDefault() != null)
-            {
-                return team.ProjectTeams.First().ProjectId;
-            }
-
-            // Fallback: return current user's project ID
-            var currentUser = await GetCurrentUserAsync();
-            return currentUser?.ProjectId ?? 0;
-        }
-        catch
-        {
-            var currentUser = await GetCurrentUserAsync();
-            return currentUser?.ProjectId ?? 0;
         }
     }
 }

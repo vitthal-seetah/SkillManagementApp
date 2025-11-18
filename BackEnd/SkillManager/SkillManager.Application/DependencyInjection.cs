@@ -9,6 +9,8 @@ using SkillManager.Application.Interfaces.Services;
 using SkillManager.Application.Services;
 using SkillManager.Application.Validators;
 using SkillManager.Application.Validators.Category;
+using SkillManager.Application.Validators.Skill;
+using SkillManager.Application.Validators.User;
 
 namespace AppManagement.Application;
 

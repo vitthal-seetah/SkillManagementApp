@@ -4,7 +4,7 @@ using SkillManager.Application.Interfaces.Repositories;
 using SkillManager.Domain.Entities;
 using SkillManager.Domain.Entities.Enums;
 
-namespace SkillManager.Application.Validators;
+namespace SkillManager.Application.Validators.User;
 
 // ✅ CREATE USER VALIDATOR
 public class CreateUserValidator : AbstractValidator<CreateUserDto>

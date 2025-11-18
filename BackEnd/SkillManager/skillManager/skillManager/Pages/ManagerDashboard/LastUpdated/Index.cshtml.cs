@@ -44,11 +44,13 @@ public class IndexModel : PageModel
 
     [BindProperty(SupportsGet = true)]
     public string? SortBy { get; set; } = "RecentFirst";
+    public List<string> Roles { get; set; } = new();
 
     public async Task OnGetAsync()
     {
         // Get current team lead info
         var currentUserId = GetCurrentUserId();
+        Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
         if (currentUserId > 0)
         {
             var currentUser = await _userService.GetByIdAsync(currentUserId);

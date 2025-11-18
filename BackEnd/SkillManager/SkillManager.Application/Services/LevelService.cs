@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using SkillManager.Application.DTOs.Level;
 using SkillManager.Application.Interfaces.Repositories;
 using SkillManager.Application.Interfaces.Repositories.m;
 using SkillManager.Application.Mappers;
-using SkillManager.Domain.Entities;
 using SkillManager.Infrastructure.Exceptions;
 
 namespace SkillManager.Application.Services
