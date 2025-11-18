@@ -266,8 +266,4 @@ SkillManager/
 │ └─ DependencyInjection.cs
 │
 └─ SkillManager.Web/
-├─ Connected Services/
-├─ Dependencies/
-├─ Properties/
-├─ wwwroot/
-└─ Pages/
+
